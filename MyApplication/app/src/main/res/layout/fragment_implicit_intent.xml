@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="2dp"
+    android:layout_marginTop="2dp"
+    tools:context=".basic_02_Activity.ImplicitIntentActivityFragment"
+    tools:showIn="@layout/activity_implicit_intent">
+
+    <EditText
+        android:id="@+id/openWebsiteEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="@string/http_developer_android_com"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/locationEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="@string/golden_gate_bridge"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/openWebsiteEditText"
+        app:layout_constraintTop_toBottomOf="@+id/openWebSiteButton" />
+
+    <EditText
+        android:id="@+id/shareTextEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="@string/share_text"
+        app:layout_constraintEnd_toEndOf="@+id/locationEditText"
+        app:layout_constraintStart_toStartOf="@+id/locationEditText"
+        app:layout_constraintTop_toBottomOf="@+id/openLocationButton" />
+
+    <Button
+        android:id="@+id/openWebSiteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/open_website"
+        app:layout_constraintStart_toStartOf="@+id/openWebsiteEditText"
+        app:layout_constraintTop_toBottomOf="@+id/openWebsiteEditText" />
+
+    <Button
+        android:id="@+id/openLocationButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/open_location"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/locationEditText" />
+
+    <Button
+        android:id="@+id/shareInfoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/share_this_text"
+        app:layout_constraintStart_toStartOf="@+id/openLocationButton"
+        app:layout_constraintTop_toBottomOf="@+id/shareTextEditText" />
+
+    <Button
+        android:id="@+id/takePhotoButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="TakePhoton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shareInfoButton" />
+</androidx.constraintlayout.widget.ConstraintLayout>

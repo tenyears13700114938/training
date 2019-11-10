@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.myapplication.basic_03_android_test.todoList.TodoListActivity">
+    <item
+        android:id="@+id/action_allItems"
+        android:orderInCategory="100"
+        android:title="all todo items"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_activeItems"
+        android:orderInCategory="101"
+        android:title="active todo items"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/action_completeItems"
+        android:orderInCategory="102"
+        android:title="complete todo items"
+        app:showAsAction="never"
+        />
+</menu>

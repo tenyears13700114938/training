@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="button_label_count">Count</string>
+    <string name="button_label_toast">Toast</string>
+    <string name="count_initial_value">0</string>
+    <string name="toast_message">Hello Toast!</string>
+    <string name="button_label_zero">ZERO</string>
+    <string name="home_work_toast">DoHomeWork</string>
+    <string name="article_title">Article Title</string>
+    <string name="article_subtitle">Article Subtitle</string>
+    <string name="article">learing let you grown up \n\n
+        \"android develop weapon\" \n\n
+        \"android sdk\"\n\n
+        \"android architecture livedata viewmodel,,,,\"\n\n
+        \"stream programming rxjava, rxkotlin,,,\"\n\n
+        \"http lib retrofit\"\n\n
+        \"database lib room \"\n\n
+        \"depenency inject dagger\"\n\n
+        \"image load libraray, Unit testing, PaingLib,,\"\n\n
+        \"java8 stream api\"\n\n
+        \"kotlin lambda, funtion first class, data class, coroutine\"\n\n
+        \"trainning slef, android code lab is great\"\n\n
+        \"good company is very little, so i must trainning myself, donnot denpend anyone\"\n\n
+        \"keep working more hard\"\n\n
+        \"i like google, it is open\"\n\n
+        \"human exit not only for food\"\n\n
+        \"i like challenge, i donot fear failure\"\n\n\n
+        \"<b>future is done by yourself</b>\"\n\n
+        \"if you any question, please visi\" <b><i>www.google.com</i></b>
+    </string>
+    <string name="title_activity_intents_common">ActivityIntentsCommon</string>
+    <string name="message">Message...</string>
+    <string name="no_message">No Message...</string>
+    <string name="input_message_here">Input message here</string>
+    <string-array name="actionActivity">
+        <item>None</item>
+        <item>.basic_03_android_test.todoList.TodoListActivity</item>
+        <item>.basic_02_Activity.IntentSendActivity</item>
+        <item>.basic_01_03_text_scrollingView.ScrollingTextActivity</item>
+        <item>.basic_01_02_firstApp.FirstAppActivity</item>
+        <item>.basic_01_02_firstApp.FirstAppHomeWorkActivity</item>
+        <item>.sensorlist.SensorListActivity</item>
+        <item>.basic_02_Activity.ImplicitIntentActivity</item>
+    </string-array>
+    <string name="title_activity_implicit_intent">ImplicitIntent</string>
+    <string name="action_settings">Settings</string>
+    <string name="share_this_text">Share This Text</string>
+    <string name="open_location">Open Location</string>
+    <string name="open_website">Open WebSite</string>
+    <string name="share_text">\'TWas brilling and the slithy toves</string>
+    <string name="golden_gate_bridge">Golden Gate Bridge</string>
+    <string name="http_developer_android_com">http://developer.android.com</string>
+    <string name="title_activity_todo_list">TodoListActivity</string>
+    <string name="title_activity_todo_add">TodoAddActivity</string>
+</resources>
