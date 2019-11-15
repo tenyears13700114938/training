@@ -15,13 +15,18 @@ import com.example.myapplication.R
  * A simple [Fragment] subclass.
  */
 class TodoTitleEditFragment : Fragment() {
-
+    private lateinit var todoViewModel: TodoViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_todo_title_edit, container, false)
+        val view = inflater.inflate(R.layout.fragment_todo_title_edit, container, false)
+        todoViewModel = activity?.run{
+            ViewModelProviders.of(this).get(TodoViewModel::class.java)
+        } ?: return view
+
+        return view;
     }
 
 

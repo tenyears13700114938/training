@@ -50,8 +50,8 @@ class TodoListActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         mNaviView = findViewById(R.id.navi_slide_menu)
         configureNaviView(mNaviView)
 
-        todoListViewModel = ViewModelProviders.of(this).get(TodoListViewModel::class.java)
         editingTodoViewModel = ViewModelProviders.of(this).get(TodoViewModel::class.java)
+        todoListViewModel = ViewModelProviders.of(this).get(TodoListViewModel::class.java)
     }
 
     private fun configureNaviView(navigationView: NavigationView?) {
