@@ -26,6 +26,7 @@ import kotlinx.coroutines.*
 
 class TodoListActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private lateinit var todoListViewModel: TodoListViewModel
+    private lateinit var editingTodoViewModel: TodoViewModel
     private lateinit var mNaviView : NavigationView
     private lateinit var mNavController : NavController
 
@@ -50,18 +51,7 @@ class TodoListActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         configureNaviView(mNaviView)
 
         todoListViewModel = ViewModelProviders.of(this).get(TodoListViewModel::class.java)
-
-        fab.setOnClickListener { view ->
-            mNavController.navigate(R.id.todoTitleEditFragment, null)
-            /*Intent(this, TodoAddActivity::class.java).let { _intent ->
-                startActivityForResult(_intent, TodoAddActivity.Request_Code_Add_ToDo)
-            }*/
-            //supportFragmentManager.beginTransaction().replace(R.id.fragment_container, TodoAddFragment.newInstance(), "2").addToBackStack(null).commitAllowingStateLoss()
-        }
-
-        /*if(supportFragmentManager.findFragmentById(R.id.fragment_container) == null){
-            supportFragmentManager.beginTransaction().add(R.id.fragment_container, TodoListFragment.newInstance(), "1").commitNow()
-        }*/
+        editingTodoViewModel = ViewModelProviders.of(this).get(TodoViewModel::class.java)
     }
 
     private fun configureNaviView(navigationView: NavigationView?) {

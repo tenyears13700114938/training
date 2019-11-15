@@ -7,11 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.fragment_todo_list.*
 import kotlinx.coroutines.*
 import java.util.stream.Collectors
 
@@ -53,6 +56,14 @@ class TodoListFragment : Fragment(), CoroutineScope by MainScope() {
         }
         todoListViewModel.displayType.observe(this){
             updateList(todoListViewModel.todoList.value, it)
+        }
+
+        fragmentView.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
+            view.findNavController().navigate(R.id.todoTitleEditFragment, null)
+            /*Intent(this, TodoAddActivity::class.java).let { _intent ->
+                startActivityForResult(_intent, TodoAddActivity.Request_Code_Add_ToDo)
+            }*/
+            //supportFragmentManager.beginTransaction().replace(R.id.fragment_container, TodoAddFragment.newInstance(), "2").addToBackStack(null).commitAllowingStateLoss()
         }
 
         return fragmentView
