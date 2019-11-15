@@ -20,11 +20,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay" />
 
-        <include
-            android:id="@+id/include"
-            layout="@layout/content_todo_list"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            />
+        <fragment android:id="@+id/navi_host_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            app:navGraph="@navigation/todo_navigation"
+            app:defaultNavHost="true"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
@@ -42,6 +45,8 @@
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        app:headerLayout="@layout/navi_slide_menu_header"
+        app:menu="@menu/navi_slide_menu_item"
         android:id="@+id/navi_slide_menu" >
 
     </com.google.android.material.navigation.NavigationView>

@@ -18,7 +18,7 @@ import java.util.stream.Collectors
 /**
  * A placeholder fragment containing a simple view.
  */
-class TodoListActivityFragment : Fragment(), CoroutineScope by MainScope() {
+class TodoListFragment : Fragment(), CoroutineScope by MainScope() {
     private lateinit var todoListView: RecyclerView
     private lateinit var todoListAdapter: TodoListAdapter
     private lateinit var todoListViewModel: TodoListViewModel
@@ -35,7 +35,7 @@ class TodoListActivityFragment : Fragment(), CoroutineScope by MainScope() {
                     _todo.completed = true
                     launch {
                         withContext(Dispatchers.IO) {
-                            todoRepository.getInstance(this@TodoListActivityFragment.context!!)
+                            todoRepository.getInstance(this@TodoListFragment.context!!)
                                 .updateToDo(_todo)
                         }
                     }
@@ -56,6 +56,10 @@ class TodoListActivityFragment : Fragment(), CoroutineScope by MainScope() {
         }
 
         return fragmentView
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun onDestroy() {
@@ -82,6 +86,12 @@ class TodoListActivityFragment : Fragment(), CoroutineScope by MainScope() {
                 else -> {
                 }
             }
+        }
+    }
+
+    companion object {
+        fun newInstance() : TodoListFragment {
+            return TodoListFragment();
         }
     }
 }

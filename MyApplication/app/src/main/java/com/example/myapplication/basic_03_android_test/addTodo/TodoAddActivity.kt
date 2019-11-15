@@ -19,14 +19,16 @@ class TodoAddActivity : AppCompatActivity() {
         val ToDo_Extra_Parameter = "ToDoExtraParameter"
     }
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_todo_add)
-        setSupportActionBar(toolbar)
+  //      setSupportActionBar(toolbar)
 
         mTitleEditView = findViewById(R.id.titleEditView)
         mDescriptionEditView = findViewById(R.id.descriptionEditText)
-
+/*
         fab.setOnClickListener { view ->
             val title = mTitleEditView.text
             val description = mDescriptionEditView.text
@@ -37,7 +39,7 @@ class TodoAddActivity : AppCompatActivity() {
                     finish()
                 }
             }
-        }
+        }*/
     }
 
 }
