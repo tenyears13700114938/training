@@ -71,6 +71,10 @@ class TodoListFragment : Fragment(), CoroutineScope by MainScope() {
 
     override fun onResume() {
         super.onResume()
+        (activity as TodoListActivity).run {
+            setMenuVisibility(true)
+            setTitle("ToDo List")
+        }
     }
 
     override fun onDestroy() {

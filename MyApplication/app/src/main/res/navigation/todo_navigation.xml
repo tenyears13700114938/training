@@ -18,5 +18,23 @@
         android:id="@+id/todoTitleEditFragment"
         android:name="com.example.myapplication.basic_03_android_test.todoList.TodoTitleEditFragment"
         android:label="fragment_todo_title_edit"
-        tools:layout="@layout/fragment_todo_title_edit" />
+        tools:layout="@layout/fragment_todo_title_edit" >
+        <action
+            android:id="@+id/action_todo_titleEdit_to_timeEdit"
+            app:destination="@id/todoTimeEditFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/todoTimeEditFragment"
+        android:name="com.example.myapplication.basic_03_android_test.todoList.TodoTimeEditFragment"
+        android:label="fragment_todo_time_edit"
+        tools:layout="@layout/fragment_todo_time_edit" >
+        <action
+            android:id="@+id/action_todo_TimeEdit_to_PhotoEdit"
+            app:destination="@id/todoPhotoEditFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/todoPhotoEditFragment"
+        android:name="com.example.myapplication.basic_03_android_test.todoList.TodoPhotoEditFragment"
+        android:label="fragment_todo_photo_edit"
+        tools:layout="@layout/fragment_todo_photo_edit" />
 </navigation>

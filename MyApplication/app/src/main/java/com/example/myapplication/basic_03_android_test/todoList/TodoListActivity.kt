@@ -1,21 +1,18 @@
 package com.example.myapplication.basic_03_android_test.todoList
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.core.view.iterator
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
-import com.example.myapplication.basic_03_android_test.addTodo.TodoAddActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import com.example.myapplication.util.searchViewUtil
@@ -48,16 +45,16 @@ class TodoListActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
         //configure navigationView
         mNaviView = findViewById(R.id.navi_slide_menu)
-        configureNaviView(mNaviView)
+        configureNavView(mNaviView)
 
         editingTodoViewModel = ViewModelProviders.of(this).get(TodoViewModel::class.java)
         todoListViewModel = ViewModelProviders.of(this).get(TodoListViewModel::class.java)
     }
 
-    private fun configureNaviView(navigationView: NavigationView?) {
+    private fun configureNavView(navigationView: NavigationView?) {
         navigationView?.let {
             val drawerLayoutParams : DrawerLayout.LayoutParams = it.layoutParams as DrawerLayout.LayoutParams
-            drawerLayoutParams.width = resources.displayMetrics.widthPixels / 2
+            drawerLayoutParams.width = resources.displayMetrics.widthPixels * 5 / 6
             it.layoutParams = drawerLayoutParams
 
             searchViewUtil(
@@ -73,23 +70,38 @@ class TodoListActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                         .into(_imageView)
                 }
             }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && data != null) {
-            data.getSerializableExtra(TodoAddActivity.ToDo_Extra_Parameter)?.also {_todo ->
-                if(_todo is Todo){
-                    launch {
-                        withContext(Dispatchers.IO) {
-                            todoRepository.getInstance(this@TodoListActivity).addToDo(_todo)
+            var menuIterator = it.menu.iterator()
+            while (menuIterator.hasNext()) {
+                menuIterator.next().let {
+                    it.setOnMenuItemClickListener() { item ->
+                        when (item.itemId) {
+                            R.id.todo -> true
+                            R.id.nasa_world -> true
+                            R.id.next_what ->  true
+                            R.id.close_menu_item -> {
+                                findViewById<DrawerLayout>(R.id.root_drawer).closeDrawer(
+                                    GravityCompat.START
+                                )
+                                true
+                            }
+                            else -> true
                         }
                     }
                 }
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    fun saveTodo(_todo: Todo) {
+        launch {
+            withContext(Dispatchers.IO) {
+                todoRepository.getInstance(this@TodoListActivity).addToDo(_todo)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun onDestroy() {
@@ -125,4 +137,17 @@ class TodoListActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             else -> return super.onOptionsItemSelected(item)
         }
     }
+
+    fun setMenuVisibility(visibility : Boolean){
+        toolbar.menu.iterator().let { _iterator ->
+            while(_iterator.hasNext()){
+                _iterator.next().setVisible(visibility)
+            }
+        }
+    }
+
+    fun setTitle(title : String){
+        toolbar.title = title
+    }
+
 }

@@ -11,6 +11,8 @@ data class Todo(
     @PrimaryKey(autoGenerate = true)
     val id : Long,
     @ColumnInfo(name="content")
-    val thing : String,
+    var thing : String,
     var completed : Boolean,
-    val description : String? = "") : Serializable
+    var description : String? = "",
+    @ColumnInfo(name="image_url")
+    var imageUrl : String? = "") : Serializable

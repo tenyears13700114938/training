@@ -5,5 +5,5 @@ import androidx.lifecycle.AndroidViewModel
 import com.example.myapplication.basic_03_android_test.model.Todo
 
 class TodoViewModel(app : Application) : AndroidViewModel(app) {
-    lateinit var todoInfo : Todo
+    var todoInfo : Todo = Todo(0, "", false, "")
 }

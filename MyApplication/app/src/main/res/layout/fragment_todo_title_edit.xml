@@ -1,8 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".basic_03_android_test.todoList.TodoTitleEditFragment">
 
-</FrameLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout3"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/todo_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="please input todo title"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp"
+            app:counterEnabled="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout3">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/todo_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="please input todo description"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            app:counterEnabled="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+
+        <include layout="@layout/nav_buttons" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
