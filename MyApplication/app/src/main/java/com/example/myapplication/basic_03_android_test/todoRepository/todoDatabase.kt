@@ -9,7 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.myapplication.basic_03_android_test.model.Todo
 
-@Database(entities = [Todo::class], version = 3, exportSchema = false)
+@Database(entities = [Todo::class], version = 4, exportSchema = false)
 abstract class todoDatabase() : RoomDatabase(){
     abstract fun todoDao() : todoDao
 
@@ -23,7 +23,7 @@ abstract class todoDatabase() : RoomDatabase(){
                         todoDatabase::class.java,
                         "todoDatabase"
                     ).addCallback(databaseCb)
-                        .addMigrations(migration_2_3)
+                        .addMigrations(migration_3_4)
                         .build()
                 }
                 return mIns!!
@@ -54,6 +54,12 @@ abstract class todoDatabase() : RoomDatabase(){
         private  var migration_2_3 = object  : Migration(2,3){
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `todo_table` ADD COLUMN `image_url` TEXT ")
+            }
+        }
+
+        private  var migration_3_4 = object  : Migration(3,4){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE `todo_table` ADD COLUMN `target_time` INTEGER ")
             }
         }
     }

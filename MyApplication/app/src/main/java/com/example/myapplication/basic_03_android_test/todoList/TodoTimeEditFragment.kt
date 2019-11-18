@@ -7,14 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.DatePicker
+import android.widget.TimePicker
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 
 import com.example.myapplication.R
+import java.lang.StringBuilder
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.util.*
 
 /**
  * A simple [Fragment] subclass.
  */
 class TodoTimeEditFragment : Fragment() {
+    private lateinit var todoViewModel: TodoViewModel
+    private lateinit var mDatePicker: DatePicker
+    private lateinit var mTimePicker: TimePicker
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,7 +32,29 @@ class TodoTimeEditFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_todo_time_edit, container, false)
+        mDatePicker = view.findViewById(R.id.datePicker)
+        mTimePicker = view.findViewById(R.id.timePicker)
+
+        todoViewModel = activity?.run {
+            ViewModelProviders.of(this).get(TodoViewModel::class.java)
+        } ?: return view
+
         view.findViewById<Button>(R.id.next_button).setOnClickListener {
+             SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.JAPAN).apply {
+                 var timeString =    StringBuilder().append(String.format("%4d",mDatePicker.year))
+                    .append("-")
+                    .append(String.format("%2d", mDatePicker.month + 1))
+                    .append("-")
+                    .append(String.format("%2d", mDatePicker.dayOfMonth))
+                    .append("T")
+                    .append(String.format("%2d", mTimePicker.hour))
+                    .append(":")
+                    .append(String.format("%2d", mTimePicker.minute))
+                     .append(":00")
+                    .toString()
+                todoViewModel.todoInfo.targetTime = this.parse(timeString).time
+
+            }
             it.findNavController().navigate(R.id.todoPhotoEditFragment, null)
         }
         view.findViewById<Button>(R.id.back_button).setOnClickListener {

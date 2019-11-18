@@ -15,4 +15,6 @@ data class Todo(
     var completed : Boolean,
     var description : String? = "",
     @ColumnInfo(name="image_url")
-    var imageUrl : String? = "") : Serializable
+    var imageUrl : String? = "",
+    @ColumnInfo(name="target_time")
+    var targetTime : Long? = 0 ) : Serializable
