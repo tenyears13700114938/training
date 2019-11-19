@@ -1,42 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal">
+    >
 
-    <ImageView
-        android:id="@+id/todoItemImage"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        />
+        android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/todoItemImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:adjustViewBounds="true"
+            tools:background="@drawable/saturn_card_view_default"/>
+
 
         <TextView
             android:id="@+id/todoItemTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="2dp"
-            android:textColor="@color/colorPrimary"
-            android:textSize="24sp"
+            android:layout_alignBottom="@+id/todoItemImage"
+            style="@style/ThemeOverlay.AppCompat.Dark"
             tools:text="title" />
 
         <TextView
             android:id="@+id/todoItemDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginBottom="4dp"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
+            android:layout_below="@+id/todoItemTitle"
+            android:textColor="?android:textColorSecondary"
             tools:text="description" />
-    </LinearLayout>
-</LinearLayout>
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
+
