@@ -81,7 +81,8 @@ class TodoListAdapter(val context : Context) : RecyclerView.Adapter<TodoListAdap
                 this@TodoListAdapter.notifyItemChanged(position, null)
             }
             deleteButton.setOnClickListener{
-
+                todoList.removeAt(position)
+                this@TodoListAdapter.notifyItemRemoved(position)
             }
         }
     }

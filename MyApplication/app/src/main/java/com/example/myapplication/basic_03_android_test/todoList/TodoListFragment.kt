@@ -2,7 +2,6 @@ package com.example.myapplication.basic_03_android_test.todoList
 
 import androidx.fragment.app.Fragment
 import android.os.Bundle
-import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,9 +73,9 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
     }
 
     private fun configureItemTouchHelper() {
-        val itemTouchHelper = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
                                         ItemTouchHelper.UP or ItemTouchHelper.DOWN) {
-            public fun onMove(recyclerView : RecyclerView, viewHolder : RecyclerView.ViewHolder, target : ViewHolder) : boolean {
+            public override fun onMove(recyclerView : RecyclerView, viewHolder : RecyclerView.ViewHolder, target : RecyclerView.ViewHolder) : Boolean {
                 val fromPos = viewHolder.getAdapterPosition();
                 val toPos = target.getAdapterPosition();
                 // move item in `fromPos` to `toPos` in adapter.
@@ -84,13 +83,13 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                 todoListAdapter.notifyItemMoved(fromPos, toPos)
                 return true;// true if moved, false otherwise
             }
-            public fun onSwiped(viewHolder : ViewHolder, direction : Int) {
+            public override fun onSwiped(viewHolder : RecyclerView.ViewHolder, direction : Int) {
                 // remove from adapter
                 todoListAdapter.todoList.removeAt(viewHolder.getAdapterPosition())
                 todoListAdapter.notifyItemRemoved(viewHolder.getAdapterPosition())
             }
         }
-        itemTouchHelper.attchToRecylerView(todoListView)
+        ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(todoListView)
     }
 
     override fun onResume() {

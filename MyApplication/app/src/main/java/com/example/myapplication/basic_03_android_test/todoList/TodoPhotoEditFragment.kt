@@ -3,12 +3,13 @@ package com.example.myapplication.basic_03_android_test.todoList
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.hardware.Camera
-import android.opengl.Matrix
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.util.Size
 import android.view.*
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import android.widget.Button
 import android.widget.ImageButton
@@ -20,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
+import com.bumptech.glide.Glide
 
 import com.example.myapplication.R
 import java.io.File
@@ -38,6 +40,7 @@ class TodoPhotoEditFragment : Fragment() {
     private lateinit var todoViewModel : TodoViewModel
     private var preview : Preview? = null
     private var imageCapture : ImageCapture? = null
+    private lateinit var imageButton: ImageButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,55 +62,14 @@ class TodoPhotoEditFragment : Fragment() {
         }
 
         mPhotoImage = view.findViewById(R.id.todo_image)
-
-        viewFinder = view.findViewById<TextureView>(R.id.view_finder).also {
-           it.addOnLayoutChangeListener {_,_,_,_,_,_,_,_,_->
-                updateTransform()
-            }
-        }
-
-        todoViewModel = activity?.run{
-            ViewModelProviders.of(this).get(TodoViewModel::class.java)
-        } ?: return view
-
-        if (allPermissionGranted()) {
-            viewFinder.post { startCamera() }
-        } else {
-            activity?.run{
-                ActivityCompat.requestPermissions(activity as FragmentActivity, REQUEST_PERMISSIONS, REQUEST_CODE_CAMERA_PERMISSION)
-            }
-        }
-
-        if(activity is TodoListActivity){
-            (activity as TodoListActivity).setTitle("Take a photo")
-        }
-        return view
-    }
-
-    private fun startCamera(){
-        //preview config
-        if (preview == null || imageCapture == null) {
-            val previewConfig = PreviewConfig.Builder().apply {
-                setTargetResolution(Size(500, 500))
-            }.build()
-            preview = Preview(previewConfig).also {
-                it.setOnPreviewOutputUpdateListener { _previewOutput ->
-                    val parent = viewFinder.parent as ViewGroup
-                    parent.removeView(viewFinder)
-                    parent.addView(viewFinder, 0)
-                    viewFinder.surfaceTexture = _previewOutput.surfaceTexture
-                    updateTransform()
-                }
-            }
-
-            //capture config
-            val imageCaptureConfig = ImageCaptureConfig.Builder().apply {
-                setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
-            }.build()
-            imageCapture = ImageCapture(imageCaptureConfig)
-            view?.findViewById<ImageButton>(R.id.imageButton)?.setOnClickListener {
+        imageButton = view.findViewById(R.id.image_button)
+        imageButton.setOnClickListener { _imageButton ->
+            if (TextUtils.isEmpty(todoViewModel.todoInfo.imageUrl)) {
                 val file =
-                    File(it.context.externalMediaDirs.first(), "${System.currentTimeMillis()}.jpg")
+                    File(
+                        imageButton.context.externalMediaDirs.first(),
+                        "${System.currentTimeMillis()}.jpg"
+                    )
                 imageCapture?.takePicture(
                     file,
                     captureExecutor,
@@ -125,13 +87,95 @@ class TodoPhotoEditFragment : Fragment() {
                         }
 
                         override fun onImageSaved(file: File) {
-                            todoViewModel.todoInfo.imageUrl = file.absolutePath
+                            viewFinder.post {
+                                todoViewModel.todoInfo.imageUrl = file.absolutePath
+                                configPhotoImageOrCamera()
+                            }
                         }
                     })
 
+
+            } else {
+                viewFinder.post {
+                    todoViewModel.todoInfo.imageUrl = null
+                    configPhotoImageOrCamera()
+                }
             }
         }
-        CameraX.bindToLifecycle(this, preview, imageCapture)
+
+        viewFinder = view.findViewById<TextureView>(R.id.view_finder).also {
+           it.addOnLayoutChangeListener {_,_,_,_,_,_,_,_,_->
+                updateTransform()
+            }
+        }
+
+        todoViewModel = activity?.run{
+            ViewModelProviders.of(this).get(TodoViewModel::class.java)
+        } ?: return view
+
+        configPhotoImageOrCamera()
+
+        if(activity is TodoListActivity){
+            (activity as TodoListActivity).setTitle("Take a photo")
+        }
+        return view
+    }
+
+    private fun configPhotoImageOrCamera() {
+        if(TextUtils.isEmpty(todoViewModel.todoInfo.imageUrl)) {
+            mPhotoImage.visibility = INVISIBLE
+            viewFinder.visibility = VISIBLE
+
+            if (allPermissionGranted()) {
+                viewFinder.post { startCamera() }
+            } else {
+                activity?.run {
+                    ActivityCompat.requestPermissions(
+                        activity as FragmentActivity,
+                        REQUEST_PERMISSIONS,
+                        REQUEST_CODE_CAMERA_PERMISSION
+                    )
+                }
+            }
+        }
+        else {
+            mPhotoImage.visibility = VISIBLE
+            viewFinder.visibility = INVISIBLE
+            Glide.with(this).load(todoViewModel.todoInfo.imageUrl).centerCrop().into(mPhotoImage)
+            stopCamera()
+        }
+        Glide.with(this).load(android.R.drawable.ic_menu_camera).into(imageButton)
+    }
+
+    private fun startCamera(){
+        //preview config
+        if (preview == null || imageCapture == null) {
+            val previewConfig = PreviewConfig.Builder().apply {
+                setTargetResolution(Size(600, 600))
+            }.build()
+            preview = Preview(previewConfig).also {
+                it.setOnPreviewOutputUpdateListener { _previewOutput ->
+                    val parent = viewFinder.parent as ViewGroup
+                    parent.removeView(viewFinder)
+                    parent.addView(viewFinder, 0)
+                    viewFinder.surfaceTexture = _previewOutput.surfaceTexture
+                    updateTransform()
+                }
+            }
+
+            //capture config
+            val imageCaptureConfig = ImageCaptureConfig.Builder().apply {
+                setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
+            }.build()
+            imageCapture = ImageCapture(imageCaptureConfig)
+            CameraX.bindToLifecycle(this, preview, imageCapture)
+        }
+    }
+
+    private fun stopCamera(){
+        /*if(preview != null && imageCapture != null){
+            CameraX.unbind(preview, imageCapture)
+        }*/
     }
 
     private fun updateTransform() {
