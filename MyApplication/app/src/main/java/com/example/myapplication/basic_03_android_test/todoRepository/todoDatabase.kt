@@ -23,6 +23,7 @@ abstract class todoDatabase() : RoomDatabase(){
                         todoDatabase::class.java,
                         "todoDatabase"
                     ).addCallback(databaseCb)
+                        .addMigrations(migration_2_3)
                         .addMigrations(migration_3_4)
                         .build()
                 }

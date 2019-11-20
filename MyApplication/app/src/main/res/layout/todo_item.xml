@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/content_card"
+    android:layout_marginLeft="@dimen/mtrl_card_spacing"
+    android:layout_marginTop="@dimen/mtrl_card_spacing"
+    android:layout_marginRight="@dimen/mtrl_card_spacing"
+    style="@style/Widget.MaterialComponents.CardView"
     >
 
     <RelativeLayout
@@ -18,13 +23,25 @@
             android:adjustViewBounds="true"
             tools:background="@drawable/saturn_card_view_default"/>
 
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/todo_statusIcon"
+            android:padding="2dp"
+            android:background="@color/cardview_dark_background"
+            android:layout_alignStart="@+id/todoItemImage"
+            android:layout_alignTop="@+id/todoItemImage"
+            tools:src="@drawable/ic_check_box_black_24dp" />
 
         <TextView
             android:id="@+id/todoItemTitle"
+            style="@style/ThemeOverlay.AppCompat.Dark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/todoItemImage"
-            style="@style/ThemeOverlay.AppCompat.Dark"
+            android:layout_below="@+id/todoItemImage"
+            android:fontFamily="@font/rubik_light"
+            android:textSize="24sp"
+            android:textStyle="bold"
             tools:text="title" />
 
         <TextView
@@ -33,8 +50,44 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/todoItemTitle"
             android:textColor="?android:textColorSecondary"
+            android:textSize="14sp"
+            android:textStyle="normal"
             tools:text="description" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/expand_button"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@+id/todoItemDescription"
+            android:background="@drawable/ic_arrow_drop_down_black_24dp"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/expand_button_area"
+            android:layout_below="@+id/todoItemDescription"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
+            <ImageButton
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/todo_complete_button"
+                android:src="@drawable/ic_build_black_24dp"
+                android:contentDescription="let todo completed.."
+                />
+            <ImageButton
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/todo_delete_button"
+                android:src="@drawable/ic_delete_black_24dp"
+                android:contentDescription="delete todo..."
+                />
+
+        </LinearLayout>
     </RelativeLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
 

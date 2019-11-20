@@ -2,6 +2,7 @@ package com.example.myapplication.basic_03_android_test.todoList
 
 import androidx.fragment.app.Fragment
 import android.os.Bundle
+import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +17,14 @@ import com.example.myapplication.basic_03_android_test.todoRepository.todoReposi
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.fragment_todo_list.*
 import kotlinx.coroutines.*
+import java.util.*
 import java.util.stream.Collectors
+import androidx.recyclerview.widget.ItemTouchHelper
 
 /**
  * A placeholder fragment containing a simple view.
  */
-class TodoListFragment : Fragment(), CoroutineScope by MainScope() {
+class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by MainScope() {
     private lateinit var todoListView: RecyclerView
     private lateinit var todoListAdapter: TodoListAdapter
     private lateinit var todoListViewModel: TodoListViewModel
@@ -66,7 +69,28 @@ class TodoListFragment : Fragment(), CoroutineScope by MainScope() {
             //supportFragmentManager.beginTransaction().replace(R.id.fragment_container, TodoAddFragment.newInstance(), "2").addToBackStack(null).commitAllowingStateLoss()
         }
 
+        configureItemTouchHelper()
         return fragmentView
+    }
+
+    private fun configureItemTouchHelper() {
+        val itemTouchHelper = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+                                        ItemTouchHelper.UP or ItemTouchHelper.DOWN) {
+            public fun onMove(recyclerView : RecyclerView, viewHolder : RecyclerView.ViewHolder, target : ViewHolder) : boolean {
+                val fromPos = viewHolder.getAdapterPosition();
+                val toPos = target.getAdapterPosition();
+                // move item in `fromPos` to `toPos` in adapter.
+                Collections.swap(todoListAdapter.todoList, fromPos, toPos)
+                todoListAdapter.notifyItemMoved(fromPos, toPos)
+                return true;// true if moved, false otherwise
+            }
+            public fun onSwiped(viewHolder : ViewHolder, direction : Int) {
+                // remove from adapter
+                todoListAdapter.todoList.removeAt(viewHolder.getAdapterPosition())
+                todoListAdapter.notifyItemRemoved(viewHolder.getAdapterPosition())
+            }
+        }
+        itemTouchHelper.attchToRecylerView(todoListView)
     }
 
     override fun onResume() {

@@ -12,6 +12,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
@@ -32,8 +33,11 @@ private const val REQUEST_CODE_CAMERA_PERMISSION = 10
 class TodoPhotoEditFragment : Fragment() {
     private val REQUEST_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     private lateinit var  viewFinder : TextureView
+    private lateinit var mPhotoImage : ImageView
     private val captureExecutor = Executors.newSingleThreadExecutor()
     private lateinit var todoViewModel : TodoViewModel
+    private var preview : Preview? = null
+    private var imageCapture : ImageCapture? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,7 +45,7 @@ class TodoPhotoEditFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_todo_photo_edit, container, false)
-        view.findViewById<Button>(R.id.next_button).let {
+        view.findViewById<View>(R.id.next_button).let {
             if (it is Button)
                 it.text = "OK"
             it
@@ -53,6 +57,8 @@ class TodoPhotoEditFragment : Fragment() {
         view.findViewById<Button>(R.id.back_button).setOnClickListener {
             it.findNavController().popBackStack()
         }
+
+        mPhotoImage = view.findViewById(R.id.todo_image)
 
         viewFinder = view.findViewById<TextureView>(R.id.view_finder).also {
            it.addOnLayoutChangeListener {_,_,_,_,_,_,_,_,_->
@@ -80,45 +86,51 @@ class TodoPhotoEditFragment : Fragment() {
 
     private fun startCamera(){
         //preview config
-        val previewConfig = PreviewConfig.Builder().apply {
-            setTargetResolution(Size(500, 500))
-        }.build()
-        val preview = Preview(previewConfig).also {
-            it.setOnPreviewOutputUpdateListener { _previewOutput ->
-                val parent = viewFinder.parent as ViewGroup
-                parent.removeView(viewFinder)
-                parent.addView(viewFinder, 0)
-                viewFinder.surfaceTexture = _previewOutput.surfaceTexture
-                updateTransform()
+        if (preview == null || imageCapture == null) {
+            val previewConfig = PreviewConfig.Builder().apply {
+                setTargetResolution(Size(500, 500))
+            }.build()
+            preview = Preview(previewConfig).also {
+                it.setOnPreviewOutputUpdateListener { _previewOutput ->
+                    val parent = viewFinder.parent as ViewGroup
+                    parent.removeView(viewFinder)
+                    parent.addView(viewFinder, 0)
+                    viewFinder.surfaceTexture = _previewOutput.surfaceTexture
+                    updateTransform()
+                }
+            }
+
+            //capture config
+            val imageCaptureConfig = ImageCaptureConfig.Builder().apply {
+                setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
+            }.build()
+            imageCapture = ImageCapture(imageCaptureConfig)
+            view?.findViewById<ImageButton>(R.id.imageButton)?.setOnClickListener {
+                val file =
+                    File(it.context.externalMediaDirs.first(), "${System.currentTimeMillis()}.jpg")
+                imageCapture?.takePicture(
+                    file,
+                    captureExecutor,
+                    object : ImageCapture.OnImageSavedListener {
+                        override fun onError(
+                            imageCaptureError: ImageCapture.ImageCaptureError,
+                            message: String,
+                            cause: Throwable?
+                        ) {
+                            val msg = "photo capture failed:$message"
+                            Log.e("CameraX", message)
+                            viewFinder.post {
+                                Toast.makeText(viewFinder.context, msg, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        override fun onImageSaved(file: File) {
+                            todoViewModel.todoInfo.imageUrl = file.absolutePath
+                        }
+                    })
+
             }
         }
-
-        //capture config
-        val imageCaptureConfig = ImageCaptureConfig.Builder().apply {
-            setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
-        }.build()
-        val imageCapture = ImageCapture(imageCaptureConfig)
-        view?.findViewById<ImageButton>(R.id.imageButton)?.setOnClickListener{
-            val file = File(it.context.externalMediaDirs.first(), "${System.currentTimeMillis()}.jpg")
-            imageCapture.takePicture(file, captureExecutor, object: ImageCapture.OnImageSavedListener {
-                override fun onError(
-                    imageCaptureError: ImageCapture.ImageCaptureError,
-                    message: String,
-                    cause: Throwable?
-                ) {
-                    val msg = "photo capture failed:$message"
-                    Log.e("CameraX", message)
-                    viewFinder.post {
-                        Toast.makeText(viewFinder.context, msg, Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                override fun onImageSaved(file: File) {
-                    todoViewModel.todoInfo.imageUrl = file.absolutePath
-                }
-            })
-        }
-
         CameraX.bindToLifecycle(this, preview, imageCapture)
     }
 
