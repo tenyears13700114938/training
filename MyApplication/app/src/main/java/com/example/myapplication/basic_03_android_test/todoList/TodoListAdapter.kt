@@ -70,19 +70,25 @@ class TodoListAdapter(val context : Context) : RecyclerView.Adapter<TodoListAdap
             titleView.text = item.thing
             descriptionView.text = item.description
 
+            photoImageView.layoutParams.height = context.resources.displayMetrics.widthPixels * 3 / 4
             Glide.with(context).load(if(TextUtils.isEmpty(item.imageUrl)) R.drawable.saturn_card_view_default else item.imageUrl).into(photoImageView)
+
             Glide.with(context).load(if(item.completed) R.drawable.ic_check_box_black_24dp else R.drawable.ic_check_box_outline_blank_black_24dp).into(statusImageView)
             expandButton.setOnClickListener {
                 expandButton.background = context.getDrawable(if(expandButtonArea.visibility == VISIBLE) R.drawable.ic_arrow_drop_down_black_24dp else R.drawable.ic_arrow_drop_up_black_24dp)
                 expandButtonArea.visibility = if(expandButtonArea.visibility == VISIBLE) GONE else VISIBLE
             }
             completeButton.setOnClickListener{
-                item.completed = true
-                this@TodoListAdapter.notifyItemChanged(position, null)
+                todoList.indexOf(item).takeIf { index -> index != -1 }?.also{
+                    item.completed = true
+                    this@TodoListAdapter.notifyItemChanged(it, null)
+                }
             }
             deleteButton.setOnClickListener{
-                todoList.removeAt(position)
-                this@TodoListAdapter.notifyItemRemoved(position)
+                todoList.indexOf(item).takeIf { index -> index != -1 }?.also {
+                    todoList.removeAt(it)
+                    this@TodoListAdapter.notifyItemRemoved(it)
+                }
             }
         }
     }

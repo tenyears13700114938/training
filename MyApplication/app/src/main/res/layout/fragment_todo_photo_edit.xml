@@ -9,7 +9,7 @@
     <FrameLayout
         android:id="@+id/photo_disp_area"
         android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_height="225dp"
         android:layout_marginTop="80dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

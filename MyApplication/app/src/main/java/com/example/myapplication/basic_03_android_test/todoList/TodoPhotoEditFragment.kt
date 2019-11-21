@@ -151,7 +151,7 @@ class TodoPhotoEditFragment : Fragment() {
         //preview config
         if (preview == null || imageCapture == null) {
             val previewConfig = PreviewConfig.Builder().apply {
-                setTargetResolution(Size(600, 600))
+                setTargetResolution(Size(600, 600 * 3 / 4))
             }.build()
             preview = Preview(previewConfig).also {
                 it.setOnPreviewOutputUpdateListener { _previewOutput ->

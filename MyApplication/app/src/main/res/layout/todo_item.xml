@@ -17,8 +17,9 @@
 
         <ImageView
             android:id="@+id/todoItemImage"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:scaleType="fitXY"
             android:layout_marginTop="4dp"
             android:adjustViewBounds="true"
             tools:background="@drawable/saturn_card_view_default"/>
