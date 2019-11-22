@@ -1,9 +1,8 @@
 package com.example.myapplication.basic_03_android_test.todoList
 
-import android.content.Context
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -22,10 +21,11 @@ import com.google.android.material.navigation.NavigationView
 
 import kotlinx.android.synthetic.main.activity_todo_list.*
 import kotlinx.coroutines.*
+import java.io.File
 
 class TodoListActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private lateinit var todoListViewModel: TodoListViewModel
-    private lateinit var editingTodoViewModel: TodoViewModel
+    private lateinit var todoViewModel: TodoViewModel
     private lateinit var mNaviView : NavigationView
     private lateinit var mNavController : NavController
 
@@ -49,7 +49,7 @@ class TodoListActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         mNaviView = findViewById(R.id.navi_slide_menu)
         configureNavView(mNaviView)
 
-        editingTodoViewModel = ViewModelProviders.of(this).get(TodoViewModel::class.java)
+        todoViewModel = ViewModelProviders.of(this).get(TodoViewModel::class.java)
         todoListViewModel = ViewModelProviders.of(this).get(TodoListViewModel::class.java)
     }
 
@@ -107,6 +107,9 @@ class TodoListActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     }
 
     override fun onDestroy() {
+        if(!TextUtils.isEmpty(todoViewModel.todoInfo.imageUrl)){
+            File(todoViewModel.todoInfo.imageUrl!!).delete()
+        }
         super.onDestroy()
         cancel()
     }

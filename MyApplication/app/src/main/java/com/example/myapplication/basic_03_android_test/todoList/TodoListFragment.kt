@@ -2,6 +2,7 @@ package com.example.myapplication.basic_03_android_test.todoList
 
 import androidx.fragment.app.Fragment
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import kotlinx.coroutines.*
 import java.util.*
 import java.util.stream.Collectors
 import androidx.recyclerview.widget.ItemTouchHelper
+import java.io.File
 
 /**
  * A placeholder fragment containing a simple view.
@@ -27,13 +29,14 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
     private lateinit var todoListView: RecyclerView
     private lateinit var todoListAdapter: TodoListAdapter
     private lateinit var todoListViewModel: TodoListViewModel
+    private lateinit var todoViewModel: TodoViewModel
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var fragmentView = inflater.inflate(R.layout.fragment_todo_list, container, false)
+        val fragmentView = inflater.inflate(R.layout.fragment_todo_list, container, false)
         todoListAdapter = TodoListAdapter(context!!).also {
             it.clickSubject.subscribe() { _todo ->
                 if (!_todo.completed) {
@@ -60,12 +63,16 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
             updateList(todoListViewModel.todoList.value, it)
         }
 
+        todoViewModel = activity?.let {
+            ViewModelProviders.of(it).get(TodoViewModel::class.java)
+        } ?: throw Exception("no activity")
+
         fragmentView.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
+            if (!TextUtils.isEmpty(todoViewModel.todoInfo.imageUrl)) {
+                File(todoViewModel.todoInfo.imageUrl!!).delete()
+            }
+            todoViewModel.todoInfo.reset()
             view.findNavController().navigate(R.id.todoTitleEditFragment, null)
-            /*Intent(this, TodoAddActivity::class.java).let { _intent ->
-                startActivityForResult(_intent, TodoAddActivity.Request_Code_Add_ToDo)
-            }*/
-            //supportFragmentManager.beginTransaction().replace(R.id.fragment_container, TodoAddFragment.newInstance(), "2").addToBackStack(null).commitAllowingStateLoss()
         }
 
         configureItemTouchHelper()

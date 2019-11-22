@@ -54,6 +54,7 @@ class TodoPhotoEditFragment : Fragment() {
             it
         }.setOnClickListener {
             (activity as TodoListActivity).saveTodo(todoViewModel.todoInfo)
+            todoViewModel.todoInfo.reset()
             it.findNavController().popBackStack(R.id.todoListFragment, false)
         }
 
@@ -97,6 +98,9 @@ class TodoPhotoEditFragment : Fragment() {
 
             } else {
                 viewFinder.post {
+                    if (!TextUtils.isEmpty(todoViewModel.todoInfo.imageUrl)) {
+                        File(todoViewModel.todoInfo.imageUrl!!).delete()
+                    }
                     todoViewModel.todoInfo.imageUrl = null
                     configPhotoImageOrCamera()
                 }
