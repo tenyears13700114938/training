@@ -54,7 +54,6 @@ class TodoPhotoEditFragment : Fragment() {
             it
         }.setOnClickListener {
             (activity as TodoListActivity).saveTodo(todoViewModel.todoInfo)
-            todoViewModel.todoInfo.reset()
             it.findNavController().popBackStack(R.id.todoListFragment, false)
         }
 
@@ -155,7 +154,7 @@ class TodoPhotoEditFragment : Fragment() {
         //preview config
         if (preview == null || imageCapture == null) {
             val previewConfig = PreviewConfig.Builder().apply {
-                setTargetResolution(Size(600, 600 * 3 / 4))
+                setTargetResolution(Size(800, 400))
             }.build()
             preview = Preview(previewConfig).also {
                 it.setOnPreviewOutputUpdateListener { _previewOutput ->

@@ -15,11 +15,10 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.model.Todo
 import io.reactivex.subjects.PublishSubject
-import java.io.File
 
 class TodoListAdapter(val context : Context) : RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
     val todoList : MutableList<Todo> = mutableListOf()
-    val clickSubject = PublishSubject.create<Todo>()
+    val clickItemEventSubject = PublishSubject.create<Pair<Todo, Int>>()
     fun updateList(todos : List<Todo>) {
         todoList.clear()
         todoList.addAll(todos)
@@ -37,8 +36,12 @@ class TodoListAdapter(val context : Context) : RecyclerView.Adapter<TodoListAdap
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         holder.bind(todoList[position], position)
         holder.photoImageView.setOnClickListener { _view ->
-            clickSubject.onNext(todoList[position])
+            clickItemEventSubject.onNext(Pair(todoList[position], R.id.todoItemImage))
         }
+    }
+
+    override fun getItemId(position: Int): Long {
+        return todoList[position].id
     }
 
     override fun onViewRecycled(holder: TodoViewHolder) {
@@ -70,7 +73,7 @@ class TodoListAdapter(val context : Context) : RecyclerView.Adapter<TodoListAdap
             titleView.text = item.thing
             descriptionView.text = item.description
 
-            photoImageView.layoutParams.height = context.resources.displayMetrics.widthPixels * 3 / 4
+            photoImageView.layoutParams.height = context.resources.displayMetrics.widthPixels * 1 / 2
             Glide.with(context).load(if(TextUtils.isEmpty(item.imageUrl)) R.drawable.saturn_card_view_default else item.imageUrl).into(photoImageView)
 
             Glide.with(context).load(if(item.completed) R.drawable.ic_check_box_black_24dp else R.drawable.ic_check_box_outline_blank_black_24dp).into(statusImageView)
@@ -81,13 +84,13 @@ class TodoListAdapter(val context : Context) : RecyclerView.Adapter<TodoListAdap
             completeButton.setOnClickListener{
                 todoList.indexOf(item).takeIf { index -> index != -1 }?.also{
                     item.completed = true
-                    this@TodoListAdapter.notifyItemChanged(it, null)
+                    clickItemEventSubject.onNext(Pair(item, R.id.todo_complete_button))
                 }
             }
             deleteButton.setOnClickListener{
                 todoList.indexOf(item).takeIf { index -> index != -1 }?.also {
                     todoList.removeAt(it)
-                    this@TodoListAdapter.notifyItemRemoved(it)
+                    clickItemEventSubject.onNext(Pair(item, R.id.todo_delete_button))
                 }
             }
         }

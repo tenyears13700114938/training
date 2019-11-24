@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.myapplication">
 
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".MyApplication"
@@ -12,10 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity
-            android:name=".basic_03_android_test.addTodo.TodoAddActivity"
-            android:label="@string/title_activity_todo_add"
-            android:theme="@style/AppTheme.NoActionBar.NoActionBar"></activity>
+        <activity android:name=".basic_03_android_test.todoDetail.TodoDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar.NoActionBar"
+            ></activity>
         <activity
             android:name=".basic_03_android_test.todoList.TodoListActivity"
             android:label="@string/title_activity_todo_list"

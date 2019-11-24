@@ -17,4 +17,7 @@ interface todoDao {
 
     @Update
     fun updateTodo(todo : Todo)
+
+    @Delete
+    fun delete(todo :Todo)
 }

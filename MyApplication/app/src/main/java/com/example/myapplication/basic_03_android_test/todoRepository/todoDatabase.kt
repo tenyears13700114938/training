@@ -33,7 +33,7 @@ abstract class todoDatabase() : RoomDatabase(){
         private var databaseCb = object : RoomDatabase.Callback(){
             override fun onOpen(db: SupportSQLiteDatabase) {
                 super.onOpen(db)
-                object : AsyncTask<Void, Void, Void>(){
+                /*object : AsyncTask<Void, Void, Void>(){
                     override fun doInBackground(vararg params: Void?) : Void? {
                         mIns?.todoDao()?.deleteAll()
                         var todo = Todo(0, "helloworld", false, "android is open for study")
@@ -42,7 +42,7 @@ abstract class todoDatabase() : RoomDatabase(){
                         mIns?.todoDao()?.insertTodo(todo)
                         return null
                     }
-                }.execute()
+                }.execute()*/
             }
         }
 

@@ -1,6 +1,6 @@
 package com.example.myapplication.basic_03_android_test.todoList
 
-import androidx.fragment.app.Fragment
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -13,13 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.model.Todo
-import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.android.synthetic.main.fragment_todo_list.*
 import kotlinx.coroutines.*
 import java.util.*
 import java.util.stream.Collectors
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.example.myapplication.basic_03_android_test.todoDetail.DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO
+import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
+import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
+import kotlinx.android.synthetic.main.todo_item.*
 import java.io.File
 
 /**
@@ -38,17 +40,32 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
     ): View? {
         val fragmentView = inflater.inflate(R.layout.fragment_todo_list, container, false)
         todoListAdapter = TodoListAdapter(context!!).also {
-            it.clickSubject.subscribe() { _todo ->
-                if (!_todo.completed) {
-                    _todo.completed = true
-                    launch {
-                        withContext(Dispatchers.IO) {
-                            todoRepository.getInstance(this@TodoListFragment.context!!)
-                                .updateToDo(_todo)
+            it.clickItemEventSubject.subscribe() { _pair ->
+                when (_pair.second) {
+                    R.id.todo_delete_button ->
+                        launch {
+                            withContext(Dispatchers.IO) {
+                                if (TextUtils.isEmpty(_pair.first.imageUrl)) {
+                                    File(_pair.first.imageUrl).delete()
+                                }
+                                todoRepository.getInstance(context!!).deleteToDo(_pair.first)
+                            }
+                        }
+                    R.id.todo_complete_button ->
+                        launch {
+                            withContext(Dispatchers.IO) {
+                                todoRepository.getInstance(context!!).updateToDo(_pair.first)
+                            }
+                        }
+                    R.id.todoItemImage -> {
+                        Intent(activity, TodoDetailActivity::class.java).apply {
+                            putExtra(DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO, _pair.first)
+                            activity?.startActivity(this)
                         }
                     }
                 }
             }
+            it.setHasStableIds(true)
         }
         todoListView = fragmentView.findViewById<RecyclerView>(R.id.todoList).also { _list ->
             _list.adapter = todoListAdapter

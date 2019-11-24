@@ -17,6 +17,10 @@ class todoRepository(val context : Context) {
         todoDatabase.getInstance(context).todoDao().updateTodo(todo)
     }
 
+    suspend fun deleteToDo(todo : Todo){
+        todoDatabase.getInstance(context).todoDao().delete(todo)
+    }
+
     companion object {
         private var todoIns : todoRepository? = null
         fun getInstance(context: Context) : todoRepository {

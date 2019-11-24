@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".basic_03_android_test.todoList.TodoListFragment"
-    tools:showIn="@layout/activity_todo_list">
+    tools:showIn="@layout/activity_navi_common">
 
     <TextView
         android:id="@+id/todoListTitle"
@@ -34,10 +34,11 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        app:backgroundTint="@color/colorPrimary"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        app:backgroundTint="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_black_24dp"
+        app:srcCompat="@drawable/ic_add_black_16dp"
         tools:ignore="VectorDrawableCompat" />
 </androidx.constraintlayout.widget.ConstraintLayout>
