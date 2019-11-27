@@ -23,8 +23,10 @@ abstract class todoDatabase() : RoomDatabase(){
                         todoDatabase::class.java,
                         "todoDatabase"
                     ).addCallback(databaseCb)
+                        .addMigrations(migration_1_2)
                         .addMigrations(migration_2_3)
                         .addMigrations(migration_3_4)
+                        .addMigrations(migration_4_5)
                         .build()
                 }
                 return mIns!!
@@ -61,6 +63,12 @@ abstract class todoDatabase() : RoomDatabase(){
         private  var migration_3_4 = object  : Migration(3,4){
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `todo_table` ADD COLUMN `target_time` INTEGER ")
+            }
+        }
+
+        private  var migration_4_5 = object  : Migration(4,5){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE `todo_table` ADD COLUMN `comment` TEXT ")
             }
         }
     }

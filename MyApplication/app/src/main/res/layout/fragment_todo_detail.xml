@@ -10,13 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.cardview.widget.CardView
+        <FrameLayout
+            android:id="@+id/card_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-            toos:background="@drawable/saturn_card_view_default"
             toos:layout_constraintEnd_toEndOf="parent"
             toos:layout_constraintStart_toStartOf="parent"
-            toos:layout_constraintTop_toTopOf="parent" />
+            toos:layout_constraintTop_toTopOf="parent">
+
+            <include layout="@layout/todo_item" />
+        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

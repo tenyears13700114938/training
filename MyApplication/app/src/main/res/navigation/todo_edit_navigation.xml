@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/todo_edit_navigation"
+    app:startDestination="@id/todoTitleEditFragment">
+    <fragment
+        android:id="@+id/todoTitleEditFragment"
+        android:name="com.example.myapplication.basic_03_android_test.todoList.TodoTitleEditFragment"
+        android:label="fragment_todo_title_edit"
+        tools:layout="@layout/fragment_todo_title_edit" >
+        <action
+            android:id="@+id/action_todo_titleEdit_to_timeEdit"
+            app:destination="@id/todoTimeEditFragment" />
+        <argument
+            android:name="editType"
+            app:argType="com.example.myapplication.basic_03_android_test.model.TodoEditType"
+            android:defaultValue="CREATE" />
+    </fragment>
+    <fragment
+        android:id="@+id/todoTimeEditFragment"
+        android:name="com.example.myapplication.basic_03_android_test.todoList.TodoTimeEditFragment"
+        android:label="fragment_todo_time_edit"
+        tools:layout="@layout/fragment_todo_time_edit" >
+        <action
+            android:id="@+id/action_todo_TimeEdit_to_PhotoEdit"
+            app:destination="@id/todoPhotoEditFragment" />
+        <argument
+            android:name="editType"
+            app:argType="com.example.myapplication.basic_03_android_test.model.TodoEditType"
+            android:defaultValue="CREATE" />
+    </fragment>
+    <fragment
+        android:id="@+id/todoPhotoEditFragment"
+        android:name="com.example.myapplication.basic_03_android_test.todoList.TodoPhotoEditFragment"
+        android:label="fragment_todo_photo_edit"
+        tools:layout="@layout/fragment_todo_photo_edit" >
+        <argument
+            android:name="editType"
+            app:argType="com.example.myapplication.basic_03_android_test.model.TodoEditType"
+            android:defaultValue="CREATE" />
+    </fragment>
+</navigation>

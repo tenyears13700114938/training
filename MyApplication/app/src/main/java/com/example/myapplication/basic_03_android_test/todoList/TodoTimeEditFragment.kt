@@ -11,6 +11,7 @@ import android.widget.DatePicker
 import android.widget.TimePicker
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 
 import com.example.myapplication.R
 import java.lang.StringBuilder
@@ -25,6 +26,7 @@ class TodoTimeEditFragment : Fragment() {
     private lateinit var todoViewModel: TodoViewModel
     private lateinit var mDatePicker: DatePicker
     private lateinit var mTimePicker: TimePicker
+    private val args : TodoTimeEditFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,7 +57,8 @@ class TodoTimeEditFragment : Fragment() {
                 todoViewModel.todoInfo.targetTime = this.parse(timeString).time
 
             }
-            it.findNavController().navigate(R.id.todoPhotoEditFragment, null)
+            val photoAction = TodoTimeEditFragmentDirections.actionTodoTimeEditToPhotoEdit(args.editType)
+            it.findNavController().navigate(photoAction)
         }
         view.findViewById<Button>(R.id.back_button).setOnClickListener {
             it.findNavController().popBackStack()
@@ -64,8 +67,13 @@ class TodoTimeEditFragment : Fragment() {
         if(activity is TodoListActivity){
             (activity as TodoListActivity).setTitle("Edit Time")
         }
+        setView()
         return view
     }
 
+    //set time display accrod todoViewModel
+    private fun setView(){
+
+    }
 
 }

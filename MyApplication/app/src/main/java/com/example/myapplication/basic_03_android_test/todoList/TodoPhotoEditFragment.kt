@@ -21,9 +21,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 
 import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.model.TodoEditType
+import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailViewModel
+import com.example.myapplication.util.copyTodo
 import java.io.File
 import java.util.concurrent.Executors
 
@@ -38,9 +42,11 @@ class TodoPhotoEditFragment : Fragment() {
     private lateinit var mPhotoImage : ImageView
     private val captureExecutor = Executors.newSingleThreadExecutor()
     private lateinit var todoViewModel : TodoViewModel
+    private lateinit var todoDetailViewModel: TodoDetailViewModel
     private var preview : Preview? = null
     private var imageCapture : ImageCapture? = null
     private lateinit var imageButton: ImageButton
+    private val args : TodoPhotoEditFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,8 +59,13 @@ class TodoPhotoEditFragment : Fragment() {
                 it.text = "OK"
             it
         }.setOnClickListener {
-            (activity as TodoListActivity).saveTodo(todoViewModel.todoInfo)
-            it.findNavController().popBackStack(R.id.todoListFragment, false)
+            if (args.editType == TodoEditType.CREATE) {
+                it.findNavController().popBackStack(R.id.todoListFragment, false)
+                (activity as TodoListActivity).saveTodo(todoViewModel.todoInfo)
+            } else {
+                copyTodo(todoViewModel.todoInfo, todoDetailViewModel.todoDetail.value!!)
+                it.findNavController().popBackStack(R.id.todoDetailFragment, false)
+            }
         }
 
         view.findViewById<Button>(R.id.back_button).setOnClickListener {
@@ -114,6 +125,10 @@ class TodoPhotoEditFragment : Fragment() {
 
         todoViewModel = activity?.run{
             ViewModelProviders.of(this).get(TodoViewModel::class.java)
+        } ?: return view
+
+        todoDetailViewModel = activity?.run {
+            ViewModelProviders.of(this).get(TodoDetailViewModel::class.java)
         } ?: return view
 
         configPhotoImageOrCamera()

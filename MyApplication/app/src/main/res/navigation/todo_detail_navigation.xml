@@ -13,5 +13,15 @@
         <argument
             android:name="Todo_Detail"
             app:argType="com.example.myapplication.basic_03_android_test.model.Todo" />
+        <action
+            android:id="@+id/action_todoDetailFragment_to_todoTitleEditFragment2"
+            app:destination="@id/todo_edit_navigation">
+            <argument
+                android:name="editType"
+                app:argType="com.example.myapplication.basic_03_android_test.model.TodoEditType"
+                android:defaultValue="CREATE" />
+        </action>
     </fragment>
+    <include app:graph="@navigation/todo_edit_navigation" />
+
 </navigation>

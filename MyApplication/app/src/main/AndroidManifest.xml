@@ -12,9 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".basic_03_android_test.todoDetail.TodoDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar.NoActionBar"
-            ></activity>
+        <activity
+            android:name=".basic_03_android_test.todoDetail.TodoDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar.NoActionBar"/>
         <activity
             android:name=".basic_03_android_test.todoList.TodoListActivity"
             android:label="@string/title_activity_todo_list"

@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 
 import com.example.myapplication.R
 import com.example.myapplication.util.hideSoftInput
@@ -26,6 +27,7 @@ class TodoTitleEditFragment : Fragment() {
     private lateinit var todoViewModel: TodoViewModel
     private lateinit var titleEdit : EditText
     private lateinit var descriptionEdit : EditText
+    private val args : TodoTitleEditFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,7 +49,8 @@ class TodoTitleEditFragment : Fragment() {
             activity?.apply {
                 hideSoftInput(this)
             }
-            it.findNavController().navigate(R.id.todoTimeEditFragment)
+            val timeAction = TodoTitleEditFragmentDirections.actionTodoTitleEditToTimeEdit(args.editType)
+            it.findNavController().navigate(timeAction)
         }
 
         view.findViewById<Button>(R.id.back_button).setOnClickListener {
@@ -60,7 +63,13 @@ class TodoTitleEditFragment : Fragment() {
                 setTitle("Edit Title and description")
             }
         }
+        setView()
         return view;
+    }
+
+    private fun setView() {
+        titleEdit.setText(todoViewModel.todoInfo.thing)
+        descriptionEdit.setText(todoViewModel.todoInfo.description)
     }
 
     override fun onResume() {

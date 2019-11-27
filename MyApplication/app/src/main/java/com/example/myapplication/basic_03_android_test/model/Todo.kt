@@ -17,7 +17,8 @@ data class Todo(
     @ColumnInfo(name = "image_url")
     var imageUrl: String? = "",
     @ColumnInfo(name = "target_time")
-    var targetTime: Long? = 0
+    var targetTime: Long? = 0,
+    var comment: String? = ""
 ) : Serializable {
 
     fun reset() {
@@ -27,4 +28,5 @@ data class Todo(
         imageUrl = ""
         targetTime = null
     }
+
 }
