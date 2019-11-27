@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
@@ -24,6 +25,7 @@ import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import com.example.myapplication.util.localDateOfTimeFromUtc
+import kotlinx.android.synthetic.main.activity_navi_common.*
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -60,13 +62,20 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        todoDetailViewModel = ViewModelProviders.of(this).get(TodoDetailViewModel::class.java)
+        todoDetailViewModel = activity?.run{ ViewModelProviders.of(activity as FragmentActivity).get(TodoDetailViewModel::class.java)} ?: throw Exception("no activity")
         //todo observe
         // Inflate the layout for this fragment
         val detailsView = inflater.inflate(R.layout.fragment_todo_detail, container, false)
         configCardView(detailsView)
         setCardView(detailsView, null, todoDetailViewModel.todoDetail.value!!)
         return detailsView
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as TodoDetailActivity).run {
+            setTitle("Todo Detail")
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -97,7 +106,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
             _imageEditBtn
         }
         //complete button, delete button
-        root.findViewById<Button>(R.id.todo_complete_button)?.let { _completeBtn ->
+        root.findViewById<ImageButton>(R.id.todo_complete_button)?.let { _completeBtn ->
             _completeBtn.setOnClickListener { _view ->
                 todoDetailViewModel.todoDetail.value?.completed = true;
                 Glide.with(mStatusIconImage)
@@ -106,7 +115,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
             }
         }
         //delete button
-        root.findViewById<Button>(R.id.todo_delete_button)?.let { _deleteBtn ->
+        root.findViewById<ImageButton>(R.id.todo_delete_button)?.let { _deleteBtn ->
             _deleteBtn.setOnClickListener { _view ->
                 launch {
                     todoDetailViewModel.todoDetail.value?.let {
@@ -119,10 +128,11 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
             }
         }
         //comment area
-        mCommentEdit = root.findViewById<EditText>(R.id.todo_comment_edit_text)!!.let { _todoCommentEdit ->
-            _todoCommentEdit.visibility = View.VISIBLE
-            _todoCommentEdit
+        root.findViewById<View>(R.id.todo_comment_edit_text_area).also {_commentArea ->
+            _commentArea.visibility = View.VISIBLE
         }
+
+        mCommentEdit = root.findViewById<EditText>(R.id.todo_comment_edit_text)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -140,7 +150,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
                 Glide.with(_todoImage)
                     .asBitmap()
                     .load(if (TextUtils.isEmpty(newInfo.imageUrl)) R.drawable.saturn_card_view_default else newInfo.imageUrl)
-                    .into(object : CustomTarget<Bitmap>(_todoImage.width, _todoImage.height) {
+                    .into(object : CustomTarget<Bitmap>(_todoImage.resources.displayMetrics.widthPixels, _todoImage.resources.displayMetrics.widthPixels) {
                         override fun onLoadCleared(placeholder: Drawable?) {
                         }
 

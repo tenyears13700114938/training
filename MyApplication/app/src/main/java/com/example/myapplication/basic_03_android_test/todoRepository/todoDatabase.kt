@@ -9,7 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.myapplication.basic_03_android_test.model.Todo
 
-@Database(entities = [Todo::class], version = 4, exportSchema = false)
+@Database(entities = [Todo::class], version = 5, exportSchema = false)
 abstract class todoDatabase() : RoomDatabase(){
     abstract fun todoDao() : todoDao
 

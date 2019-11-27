@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide
 
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
+import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailViewModel
 import com.example.myapplication.util.copyTodo
 import java.io.File
@@ -64,6 +65,7 @@ class TodoPhotoEditFragment : Fragment() {
                 (activity as TodoListActivity).saveTodo(todoViewModel.todoInfo)
             } else {
                 copyTodo(todoViewModel.todoInfo, todoDetailViewModel.todoDetail.value!!)
+                (activity as TodoDetailActivity).updateTodo(todoDetailViewModel.todoDetail.value!!)
                 it.findNavController().popBackStack(R.id.todoDetailFragment, false)
             }
         }

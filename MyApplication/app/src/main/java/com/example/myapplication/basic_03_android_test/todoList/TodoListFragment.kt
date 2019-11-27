@@ -89,7 +89,7 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                 File(todoViewModel.todoInfo.imageUrl!!).delete()
             }
             todoViewModel.todoInfo.reset()
-            view.findNavController().navigate(R.id.todoTitleEditFragment, null)
+            view.findNavController().navigate(R.id.todo_edit_navigation, null)
         }
 
         configureItemTouchHelper()

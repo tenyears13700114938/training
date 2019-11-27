@@ -107,7 +107,7 @@ class TodoListAdapter(val context: Context) :
                 .asBitmap()
                 .load(if (TextUtils.isEmpty(item.imageUrl)) R.drawable.saturn_card_view_default else item.imageUrl)
                 .into(object : CustomTarget<Bitmap>(
-                    photoImageView.layoutParams.width,
+                    context.resources.displayMetrics.widthPixels,
                     photoImageView.layoutParams.height
                 ) {
                     override fun onLoadCleared(placeholder: Drawable?) {

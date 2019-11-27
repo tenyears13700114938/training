@@ -116,12 +116,14 @@
             android:layout_width="match_parent"
             android:layout_height="400dp"
             android:visibility="gone"
-            android:id="@+id/todo_comment_edit_text"
+            android:id="@+id/todo_comment_edit_text_area"
             android:layout_below="@+id/expand_button_area">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:id="@+id/todo_comment_edit_text"
+                android:gravity="top"
                 android:hint="do you think of your work, write it..." />
         </com.google.android.material.textfield.TextInputLayout>
 
