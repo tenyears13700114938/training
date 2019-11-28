@@ -79,17 +79,4 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
             else -> return super.onOptionsItemSelected(item)
         }
     }
-
-    fun setMenuVisibility(visibility : Boolean){
-        toolbar.menu.iterator().let { _iterator ->
-            while(_iterator.hasNext()){
-                _iterator.next().setVisible(visibility)
-            }
-        }
-    }
-
-    fun setTitle(title : String){
-        toolbar.title = title
-    }
-
 }

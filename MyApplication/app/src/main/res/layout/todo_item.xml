@@ -124,7 +124,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/todo_comment_edit_text"
                 android:gravity="top"
-                android:hint="do you think of your work, write it..." />
+                android:hint="how about your work, write it..." />
         </com.google.android.material.textfield.TextInputLayout>
 
     </RelativeLayout>

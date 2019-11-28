@@ -18,6 +18,7 @@ import kotlinx.coroutines.*
 import java.util.*
 import java.util.stream.Collectors
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.todoDetail.DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
@@ -118,7 +119,7 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
 
     override fun onResume() {
         super.onResume()
-        (activity as TodoListActivity).run {
+        (activity as NavCommonActivity).run {
             setMenuVisibility(true)
             setTitle("ToDo List")
         }

@@ -1,6 +1,7 @@
 package com.example.myapplication.basic_03_android_test.todoList
 
 
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,11 +10,14 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.DatePicker
 import android.widget.TimePicker
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 
 import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
+import com.example.myapplication.util.localDateOfTimeFromUtc
 import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -28,6 +32,7 @@ class TodoTimeEditFragment : Fragment() {
     private lateinit var mTimePicker: TimePicker
     private val args : TodoTimeEditFragmentArgs by navArgs()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,16 +69,25 @@ class TodoTimeEditFragment : Fragment() {
             it.findNavController().popBackStack()
         }
 
-        if(activity is TodoListActivity){
-            (activity as TodoListActivity).setTitle("Edit Time")
+        if(activity is NavCommonActivity){
+            (activity as NavCommonActivity).setTitle("Edit Time")
         }
         setView()
         return view
     }
 
-    //set time display accrod todoViewModel
+    //set time display accord todoViewModel
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setView(){
-
+        todoViewModel.todoInfo.targetTime?.also{
+            if(it != 0L){
+                localDateOfTimeFromUtc(todoViewModel.todoInfo.targetTime!!).also { _localDateTime ->
+                    mDatePicker.updateDate(_localDateTime.year, _localDateTime.monthValue - 1, _localDateTime.dayOfMonth)
+                    mTimePicker.hour = _localDateTime.hour
+                    mTimePicker.minute = _localDateTime.minute
+                }
+            }
+        }
     }
 
 }

@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 
 import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.util.hideSoftInput
 
 /**
@@ -57,8 +58,8 @@ class TodoTitleEditFragment : Fragment() {
             it.findNavController().popBackStack()
         }
 
-        if(activity is TodoListActivity){
-            (activity as TodoListActivity).apply {
+        if(activity is NavCommonActivity){
+            (activity as NavCommonActivity).apply {
                 setMenuVisibility(false)
                 setTitle("Edit Title and description")
             }

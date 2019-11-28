@@ -42,10 +42,6 @@ class TodoDetailActivity : NavCommonActivity(), TodoDetailFragment.OnFragmentInt
         mNavController.setGraph(graph, bundle)
     }
 
-    fun setTitle(title : String){
-        toolbar.title = title
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         cancel()

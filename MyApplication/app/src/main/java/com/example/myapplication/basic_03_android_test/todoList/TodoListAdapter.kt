@@ -52,9 +52,10 @@ class TodoListAdapter(val context: Context) :
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
+        var todo = todoList[position]
         holder.bind(todoList[position], position)
         holder.photoImageView.setOnClickListener { _view ->
-            clickItemEventSubject.onNext(Pair(todoList[position], R.id.todoItemImage))
+            clickItemEventSubject.onNext(Pair(todo, R.id.todoItemImage))
         }
     }
 
@@ -111,6 +112,7 @@ class TodoListAdapter(val context: Context) :
                     photoImageView.layoutParams.height
                 ) {
                     override fun onLoadCleared(placeholder: Drawable?) {
+                        Glide.with(context).clear(photoImageView)
                     }
 
                     override fun onResourceReady(

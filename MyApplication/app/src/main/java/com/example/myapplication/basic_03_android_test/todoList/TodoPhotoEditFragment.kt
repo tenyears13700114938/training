@@ -25,6 +25,7 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 
 import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailViewModel
@@ -135,8 +136,8 @@ class TodoPhotoEditFragment : Fragment() {
 
         configPhotoImageOrCamera()
 
-        if(activity is TodoListActivity){
-            (activity as TodoListActivity).setTitle("Take a photo")
+        if(activity is NavCommonActivity){
+            (activity as NavCommonActivity).setTitle("Take a photo")
         }
         return view
     }

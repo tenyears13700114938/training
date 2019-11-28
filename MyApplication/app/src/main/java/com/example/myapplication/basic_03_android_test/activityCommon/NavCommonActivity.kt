@@ -80,4 +80,16 @@ open class NavCommonActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun setTitle(title : String){
+        toolbar.title = title
+    }
+
+    fun setMenuVisibility(visibility : Boolean){
+        toolbar.menu.iterator().let { _iterator ->
+            while(_iterator.hasNext()){
+                _iterator.next().setVisible(visibility)
+            }
+        }
+    }
 }

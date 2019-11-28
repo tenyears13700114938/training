@@ -17,10 +17,12 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 
 import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
@@ -49,6 +51,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
     private lateinit var mEditBtn : ImageButton
     private lateinit var mCommentEdit : EditText
     private lateinit var mStatusIconImage : ImageView
+    private lateinit var detailsView : View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,21 +68,32 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         todoDetailViewModel = activity?.run{ ViewModelProviders.of(activity as FragmentActivity).get(TodoDetailViewModel::class.java)} ?: throw Exception("no activity")
         //todo observe
         // Inflate the layout for this fragment
-        val detailsView = inflater.inflate(R.layout.fragment_todo_detail, container, false)
+        detailsView = inflater.inflate(R.layout.fragment_todo_detail, container, false)
         configCardView(detailsView)
-        setCardView(detailsView, null, todoDetailViewModel.todoDetail.value!!)
+        //setCardView(detailsView, null, todoDetailViewModel.todoDetail.value!!)
         return detailsView
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
-        (activity as TodoDetailActivity).run {
+        (activity as NavCommonActivity).run {
             setTitle("Todo Detail")
         }
+        setCardView(detailsView, null, todoDetailViewModel.todoDetail.value!!)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun configCardView(root: View) {
+        //complete button, delete button
+        root.findViewById<ImageButton>(R.id.todo_complete_button)?.let { _completeBtn ->
+            _completeBtn.setOnClickListener { _view ->
+                todoDetailViewModel.todoDetail.value?.completed = true;
+                Glide.with(activity!!)
+                    .load(R.drawable.ic_check_box_black_24dp)
+                    .into(mStatusIconImage)
+            }
+        }
         //status icon
         mStatusIconImage = root.findViewById(R.id.todo_statusIcon)
         //Title Text max 2 line
@@ -105,15 +119,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
             _imageEditBtn.visibility = View.VISIBLE
             _imageEditBtn
         }
-        //complete button, delete button
-        root.findViewById<ImageButton>(R.id.todo_complete_button)?.let { _completeBtn ->
-            _completeBtn.setOnClickListener { _view ->
-                todoDetailViewModel.todoDetail.value?.completed = true;
-                Glide.with(mStatusIconImage)
-                    .load(R.drawable.ic_check_box_black_24dp)
-                    .into(mStatusIconImage)
-            }
-        }
+
         //delete button
         root.findViewById<ImageButton>(R.id.todo_delete_button)?.let { _deleteBtn ->
             _deleteBtn.setOnClickListener { _view ->
@@ -123,6 +129,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
                             todoRepository.getInstance(_view.context)
                                 .deleteToDo(it)
                         }
+                        activity?.finish()
                     }
                 }
             }
@@ -138,7 +145,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun setCardView(root : View, oldInfo : Todo?, newInfo : Todo){
         if (oldInfo == null || !Objects.equals(oldInfo.completed, newInfo.completed)) {
-            Glide.with(mStatusIconImage)
+            Glide.with(activity!!)
                 .load(if (newInfo.completed) R.drawable.ic_check_box_black_24dp else R.drawable.ic_check_box_outline_blank_black_24dp)
                 .into(mStatusIconImage)
         }
@@ -147,9 +154,10 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
             root.findViewById<ImageView>(R.id.todoItemImage)?.let { _todoImage ->
                 _todoImage.layoutParams.height =
                     _todoImage.context.resources.displayMetrics.widthPixels
-                Glide.with(_todoImage)
+                Glide.with(activity!!)
                     .asBitmap()
                     .load(if (TextUtils.isEmpty(newInfo.imageUrl)) R.drawable.saturn_card_view_default else newInfo.imageUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(object : CustomTarget<Bitmap>(_todoImage.resources.displayMetrics.widthPixels, _todoImage.resources.displayMetrics.widthPixels) {
                         override fun onLoadCleared(placeholder: Drawable?) {
                         }
@@ -159,6 +167,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
                             transition: Transition<in Bitmap>?
                         ) {
                             _todoImage.setImageBitmap(resource)
+                           // resource.recycle()
                         }
                     })
             }
@@ -194,6 +203,12 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
                 TodoDetailFragmentDirections.actionTodoDetailFragmentToTodoTitleEditFragment2(TodoEditType.UPDATE)
             _editBtn.findNavController().navigate(totitleAction)
         }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onStart() {
+        super.onStart()
     }
 
     // TODO: Rename method, update argument and hook method into UI event
