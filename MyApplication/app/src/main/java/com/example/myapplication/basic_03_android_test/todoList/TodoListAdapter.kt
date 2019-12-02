@@ -15,8 +15,10 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.bumptech.glide.signature.ObjectKey
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.util.localDateOfTimeFromUtc
@@ -107,12 +109,15 @@ class TodoListAdapter(val context: Context) :
             Glide.with(context)
                 .asBitmap()
                 .load(if (TextUtils.isEmpty(item.imageUrl)) R.drawable.saturn_card_view_default else item.imageUrl)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                //.skipMemoryCache(true)
+                .override(context.resources.displayMetrics.widthPixels,photoImageView.layoutParams.height)
                 .into(object : CustomTarget<Bitmap>(
                     context.resources.displayMetrics.widthPixels,
                     photoImageView.layoutParams.height
                 ) {
                     override fun onLoadCleared(placeholder: Drawable?) {
-                        Glide.with(context).clear(photoImageView)
+                       // Glide.with(context).clear(photoImageView)
                     }
 
                     override fun onResourceReady(
@@ -120,6 +125,14 @@ class TodoListAdapter(val context: Context) :
                         transition: Transition<in Bitmap>?
                     ) {
                         photoImageView.setImageBitmap(resource)
+                    }
+
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        super.onLoadFailed(errorDrawable)
+                    }
+
+                    override fun onDestroy() {
+                        super.onDestroy()
                     }
                 })
 

@@ -46,7 +46,7 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                     R.id.todo_delete_button ->
                         launch {
                             withContext(Dispatchers.IO) {
-                                if (TextUtils.isEmpty(_pair.first.imageUrl)) {
+                                if (!TextUtils.isEmpty(_pair.first.imageUrl)) {
                                     File(_pair.first.imageUrl).delete()
                                 }
                                 todoRepository.getInstance(context!!).deleteToDo(_pair.first)

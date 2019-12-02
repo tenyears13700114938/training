@@ -18,8 +18,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.bumptech.glide.signature.ObjectKey
 
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
@@ -29,6 +31,8 @@ import com.example.myapplication.basic_03_android_test.todoRepository.todoReposi
 import com.example.myapplication.util.localDateOfTimeFromUtc
 import kotlinx.android.synthetic.main.activity_navi_common.*
 import kotlinx.coroutines.*
+import java.io.File
+import java.security.Signature
 import java.util.*
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -126,6 +130,9 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
                 launch {
                     todoDetailViewModel.todoDetail.value?.let {
                         withContext(Dispatchers.IO) {
+                            if(!TextUtils.isEmpty(it.imageUrl)){
+                                File(it.imageUrl).delete()
+                            }
                             todoRepository.getInstance(_view.context)
                                 .deleteToDo(it)
                         }
@@ -157,7 +164,9 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
                 Glide.with(activity!!)
                     .asBitmap()
                     .load(if (TextUtils.isEmpty(newInfo.imageUrl)) R.drawable.saturn_card_view_default else newInfo.imageUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    //.skipMemoryCache(true)
+                    .override(_todoImage.context.resources.displayMetrics.widthPixels,_todoImage.layoutParams.height)
                     .into(object : CustomTarget<Bitmap>(_todoImage.resources.displayMetrics.widthPixels, _todoImage.resources.displayMetrics.widthPixels) {
                         override fun onLoadCleared(placeholder: Drawable?) {
                         }
@@ -168,6 +177,14 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
                         ) {
                             _todoImage.setImageBitmap(resource)
                            // resource.recycle()
+                        }
+
+                        override fun onLoadStarted(placeholder: Drawable?) {
+                            super.onLoadStarted(placeholder)
+                        }
+
+                        override fun onLoadFailed(errorDrawable: Drawable?) {
+                            super.onLoadFailed(errorDrawable)
                         }
                     })
             }

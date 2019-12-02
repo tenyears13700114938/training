@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.bumptech.glide.util.Util
 
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
@@ -30,6 +31,8 @@ import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailViewModel
 import com.example.myapplication.util.copyTodo
+import com.example.myapplication.util.getFileDirs
+import com.example.myapplication.util.toBitmapFile
 import java.io.File
 import java.util.concurrent.Executors
 
@@ -59,21 +62,27 @@ class TodoPhotoEditFragment : Fragment() {
         view.findViewById<View>(R.id.next_button).let {
             if (it is Button)
                 it.text = "OK"
-            it
-        }.setOnClickListener {
-            if (args.editType == TodoEditType.CREATE) {
-                it.findNavController().popBackStack(R.id.todoListFragment, false)
-                (activity as TodoListActivity).saveTodo(todoViewModel.todoInfo)
-            } else {
-                copyTodo(todoViewModel.todoInfo, todoDetailViewModel.todoDetail.value!!)
-                (activity as TodoDetailActivity).updateTodo(todoDetailViewModel.todoDetail.value!!)
-                it.findNavController().popBackStack(R.id.todoDetailFragment, false)
-            }
-        }
+        it
+    }.setOnClickListener {
+            if(!TextUtils.isEmpty(todoViewModel.todoInfo.imageUrl)){
+                var originalFile = todoViewModel.todoInfo.imageUrl
+                todoViewModel.todoInfo.imageUrl = toBitmapFile(originalFile!!, 400)
+                File(originalFile).delete()
 
-        view.findViewById<Button>(R.id.back_button).setOnClickListener {
-            it.findNavController().popBackStack()
+            }
+        if (args.editType == TodoEditType.CREATE) {
+            it.findNavController().popBackStack(R.id.todoListFragment, false)
+            (activity as TodoListActivity).saveTodo(todoViewModel.todoInfo)
+        } else {
+            copyTodo(todoViewModel.todoInfo, todoDetailViewModel.todoDetail.value!!)
+            (activity as TodoDetailActivity).updateTodo(todoDetailViewModel.todoDetail.value!!)
+            it.findNavController().popBackStack(R.id.todoDetailFragment, false)
         }
+    }
+
+    view.findViewById<Button>(R.id.back_button).setOnClickListener {
+        it.findNavController().popBackStack()
+    }
 
         mPhotoImage = view.findViewById(R.id.todo_image)
         imageButton = view.findViewById(R.id.image_button)
@@ -81,7 +90,7 @@ class TodoPhotoEditFragment : Fragment() {
             if (TextUtils.isEmpty(todoViewModel.todoInfo.imageUrl)) {
                 val file =
                     File(
-                        imageButton.context.externalMediaDirs.first(),
+                        getFileDirs("todoPhoto", context!!),
                         "${System.currentTimeMillis()}.jpg"
                     )
                 imageCapture?.takePicture(
@@ -172,7 +181,7 @@ class TodoPhotoEditFragment : Fragment() {
         //preview config
         if (preview == null || imageCapture == null) {
             val previewConfig = PreviewConfig.Builder().apply {
-                setTargetResolution(Size(800, 400))
+                setTargetResolution(Size(800, 600))
             }.build()
             preview = Preview(previewConfig).also {
                 it.setOnPreviewOutputUpdateListener { _previewOutput ->
