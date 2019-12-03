@@ -66,7 +66,7 @@ class TodoPhotoEditFragment : Fragment() {
     }.setOnClickListener {
             if(!TextUtils.isEmpty(todoViewModel.todoInfo.imageUrl)){
                 var originalFile = todoViewModel.todoInfo.imageUrl
-                todoViewModel.todoInfo.imageUrl = toBitmapFile(originalFile!!, 400)
+                todoViewModel.todoInfo.imageUrl = toBitmapFile(originalFile!!, 800, 600)
                 File(originalFile).delete()
 
             }
