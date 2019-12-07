@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import androidx.navigation.findNavController
@@ -18,6 +19,7 @@ import kotlinx.coroutines.*
 import java.util.*
 import java.util.stream.Collectors
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.todoDetail.DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
@@ -43,25 +45,42 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
         todoListAdapter = TodoListAdapter(context!!).also {
             it.clickItemEventSubject.subscribe() { _pair ->
                 when (_pair.second) {
-                    R.id.todo_delete_button ->
-                        launch {
-                            withContext(Dispatchers.IO) {
-                                if (!TextUtils.isEmpty(_pair.first.imageUrl)) {
-                                    File(_pair.first.imageUrl).delete()
-                                }
-                                todoRepository.getInstance(context!!).deleteToDo(_pair.first)
-                            }
+                    R.id.todo_delete_button -> {
+                        if (TodoOpMng.getIns(this.requireContext()).isTodoEditing(_pair.first)) {
+                            Toast.makeText(
+                                this.requireContext(),
+                                "Todo is Editing...",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            TodoOpMng.getIns(this.requireContext()).deleteTodo(_pair.first)
                         }
-                    R.id.todo_complete_button ->
-                        launch {
-                            withContext(Dispatchers.IO) {
-                                todoRepository.getInstance(context!!).updateToDo(_pair.first)
-                            }
+                    }
+
+                    R.id.todo_complete_button -> {
+                        if (TodoOpMng.getIns(this.requireContext()).isTodoEditing(_pair.first)) {
+                            Toast.makeText(
+                                this.requireContext(),
+                                "Todo is Editing...",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            TodoOpMng.getIns(this.requireContext()).updateTodo(_pair.first)
                         }
+                    }
+
                     R.id.todoItemImage -> {
-                        Intent(activity, TodoDetailActivity::class.java).apply {
-                            putExtra(DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO, _pair.first)
-                            activity?.startActivity(this)
+                        if (TodoOpMng.getIns(this.requireContext()).isTodoEditing(_pair.first)) {
+                            Toast.makeText(
+                                this.requireContext(),
+                                "Todo is Editing...",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Intent(activity, TodoDetailActivity::class.java).apply {
+                                putExtra(DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO, _pair.first)
+                                activity?.startActivity(this)
+                            }
                         }
                     }
                 }
@@ -86,10 +105,7 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
         } ?: throw Exception("no activity")
 
         fragmentView.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            if (!TextUtils.isEmpty(todoViewModel.todoInfo.imageUrl)) {
-                File(todoViewModel.todoInfo.imageUrl!!).delete()
-            }
-            todoViewModel.todoInfo.reset()
+            todoViewModel.todoInfo = Todo()
             view.findNavController().navigate(R.id.todo_edit_navigation, null)
         }
 

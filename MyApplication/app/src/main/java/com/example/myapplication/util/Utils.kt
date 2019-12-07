@@ -53,6 +53,7 @@ fun localDateOfTimeFromUtc(millseconds : Long) : LocalDateTime {
 }
 
 fun copyTodo(from: Todo, to: Todo) {
+    to.id = from.id
     to.thing = from.thing
     to.targetTime = from.targetTime
     to.imageUrl = from.imageUrl
@@ -63,7 +64,7 @@ fun copyTodo(from: Todo, to: Todo) {
 
 fun getFileDirs(dirName : String, context: Context) : String{
     //return File(context.filesDir.absolutePath, dirName).let {
-      return File("/data/data/" + context.packageName + "/", dirName).let {
+      return File("/data/data/" + context.packageName + "/files/", dirName).let {
         it.mkdirs()
         it.absolutePath
     }

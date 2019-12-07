@@ -7,6 +7,7 @@ import android.view.*
 import androidx.core.view.iterator
 import androidx.lifecycle.ViewModelProviders
 import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailFragment
@@ -32,11 +33,7 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
     }
 
     fun saveTodo(_todo: Todo) {
-        launch {
-            withContext(Dispatchers.IO) {
-                todoRepository.getInstance(this@TodoListActivity).addToDo(_todo)
-            }
-        }
+        TodoOpMng.getIns(applicationContext).addTodo(_todo)
     }
 
     override fun onResume() {
@@ -44,11 +41,12 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
     }
 
     override fun onDestroy() {
-        if(!TextUtils.isEmpty(todoViewModel.todoInfo.imageUrl)){
-            File(todoViewModel.todoInfo.imageUrl!!).delete()
-        }
         super.onDestroy()
         cancel()
+        todoViewModel.todoInfo.imageUrl?.also {
+            File(it).delete()
+        }
+        todoViewModel.todoInfo.reset()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

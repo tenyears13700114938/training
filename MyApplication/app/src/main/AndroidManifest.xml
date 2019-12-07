@@ -12,9 +12,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+        <receiver
+            android:name=".basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false"></receiver>
+
+        <service
+            android:name=".basic_03_android_test.TodoService.TodoOpIntentService"
+            android:exported="false" />
+
         <activity
             android:name=".basic_03_android_test.todoDetail.TodoDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar.NoActionBar" />
         <activity
             android:name=".basic_03_android_test.todoList.TodoListActivity"
             android:label="@string/title_activity_todo_list"

@@ -15,6 +15,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -24,9 +25,11 @@ import com.bumptech.glide.request.transition.Transition
 import com.bumptech.glide.signature.ObjectKey
 
 import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
+import com.example.myapplication.basic_03_android_test.todoList.TodoViewModel
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import com.example.myapplication.util.localDateOfTimeFromUtc
 import kotlinx.android.synthetic.main.activity_navi_common.*
@@ -50,6 +53,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
     private var todoParam: Todo? = null
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var todoDetailViewModel: TodoDetailViewModel
+    private  lateinit var todoViewModel : TodoViewModel
     private lateinit var mTitleText : TextView
     private lateinit var mDescriptionText : TextView
     private lateinit var mEditBtn : ImageButton
@@ -69,10 +73,13 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        todoDetailViewModel = activity?.run{ ViewModelProviders.of(activity as FragmentActivity).get(TodoDetailViewModel::class.java)} ?: throw Exception("no activity")
-        //todo observe
         // Inflate the layout for this fragment
         detailsView = inflater.inflate(R.layout.fragment_todo_detail, container, false)
+        todoDetailViewModel = activity?.run{ ViewModelProviders.of(activity as FragmentActivity).get(TodoDetailViewModel::class.java)} ?: throw Exception("no activity")
+        todoViewModel = activity?.run {ViewModelProviders.of(activity as FragmentActivity).get(TodoViewModel::class.java)} ?: throw Exception("no activity")
+        todoDetailViewModel.todoDetail.observe(this){
+            setCardView(detailsView, null, it)
+        }
         configCardView(detailsView)
         //setCardView(detailsView, null, todoDetailViewModel.todoDetail.value!!)
         return detailsView
@@ -127,18 +134,18 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         //delete button
         root.findViewById<ImageButton>(R.id.todo_delete_button)?.let { _deleteBtn ->
             _deleteBtn.setOnClickListener { _view ->
-                launch {
-                    todoDetailViewModel.todoDetail.value?.let {
-                        withContext(Dispatchers.IO) {
-                            if(!TextUtils.isEmpty(it.imageUrl)){
-                                File(it.imageUrl).delete()
-                            }
-                            todoRepository.getInstance(_view.context)
-                                .deleteToDo(it)
-                        }
-                        activity?.finish()
+                todoViewModel.todoInfo.let {
+                    if (TodoOpMng.getIns(_view.context).isTodoEditing(it)) {
+                        Toast.makeText(
+                            _view.context,
+                            "Todo is Editing...",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        TodoOpMng.getIns(_view.context).deleteTodo(it)
                     }
                 }
+                activity?.finish()
             }
         }
         //comment area
@@ -216,9 +223,16 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         }
         //edit Button
         mEditBtn.setOnClickListener {_editBtn ->
-            val totitleAction =
-                TodoDetailFragmentDirections.actionTodoDetailFragmentToTodoTitleEditFragment2(TodoEditType.UPDATE)
-            _editBtn.findNavController().navigate(totitleAction)
+            todoViewModel.todoInfo.let {
+                if(TodoOpMng.getIns(_editBtn.context).isTodoEditing(it)){
+                    Toast.makeText(_editBtn.context, "Todo is Editing", Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    val totitleAction =
+                        TodoDetailFragmentDirections.actionTodoDetailFragmentToTodoTitleEditFragment2(TodoEditType.UPDATE)
+                    _editBtn.findNavController().navigate(totitleAction)
+                }
+            }
         }
     }
 

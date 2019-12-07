@@ -64,20 +64,22 @@ class TodoPhotoEditFragment : Fragment() {
                 it.text = "OK"
         it
     }.setOnClickListener {
-            if(!TextUtils.isEmpty(todoViewModel.todoInfo.imageUrl)){
-                var originalFile = todoViewModel.todoInfo.imageUrl
-                todoViewModel.todoInfo.imageUrl = toBitmapFile(originalFile!!, 800, 600)
-                File(originalFile).delete()
-
+            todoViewModel.todoInfo.imageUrl?.let {
+                if (!TextUtils.isEmpty(it) && !it.contains("bitmap")) {
+                    var originalFile = it
+                    todoViewModel.todoInfo.imageUrl = toBitmapFile(originalFile!!, 800, 600)
+                    File(originalFile).delete()
+                }
             }
-        if (args.editType == TodoEditType.CREATE) {
-            it.findNavController().popBackStack(R.id.todoListFragment, false)
-            (activity as TodoListActivity).saveTodo(todoViewModel.todoInfo)
-        } else {
-            copyTodo(todoViewModel.todoInfo, todoDetailViewModel.todoDetail.value!!)
-            (activity as TodoDetailActivity).updateTodo(todoDetailViewModel.todoDetail.value!!)
-            it.findNavController().popBackStack(R.id.todoDetailFragment, false)
-        }
+            if (args.editType == TodoEditType.CREATE) {
+                it.findNavController().popBackStack(R.id.todoListFragment, false)
+                (activity as TodoListActivity).saveTodo(todoViewModel.todoInfo)
+                todoViewModel.todoInfo.reset()
+            } else {
+                //copyTodo(todoViewModel.todoInfo, todoDetailViewModel.todoDetail.value!!)
+                (activity as TodoDetailActivity).updateTodo(todoViewModel.todoInfo)
+                it.findNavController().popBackStack(R.id.todoDetailFragment, false)
+            }
     }
 
     view.findViewById<Button>(R.id.back_button).setOnClickListener {
@@ -159,13 +161,14 @@ class TodoPhotoEditFragment : Fragment() {
             if (allPermissionGranted()) {
                 viewFinder.post { startCamera() }
             } else {
-                activity?.run {
-                    ActivityCompat.requestPermissions(
-                        activity as FragmentActivity,
+                //activity?.run {
+                    //ActivityCompat.requestPermissions(
+                //activity as FragmentActivity,
+                requestPermissions(
                         REQUEST_PERMISSIONS,
                         REQUEST_CODE_CAMERA_PERMISSION
                     )
-                }
+                //}
             }
         }
         else {
