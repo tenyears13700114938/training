@@ -1,9 +1,13 @@
 package com.example.myapplication.basic_03_android_test.todoList
 
+import android.app.SearchManager
+import android.content.ComponentName
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
+import android.widget.SearchView
 import androidx.core.view.iterator
 import androidx.lifecycle.ViewModelProviders
 import com.example.myapplication.R
@@ -12,6 +16,7 @@ import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonA
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailFragment
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
+import com.example.myapplication.basic_03_android_test.todoSearch.TodoSearchableActivity
 
 import kotlinx.android.synthetic.main.activity_navi_common.*
 import kotlinx.coroutines.*
@@ -51,6 +56,12 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_todo_list, menu)
+
+        var searchItem = menu?.findItem(R.id.action_search)
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as  SearchManager
+        val searchView = searchItem?.actionView as androidx.appcompat.widget.SearchView
+        searchView?.setSearchableInfo(searchManager.getSearchableInfo(ComponentName(this,TodoSearchableActivity::class.java)))
+
         return true
     }
 

@@ -19,4 +19,11 @@
         android:title="complete todo items"
         app:showAsAction="never"
         />
+    <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="always"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        android:title="search"
+        />
 </menu>

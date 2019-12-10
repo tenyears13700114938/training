@@ -1,0 +1,38 @@
+package com.example.myapplication.basic_03_android_test.todoSearch
+
+import androidx.lifecycle.ViewModelProviders
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.example.myapplication.R
+
+class TodoSearchableFragment : androidx.fragment.app.Fragment() {
+    companion object {
+        private const val EXTRA_SEARCH_KEY = "EXTRA_SEARCH_KEY"
+        fun newInstance(searchInfo : String) =
+            TodoSearchableFragment().let {
+                val bundle = Bundle()
+                bundle.putString(EXTRA_SEARCH_KEY, searchInfo)
+                it.arguments = bundle
+                it
+            }
+    }
+
+    private lateinit var viewModel: TodoSearchableViewModel
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return inflater.inflate(R.layout.todo_searchable_fragment, container, false)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProviders.of(this).get(TodoSearchableViewModel::class.java)
+        // TODO: Use the ViewModel
+    }
+
+}
