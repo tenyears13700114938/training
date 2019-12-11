@@ -40,6 +40,7 @@ dependencies {
     def room_version = "2.2.1"
     def nav_version = "2.1.0"
     def cardview_version = "1.0.0-alpha1"
+    def page_version = "2.1.0"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -83,4 +84,5 @@ dependencies {
     implementation "androidx.camera:camera-camera2:${camerax_version}"
 
     implementation "androidx.cardview:cardview:$cardview_version"
+    implementation "androidx.paging:paging-runtime:${page_version}"
 }

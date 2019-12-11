@@ -2,6 +2,7 @@ package com.example.myapplication.basic_03_android_test.todoRepository
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import com.example.myapplication.basic_03_android_test.model.Todo
 
 class todoRepository(val context : Context) {
@@ -19,6 +20,10 @@ class todoRepository(val context : Context) {
 
     suspend fun deleteToDo(todo : Todo){
         todoDatabase.getInstance(context).todoDao().delete(todo)
+    }
+
+    suspend fun searchTodo(key : String) : DataSource.Factory<Int, Todo>{
+        return todoDatabase.getInstance(context).todoDao().searchByTitleOrDescription(key)
     }
 
     companion object {
