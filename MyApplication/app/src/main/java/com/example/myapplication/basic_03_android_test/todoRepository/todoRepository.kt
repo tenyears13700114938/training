@@ -22,7 +22,7 @@ class todoRepository(val context : Context) {
         todoDatabase.getInstance(context).todoDao().delete(todo)
     }
 
-    suspend fun searchTodo(key : String) : DataSource.Factory<Int, Todo>{
+    fun searchTodo(key : String) : DataSource.Factory<Int, Todo>{
         return todoDatabase.getInstance(context).todoDao().searchByTitleOrDescription(key)
     }
 

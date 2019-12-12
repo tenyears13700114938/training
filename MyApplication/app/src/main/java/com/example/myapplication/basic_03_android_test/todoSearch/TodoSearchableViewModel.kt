@@ -1,11 +1,19 @@
 package com.example.myapplication.basic_03_android_test.todoSearch
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.example.myapplication.basic_03_android_test.model.Todo
+import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 
-class TodoSearchableViewModel : ViewModel() {
-    var searchInfo : LiveData<PagedList<Todo>> = MutableLiveData()
+class TodoSearchableViewModel(val repository : todoRepository) : ViewModel() {
+    var searchKey  : MutableLiveData<String> = MutableLiveData()
+    fun searchTodo(key: String) {
+        searchKey.postValue(key)
+    }
+
+    var searchInfo : LiveData<PagedList<Todo>> = Transformations.switchMap(searchKey){
+        LivePagedListBuilder(repository.searchTodo(it), 20).build()
+    }
+
 }
