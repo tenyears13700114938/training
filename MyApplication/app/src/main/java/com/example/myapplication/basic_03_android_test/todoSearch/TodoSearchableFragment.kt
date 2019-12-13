@@ -1,20 +1,30 @@
 package com.example.myapplication.basic_03_android_test.todoSearch
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.TodoService.OpResult
+import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
 import com.example.myapplication.basic_03_android_test.model.Todo
+import com.example.myapplication.basic_03_android_test.todoDetail.DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO
+import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
 import com.example.myapplication.basic_03_android_test.todoList.TodoListAdapter
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
+import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.exceptions.Exceptions
 import kotlinx.coroutines.*
+import java.util.function.Consumer
 import kotlin.coroutines.CoroutineContext
 
 class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope by MainScope(){
@@ -32,6 +42,9 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
     private lateinit var viewModel: TodoSearchableViewModel
     private lateinit var listView : RecyclerView
     private lateinit var listAdapter : TodoListAdapter
+    private lateinit var noresultTextView : TextView
+    private val compositeDisposable = CompositeDisposable()
+    private lateinit var todoEditReceiver : todoBroadcastReceiver
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,6 +52,7 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
     ): View {
         val rootView = inflater.inflate(R.layout.todo_searchable_fragment, container, false)
         initListView(rootView)
+        noresultTextView = rootView.findViewById(R.id.no_result_textview)
         return rootView
     }
 
@@ -57,22 +71,75 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        //get view model
         viewModel = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 return TodoSearchableViewModel(todoRepository.getInstance(this@TodoSearchableFragment.requireContext())) as T
             }
 
         }).get(TodoSearchableViewModel::class.java)
+        //viewmodel observer
+        viewModel.searchInfo.observe(this) {
+            if (it.size == 0) {
+                noresultTextView.visibility = View.VISIBLE
+            } else {
+                noresultTextView.visibility = View.INVISIBLE
+                listAdapter.updateList(it)
+            }
+        }
+        search(arguments?.getString(EXTRA_SEARCH_KEY, "") ?: "")
 
-        viewModel.searchInfo.observe(this){
-            listAdapter.updateList(it)
+        //item click callback
+        listAdapter.clickItemEventSubject.subscribe { _pair ->
+            this@TodoSearchableFragment.activity?.also { _activity ->
+                when (_pair.second) {
+                    // todo details
+                    R.id.todoItemImage -> {
+                        Intent(_activity, TodoDetailActivity::class.java).also { _intent ->
+                            _intent.putExtra(DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO, _pair.first)
+                            startActivity(_intent)
+                        }
+                    }
+                    R.id.todo_complete_button -> {
+
+                    }
+                    R.id.todo_delete_button -> {
+                        if (TodoOpMng.getIns(_activity).deleteTodo(_pair.first) == OpResult.TODO_ALREADY_DOING) {
+                            Toast.makeText(_activity, "Todo IsEditing", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }
+                }
+            }
+        }.also {
+            compositeDisposable.add(it)
         }
 
-        search(arguments?.getString(EXTRA_SEARCH_KEY, "") ?: "")
+        //edit receiver
+        todoEditReceiver = todoBroadcastReceiver(object : Consumer<Intent> {
+            override fun accept(p0: Intent) {
+                when (p0.getIntExtra(
+                    todoBroadcastReceiver.TODO_RESULT_EXTRA_PARAM,
+                    Int.MAX_VALUE
+                )) {
+                    OpResult.DELETE_OK.result -> {
+                        p0.getSerializableExtra(todoBroadcastReceiver.TODO_INFO_EXTRA_PARAM).also {_todo ->
+                            if(_todo is Todo){
+                                listAdapter.todoList.indexOf(_todo).takeIf{_index -> _index != -1}?.also{
+                                    listAdapter.notifyItemRemoved(it)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        })
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         cancel()
+        compositeDisposable.clear()
+        super.onDestroyView()
     }
 }

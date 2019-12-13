@@ -7,8 +7,24 @@
     android:layout_height="match_parent"
     tools:context=".basic_03_android_test.todoSearch.TodoSearchableFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_todo_list"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/no_result_textview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="no matched todo items!!\nyou can search by todo title or description"
+            android:textColor="@color/colorPrimary"
+            android:visibility="invisible"
+            android:textSize="18sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_todo_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
