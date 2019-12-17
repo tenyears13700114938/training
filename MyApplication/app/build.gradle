@@ -41,6 +41,8 @@ dependencies {
     def nav_version = "2.1.0"
     def cardview_version = "1.0.0-alpha1"
     def page_version = "2.1.0"
+    def core_version = "1.2.0-rc01"
+    def work_manager_version = "2.2.0"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -85,4 +87,7 @@ dependencies {
 
     implementation "androidx.cardview:cardview:$cardview_version"
     implementation "androidx.paging:paging-runtime:${page_version}"
+
+    implementation "androidx.core:core-ktx:$core_version"
+    implementation "androidx.work:work-runtime-ktx:$work_manager_version"
 }

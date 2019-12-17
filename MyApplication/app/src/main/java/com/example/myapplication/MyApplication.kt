@@ -18,5 +18,7 @@ class MyApplication : Application(),HasAndroidInjector {
     override fun onCreate() {
         super.onCreate()
         DaggerAppComponent.builder().myApp(this).build().inject(this)
+        //todo start workmanager
     }
+
 }
