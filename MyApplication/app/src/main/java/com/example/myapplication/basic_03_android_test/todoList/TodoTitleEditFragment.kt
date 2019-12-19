@@ -19,6 +19,7 @@ import androidx.navigation.fragment.navArgs
 
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
+import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.util.hideSoftInput
 import java.io.File
 
@@ -57,10 +58,12 @@ class TodoTitleEditFragment : Fragment() {
 
         view.findViewById<Button>(R.id.back_button).setOnClickListener {
             it.findNavController().popBackStack()
-            todoViewModel.todoInfo.imageUrl?.also {_imageUrl ->
-                File(_imageUrl).delete()
+            if(args.editType == TodoEditType.CREATE) {
+                todoViewModel.todoInfo.imageUrl?.also { _imageUrl ->
+                    File(_imageUrl).delete()
+                }
+                todoViewModel.todoInfo.reset()
             }
-            todoViewModel.todoInfo.reset()
         }
 
         if(activity is NavCommonActivity){

@@ -76,7 +76,7 @@ class ImplicitIntentActivityFragment : Fragment() {
 
     private val shareInfoClickListener = View.OnClickListener { _shareInfoBtn ->
         mShareEditText.text.toString().also { _shareText ->
-            ShareCompat.IntentBuilder.from(activity)
+            ShareCompat.IntentBuilder.from(activity!!)
                 .setType("text/plain")
                 .setChooserTitle("Share text with:")
                 .setText(_shareText)
