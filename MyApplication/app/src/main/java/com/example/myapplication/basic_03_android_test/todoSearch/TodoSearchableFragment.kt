@@ -1,6 +1,7 @@
 package com.example.myapplication.basic_03_android_test.todoSearch
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -21,9 +22,11 @@ import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActi
 import com.example.myapplication.basic_03_android_test.todoList.TodoListAdapter
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
+import com.example.myapplication.util.copyTodo
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.exceptions.Exceptions
 import kotlinx.coroutines.*
+import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 import kotlin.coroutines.CoroutineContext
 
@@ -44,7 +47,6 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
     private lateinit var listAdapter : TodoListAdapter
     private lateinit var noresultTextView : TextView
     private val compositeDisposable = CompositeDisposable()
-    private lateinit var todoEditReceiver : todoBroadcastReceiver
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -82,15 +84,21 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
         viewModel.searchInfo.observe(this) {
             if (it.size == 0) {
                 noresultTextView.visibility = View.VISIBLE
+                listAdapter.updateList(listOf())
+                listView.visibility = View.INVISIBLE
+
             } else {
                 noresultTextView.visibility = View.INVISIBLE
+                listView.visibility = View.VISIBLE
                 listAdapter.updateList(it)
             }
         }
         search(arguments?.getString(EXTRA_SEARCH_KEY, "") ?: "")
 
         //item click callback
-        listAdapter.clickItemEventSubject.subscribe { _pair ->
+        //listAdapter.clickItemEventSubject.skipLast(500, TimeUnit.MILLISECONDS)
+        listAdapter.clickItemEventSubject
+            .subscribe { _pair ->
             this@TodoSearchableFragment.activity?.also { _activity ->
                 when (_pair.second) {
                     // todo details
@@ -101,40 +109,31 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
                         }
                     }
                     R.id.todo_complete_button -> {
-
+                        var  copy = Todo()
+                        copyTodo(_pair.first, copy)
+                        copy.completed = if(copy.completed) false else true
+                        context?.also{
+                            TodoOpMng.getIns(it).updateTodo(copy)
+                        }
                     }
                     R.id.todo_delete_button -> {
                         if (TodoOpMng.getIns(_activity).deleteTodo(_pair.first) == OpResult.TODO_ALREADY_DOING) {
                             Toast.makeText(_activity, "Todo IsEditing", Toast.LENGTH_SHORT).show()
                         }
-
                     }
                 }
             }
         }.also {
             compositeDisposable.add(it)
         }
+    }
 
-        //edit receiver
-        todoEditReceiver = todoBroadcastReceiver(object : Consumer<Intent> {
-            override fun accept(p0: Intent) {
-                when (p0.getIntExtra(
-                    todoBroadcastReceiver.TODO_RESULT_EXTRA_PARAM,
-                    Int.MAX_VALUE
-                )) {
-                    OpResult.DELETE_OK.result -> {
-                        p0.getSerializableExtra(todoBroadcastReceiver.TODO_INFO_EXTRA_PARAM).also {_todo ->
-                            if(_todo is Todo){
-                                listAdapter.todoList.indexOf(_todo).takeIf{_index -> _index != -1}?.also{
-                                    listAdapter.notifyItemRemoved(it)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+    override fun onStart() {
+        super.onStart()
+    }
 
-        })
+    override fun onStop() {
+        super.onStop()
     }
 
     override fun onDestroyView() {

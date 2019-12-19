@@ -18,15 +18,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.bumptech.glide.signature.ObjectKey
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.util.localDateOfTimeFromUtc
 import io.reactivex.subjects.PublishSubject
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.util.*
 
 class TodoListAdapter(val context: Context) :
     RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
@@ -147,7 +142,6 @@ class TodoListAdapter(val context: Context) :
             }
             completeButton.setOnClickListener {
                 todoList.indexOf(item).takeIf { index -> index != -1 }?.also {
-                    item.completed = true
                     clickItemEventSubject.onNext(Pair(item, R.id.todo_complete_button))
                 }
             }

@@ -4,21 +4,25 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import com.example.myapplication.basic_03_android_test.model.Todo
+import java.io.File
 
 class todoRepository(val context : Context) {
     val alltodos : LiveData<List<Todo>> by lazy {
         todoDatabase.getInstance(context).todoDao().getAll()
     }
 
-    suspend fun addToDo(todo: Todo) {
+    fun addToDo(todo: Todo) {
         todoDatabase.getInstance(context).todoDao().insertTodo(todo)
     }
 
-    suspend fun updateToDo(todo : Todo){
+    fun updateToDo(todo : Todo){
         todoDatabase.getInstance(context).todoDao().updateTodo(todo)
     }
 
-    suspend fun deleteToDo(todo : Todo){
+    fun deleteToDo(todo : Todo){
+        todo.imageUrl?.also {
+            File(it).delete()
+        }
         todoDatabase.getInstance(context).todoDao().delete(todo)
     }
 

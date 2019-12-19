@@ -7,10 +7,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
@@ -31,12 +33,17 @@ import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.basic_03_android_test.todoList.TodoViewModel
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
+import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
+import com.example.myapplication.util.copyTodo
 import com.example.myapplication.util.localDateOfTimeFromUtc
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_navi_common.*
 import kotlinx.coroutines.*
 import java.io.File
 import java.security.Signature
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_TODO_DETAIL = "Todo_Detail"
@@ -57,9 +64,12 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
     private lateinit var mTitleText : TextView
     private lateinit var mDescriptionText : TextView
     private lateinit var mEditBtn : ImageButton
+    private lateinit var mCommentSaveBtn : ImageButton
     private lateinit var mCommentEdit : EditText
     private lateinit var mStatusIconImage : ImageView
     private lateinit var detailsView : View
+    private val completeSubject  = PublishSubject.create<Int>()
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +92,39 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         }
         configCardView(detailsView)
         //setCardView(detailsView, null, todoDetailViewModel.todoDetail.value!!)
+        compositeDisposable.add(
+            //completeSubject.debounce(100, TimeUnit.MILLISECONDS)
+            completeSubject
+                .subscribe() { viewId ->
+                    when (viewId) {
+                        R.id.todo_complete_button -> {
+                            var copy = Todo()
+                            copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
+                            copy.completed = if (copy.completed) false else true
+                            context?.also {
+                                    TodoOpMng.getIns(it).updateTodo(copy)
+                                }
+                        }
+                        R.id.todo_comment_save_button -> {
+                            if(!Objects.equals(todoDetailViewModel.todoDetail.value?.comment, mCommentEdit.text.toString())){
+                                var copy = Todo()
+                                copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
+                                copy.comment = mCommentEdit.text.toString()
+                                context?.also {
+                                    TodoOpMng.getIns(it).updateTodo(copy)
+                                }
+                            }
+                        }
+                    }
+                }
+        )
+
         return detailsView
+    }
+
+    override fun onDestroyView() {
+        compositeDisposable.clear()
+        super.onDestroyView()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -99,10 +141,11 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         //complete button, delete button
         root.findViewById<ImageButton>(R.id.todo_complete_button)?.let { _completeBtn ->
             _completeBtn.setOnClickListener { _view ->
-                todoDetailViewModel.todoDetail.value?.completed = true;
+                completeSubject.onNext(R.id.todo_complete_button)
+                /*todoDetailViewModel.todoDetail.value?.completed = true;
                 Glide.with(activity!!)
                     .load(R.drawable.ic_check_box_black_24dp)
-                    .into(mStatusIconImage)
+                    .into(mStatusIconImage)*/
             }
         }
         //status icon
@@ -130,6 +173,12 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
             _imageEditBtn.visibility = View.VISIBLE
             _imageEditBtn
         }
+        mCommentSaveBtn = root.findViewById<ImageButton>(R.id.todo_comment_save_button)
+        mCommentSaveBtn.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                completeSubject.onNext(R.id.todo_comment_save_button)
+            }
+        })
 
         //delete button
         root.findViewById<ImageButton>(R.id.todo_delete_button)?.let { _deleteBtn ->
@@ -220,7 +269,24 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         //comment
         if (oldInfo == null || !Objects.equals(oldInfo.comment, newInfo.comment)) {
             mCommentEdit.setText(newInfo.comment)
+            mCommentEdit.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+                override fun onEditorAction(
+                    v: TextView?,
+                    actionId: Int,
+                    event: KeyEvent?
+                ): Boolean {
+                    if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) ||
+                        event != null &&
+                        event.action == KeyEvent.ACTION_DOWN &&
+                        event.keyCode == KeyEvent.KEYCODE_ENTER
+                    ) {
+                        mCommentSaveBtn.visibility = View.VISIBLE
+                    }
+                    return false
+                }
+            })
         }
+
         //edit Button
         mEditBtn.setOnClickListener {_editBtn ->
             todoViewModel.todoInfo.let {

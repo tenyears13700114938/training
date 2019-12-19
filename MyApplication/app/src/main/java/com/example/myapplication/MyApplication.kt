@@ -21,4 +21,7 @@ class MyApplication : Application(),HasAndroidInjector {
         //todo start workmanager
     }
 
+    override fun onTerminate() {
+        super.onTerminate()
+    }
 }

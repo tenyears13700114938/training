@@ -24,8 +24,10 @@ import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonA
 import com.example.myapplication.basic_03_android_test.todoDetail.DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
+import com.example.myapplication.util.copyTodo
 import kotlinx.android.synthetic.main.todo_item.*
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 /**
  * A placeholder fragment containing a simple view.
@@ -43,7 +45,9 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
     ): View? {
         val fragmentView = inflater.inflate(R.layout.fragment_todo_list, container, false)
         todoListAdapter = TodoListAdapter(context!!).also {
-            it.clickItemEventSubject.subscribe() { _pair ->
+            //it.clickItemEventSubject.debounce(100, TimeUnit.MILLISECONDS)
+            it.clickItemEventSubject
+                .subscribe() { _pair ->
                 when (_pair.second) {
                     R.id.todo_delete_button -> {
                         if (TodoOpMng.getIns(this.requireContext()).isTodoEditing(_pair.first)) {
@@ -65,7 +69,10 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {
-                            TodoOpMng.getIns(this.requireContext()).updateTodo(_pair.first)
+                            var copy = Todo()
+                            copyTodo(_pair.first, copy)
+                            copy.completed = if(copy.completed) false else true
+                            TodoOpMng.getIns(this.requireContext()).updateTodo(copy)
                         }
                     }
 

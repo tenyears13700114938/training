@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.os.ResultReceiver
+import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
@@ -24,6 +25,7 @@ enum class OpResult(val result: Int) {
 
 class TodoOpMng(val appContext: Context) : ResultReceiver(Handler()) {
     val RESULT_EXTRA_PARAM_TODO = "RESULT_EXTRA_PARAM_TODO"
+    private val TAG = TodoOpMng::class.java.simpleName
     private val editMapLock = ReentrantLock()
     private val addListLock = ReentrantLock()
 
@@ -109,6 +111,7 @@ class TodoOpMng(val appContext: Context) : ResultReceiver(Handler()) {
             if (isTodoEditing(todo)) {
                 result = OpResult.TODO_ALREADY_DOING
             } else {
+                Log.d(TAG, "delete todo....")
                 val copy = Todo()
                 copyTodo(todo, copy)
                 mEditTodoMap[copy.id] = todo
@@ -129,6 +132,7 @@ class TodoOpMng(val appContext: Context) : ResultReceiver(Handler()) {
             if (isTodoAdding(copy)) {
                 result = OpResult.TODO_ALREADY_DOING
             } else {
+                Log.d(TAG, "add todo....")
                 mAddTodoList.add(copy)
                 TodoOpIntentService.starAddTodo(appContext, copy, this)
             }
