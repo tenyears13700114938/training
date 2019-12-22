@@ -35,7 +35,11 @@
         <activity
             android:name=".basic_03_android_test.todoList.TodoListActivity"
             android:label="@string/title_activity_todo_list"
-            android:theme="@style/AppTheme.NoActionBar.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar.NoActionBar">
+            <intent-filter>
+                <action android:name="ACTION_TODO_NOTIFY" />
+            </intent-filter>
+        </activity>
         <activity android:name=".basic_02_Activity.ImplicitIntentReceiverActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

@@ -25,4 +25,10 @@ interface todoDao {
 
     @Transaction @Query("select * from todo_table JOIN TodoSearch ON(todo_table.id = TodoSearch.docid) where TodoSearch match :key")
     fun searchByTitleOrDescription(key : String) : DataSource.Factory<Int, Todo>
+
+    @Query("select * from todo_table where target_time != 0 and target_time - 24*60*60*1000 < :millisecs")
+    fun getNotificationTodo(millisecs : Long) : List<Todo>
+
+    @Query("select * from todo_table where target_time != 0 and target_time - 24*60*60*1000 < :millisecs")
+    fun getLiveNotificationTodo(millisecs : Long) : LiveData<List<Todo>>
 }

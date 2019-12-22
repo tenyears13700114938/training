@@ -30,6 +30,14 @@ class todoRepository(val context : Context) {
         return todoDatabase.getInstance(context).todoDao().searchByTitleOrDescription(key)
     }
 
+    fun getNotificationTodo(limitTime : Long) : List<Todo>{
+        return todoDatabase.getInstance(context).todoDao().getNotificationTodo(limitTime)
+    }
+
+    fun getLiveNotificationTodo(limitTime : Long) : LiveData<List<Todo>>{
+        return todoDatabase.getInstance(context).todoDao().getLiveNotificationTodo(limitTime)
+    }
+
     companion object {
         private var todoIns : todoRepository? = null
         fun getInstance(context: Context) : todoRepository {

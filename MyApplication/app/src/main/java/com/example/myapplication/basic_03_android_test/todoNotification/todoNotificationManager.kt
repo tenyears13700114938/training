@@ -22,6 +22,7 @@ class todoNotificationManager(val mContext: Context) {
                 it.setContentTitle("todos need to be dealWith..")
                 it.setContentText("in your todo list, exit expired or soon expire todo")
                 it.setSmallIcon(R.drawable.ic_priority_high_black_24dp)
+                it.setAutoCancel(true)
                 pendingIntent?.also {_pendingIntent ->
                     it.setContentIntent(_pendingIntent)
                 }

@@ -9,6 +9,8 @@ import android.text.TextUtils
 import android.view.*
 import android.widget.SearchView
 import androidx.core.view.iterator
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
@@ -26,15 +28,20 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
     private lateinit var todoListViewModel: TodoListViewModel
     private lateinit var todoViewModel: TodoViewModel
 
+    companion object {
+        val EXTRA_PARAMETER_START_TYPE = "EXTRA_PARAMETER_START_TYPE"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        toolbar.title = "ToDo List"
+        toolbar.title = if(intent.getIntExtra(EXTRA_PARAMETER_START_TYPE, 0) == 0)"ToDo List" else "Attention Todos"
         mNavController.graph = mNavController.navInflater.inflate(R.navigation.todo_navigation)
 
         todoViewModel = ViewModelProviders.of(this).get(TodoViewModel::class.java)
-        todoListViewModel = ViewModelProviders.of(this).get(TodoListViewModel::class.java)
+        todoListViewModel = TodoListViewModel.getTodoListViewModel(this,
+            if(intent.getIntExtra(TodoListActivity.EXTRA_PARAMETER_START_TYPE, 0) == 1) StartType.search else StartType.all
+            )
     }
 
     fun saveTodo(_todo: Todo) {
@@ -88,4 +95,9 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
             else -> return super.onOptionsItemSelected(item)
         }
     }
+}
+
+enum class StartType(var type : Int) {
+    all(0),
+    search(1)
 }

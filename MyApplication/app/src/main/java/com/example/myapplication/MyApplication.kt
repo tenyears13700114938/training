@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.app.Application
+import com.example.myapplication.basic_03_android_test.todoNotification.todoWorkManager
 import com.example.myapplication.util.dagger.DaggerAppComponent
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -19,6 +20,7 @@ class MyApplication : Application(),HasAndroidInjector {
         super.onCreate()
         DaggerAppComponent.builder().myApp(this).build().inject(this)
         //todo start workmanager
+        todoWorkManager.getIns(this).run()
     }
 
     override fun onTerminate() {
