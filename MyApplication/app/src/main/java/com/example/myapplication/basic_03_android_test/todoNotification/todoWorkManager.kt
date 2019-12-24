@@ -18,7 +18,7 @@ class todoWorkManager(val appontext : Context) {
         mWorkManager.enqueueUniquePeriodicWork(
             WORKER_NAME,
             ExistingPeriodicWorkPolicy.REPLACE,
-            PeriodicWorkRequestBuilder<todoCheckWorker>(15, TimeUnit.MINUTES)
+            PeriodicWorkRequestBuilder<todoCheckWorker>(20, TimeUnit.MINUTES)
                 .setInitialDelay(1, TimeUnit.MINUTES)
                 .build()
         )

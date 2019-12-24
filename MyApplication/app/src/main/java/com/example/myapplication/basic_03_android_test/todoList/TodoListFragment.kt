@@ -155,8 +155,14 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
     override fun onResume() {
         super.onResume()
         (activity as NavCommonActivity).run {
-            setMenuVisibility(true)
-            setTitle("ToDo List")
+            if(intent.getIntExtra(EXTRA_PARAMETER_START_TYPE, 0) == 1){
+                setMenuVisibility(false)
+                setTitle("Attention Todos")
+            }
+            else {
+                setMenuVisibility(true)
+                setTitle("ToDo List")
+            }
         }
     }
 

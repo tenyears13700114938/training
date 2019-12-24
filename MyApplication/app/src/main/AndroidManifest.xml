@@ -12,12 +12,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+        <receiver
+            android:name=".basic_03_android_test.todoNotification.todoAlarmReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.myapplication.basic_03_android_test.todoNotification.TodoExpiredCheck"></action>
+            </intent-filter>
+        </receiver>
+
         <activity android:name=".basic_03_android_test.todoSearch.TodoSearchableActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
 
         <receiver
