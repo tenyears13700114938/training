@@ -43,6 +43,8 @@ class todoAlarmReceiver : BroadcastReceiver() {
                         )
                     )
                 }
+                //next Check Alarm
+                todoAlarmManager.getInstance(context).run()
             }
     }
 }

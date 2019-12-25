@@ -35,10 +35,11 @@ class todoAlarmManager(val appContext: Context){
         } else {
             appContext.getSystemService(Context.ALARM_SERVICE).also { _alarmService ->
                 if (_alarmService is AlarmManager) {
-                    _alarmService.setRepeating(
+                    //_alarmService.setRepeating(
+                    _alarmService.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
-                        LocalDateTime.now().plusMinutes(2).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-                        15 * 60 * 1000,
+                        LocalDateTime.now().plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                        //15 * 60 * 1000,
                         pendingIntent
                     )
                 }

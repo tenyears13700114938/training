@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -41,7 +42,7 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
     private lateinit var todoListAdapter: TodoListAdapter
     private lateinit var todoListViewModel: TodoListViewModel
     private lateinit var todoViewModel: TodoViewModel
-
+    private val TAG = TodoListFragment::class.java.simpleName
 
     @SuppressLint("RestrictedApi")
     override fun onCreateView(
@@ -55,15 +56,7 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                 .subscribe() { _pair ->
                 when (_pair.second) {
                     R.id.todo_delete_button -> {
-                        if (TodoOpMng.getIns(this.requireContext()).isTodoEditing(_pair.first)) {
-                            Toast.makeText(
-                                this.requireContext(),
-                                "Todo is Editing...",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            TodoOpMng.getIns(this.requireContext()).deleteTodo(_pair.first)
-                        }
+                        deleteTodo(_pair.first)
                     }
 
                     R.id.todo_complete_button -> {
@@ -132,6 +125,18 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
         return fragmentView
     }
 
+    private fun deleteTodo(todo: Todo) {
+        if (TodoOpMng.getIns(this.requireContext()).isTodoEditing(todo)) {
+            Toast.makeText(
+                this.requireContext(),
+                "Todo is Editing...",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            TodoOpMng.getIns(this.requireContext()).deleteTodo(todo)
+        }
+    }
+
     private fun configureItemTouchHelper() {
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
                                         ItemTouchHelper.UP or ItemTouchHelper.DOWN) {
@@ -145,8 +150,8 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
             }
             public override fun onSwiped(viewHolder : RecyclerView.ViewHolder, direction : Int) {
                 // remove from adapter
-                todoListAdapter.todoList.removeAt(viewHolder.getAdapterPosition())
-                todoListAdapter.notifyItemRemoved(viewHolder.getAdapterPosition())
+                Log.d(TAG, "todolist onSwiped pos:" + viewHolder.adapterPosition)
+                deleteTodo(todoListAdapter.todoList[viewHolder.getAdapterPosition()])
             }
         }
         ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(todoListView)
