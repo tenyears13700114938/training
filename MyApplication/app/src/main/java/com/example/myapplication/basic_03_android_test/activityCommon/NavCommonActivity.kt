@@ -1,10 +1,12 @@
 package com.example.myapplication.basic_03_android_test.activityCommon
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.core.view.iterator
 import androidx.drawerlayout.widget.DrawerLayout
@@ -12,6 +14,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.nasaphotoList.nasaPhotoListActivity
+import com.example.myapplication.basic_03_android_test.todoList.TodoListActivity
 import com.example.myapplication.util.searchViewUtil
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_navi_common.*
@@ -63,14 +67,24 @@ open class NavCommonActivity : AppCompatActivity() {
             while (menuIterator.hasNext()) {
                 menuIterator.next().let {
                     it.setOnMenuItemClickListener() { item ->
+                        findViewById<DrawerLayout>(R.id.root_drawer).closeDrawer(
+                            GravityCompat.START
+                        )
                         when (item.itemId) {
-                            R.id.todo -> true
-                            R.id.nasa_world -> true
-                            R.id.next_what ->  true
-                            R.id.close_menu_item -> {
-                                findViewById<DrawerLayout>(R.id.root_drawer).closeDrawer(
-                                    GravityCompat.START
-                                )
+                            R.id.todo -> {
+                                Intent(applicationContext, TodoListActivity::class.java).also {
+                                    startActivity(it)
+                                }
+                                true
+                            }
+                            R.id.nasa_world -> {
+                                Intent(applicationContext, nasaPhotoListActivity::class.java).also {
+                                    startActivity(it)
+                                }
+                                true
+                            }
+                            R.id.next_what ->  {
+                                Toast.makeText(applicationContext, "to be future....", Toast.LENGTH_SHORT).show()
                                 true
                             }
                             else -> true

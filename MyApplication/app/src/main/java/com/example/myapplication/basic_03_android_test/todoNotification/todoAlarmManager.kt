@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -17,34 +18,28 @@ class todoAlarmManager(val appContext: Context){
     private val pendingIntent : PendingIntent
     private val mIntent : Intent
     private val TAG = todoAlarmManager::class.java.simpleName
+    private val alramReceiver : todoAlarmReceiver
     init {
         mIntent = Intent( "com.example.myapplication.basic_03_android_test.todoNotification.TodoExpiredCheck")
         pendingIntent = PendingIntent.getBroadcast(appContext, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        alramReceiver = todoAlarmReceiver()
+        appContext.registerReceiver(alramReceiver, IntentFilter("com.example.myapplication.basic_03_android_test.todoNotification.TodoExpiredCheck"))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun run(){
-        if (PendingIntent.getBroadcast(
-                appContext,
-                0,
-                mIntent,
-                PendingIntent.FLAG_NO_CREATE
-            ) != null
-        ) {
-            Log.d(TAG, "alarm has exist")
-        } else {
-            appContext.getSystemService(Context.ALARM_SERVICE).also { _alarmService ->
-                if (_alarmService is AlarmManager) {
-                    //_alarmService.setRepeating(
-                    _alarmService.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        LocalDateTime.now().plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-                        //15 * 60 * 1000,
-                        pendingIntent
-                    )
-                }
+        PendingIntent.getBroadcast(appContext, 0, mIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+        appContext.getSystemService(Context.ALARM_SERVICE).also { _alarmService ->
+            if (_alarmService is AlarmManager) {
+                //_alarmService.setRepeating(
+                _alarmService.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    LocalDateTime.now().plusMinutes(2).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                    //15 * 60 * 1000,
+                    pendingIntent
+                )
             }
-        }
+         }
     }
 
     companion object {

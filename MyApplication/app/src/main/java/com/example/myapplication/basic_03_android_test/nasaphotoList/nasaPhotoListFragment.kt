@@ -29,7 +29,7 @@ class nasaPhotoListFragment : Fragment() {
         return inflater.inflate(R.layout.nasa_photo_list_fragment, container, false).also {_rootView ->
             mNasaPhotoListView = _rootView.findViewById<RecyclerView>(R.id.nasa_photo_list).also {
                 it.adapter = mNasaPhotoListAdapter
-                mGridLayoutManager = GridLayoutManager(context!!, 1)
+                mGridLayoutManager = GridLayoutManager(context!!, 2)
                 it.layoutManager = mGridLayoutManager
             }
         }
@@ -39,7 +39,7 @@ class nasaPhotoListFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(nasaPhotoListViewModel::class.java)
         viewModel.nasaPhotoList.observe(this){_pagedPhotoList ->
-
+           mNasaPhotoListAdapter.submitList(_pagedPhotoList)
         }
     }
 

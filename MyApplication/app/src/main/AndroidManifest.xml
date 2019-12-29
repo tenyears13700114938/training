@@ -3,6 +3,7 @@
     package="com.example.myapplication">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name=".MyApplication"
@@ -18,10 +19,7 @@
         <receiver
             android:name=".basic_03_android_test.todoNotification.todoAlarmReceiver"
             android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.example.myapplication.basic_03_android_test.todoNotification.TodoExpiredCheck" />
-            </intent-filter>
+            android:exported="false">
         </receiver>
 
         <activity android:name=".basic_03_android_test.todoSearch.TodoSearchableActivity">
@@ -49,6 +47,7 @@
         <activity
             android:name=".basic_03_android_test.todoList.TodoListActivity"
             android:label="@string/title_activity_todo_list"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar.NoActionBar">
             <intent-filter>
                 <action android:name="ACTION_TODO_NOTIFY" />

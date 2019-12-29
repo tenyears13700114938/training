@@ -5,13 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.ViewTarget
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.model.nasaPhoto
 
-class nasaPhotoListAdapter : RecyclerView.Adapter<nasaPhotoListAdapter.nasaPhotoHolder>() {
-    var nasaPhotoList = mutableListOf<nasaPhoto>()
-
+class nasaPhotoListAdapter : PagedListAdapter<nasaPhoto,nasaPhotoListAdapter.nasaPhotoHolder>(Diff_Callback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): nasaPhotoHolder {
         return nasaPhotoHolder(
             LayoutInflater.from(parent.context).inflate(
@@ -22,12 +25,10 @@ class nasaPhotoListAdapter : RecyclerView.Adapter<nasaPhotoListAdapter.nasaPhoto
         )
     }
 
-    override fun getItemCount(): Int {
-        return nasaPhotoList.size
-    }
-
     override fun onBindViewHolder(holder: nasaPhotoHolder, position: Int) {
-        holder.bind(nasaPhotoList[position])
+        getItem(position)?.also {
+            holder.bind(it)
+        }
     }
 
     class nasaPhotoHolder(root: View) : RecyclerView.ViewHolder(root) {
@@ -40,7 +41,24 @@ class nasaPhotoListAdapter : RecyclerView.Adapter<nasaPhotoListAdapter.nasaPhoto
         }
 
         fun bind(photo: nasaPhoto) {
+            photoDescription.text = photo.title
+            photoImage.layoutParams.height = photoImage.resources.displayMetrics.widthPixels / 2
+            photoImage.layoutParams.width = photoImage.layoutParams.height
+            Glide.with(photoImage)
+                .asBitmap()
+                .load(if(photo.media_type.equals("image")) photo.url else R.drawable.saturn_card_view_default)
+                .into(photoImage)
 
+        }
+    }
+
+    class Diff_Callback : DiffUtil.ItemCallback<nasaPhoto>(){
+        override fun areItemsTheSame(oldItem: nasaPhoto, newItem: nasaPhoto): Boolean {
+            return oldItem.date == newItem.date
+        }
+
+        override fun areContentsTheSame(oldItem: nasaPhoto, newItem: nasaPhoto): Boolean {
+            return oldItem.url == newItem.url
         }
     }
 }

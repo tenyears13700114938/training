@@ -3,6 +3,7 @@ package com.example.myapplication.basic_03_android_test.todoList
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -94,6 +95,11 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
             }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
     }
 }
 

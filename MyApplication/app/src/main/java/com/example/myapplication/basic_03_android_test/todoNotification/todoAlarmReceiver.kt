@@ -12,6 +12,7 @@ import com.example.myapplication.basic_03_android_test.todoList.StartType
 import com.example.myapplication.basic_03_android_test.todoList.TodoListActivity
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Callable
 
@@ -26,6 +27,7 @@ class todoAlarmReceiver : BroadcastReceiver() {
                     .getNotificationTodo(System.currentTimeMillis())
             }
         }).subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe() {
                 if (it.size > 0) {
                     val intent = Intent(context, TodoListActivity::class.java).also {
