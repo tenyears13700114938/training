@@ -1,5 +1,6 @@
 package com.example.myapplication.basic_03_android_test.nasaphotoList
 
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +14,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.ViewTarget
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.model.nasaPhoto
+import com.example.myapplication.basic_03_android_test.model.nasaPhotoEntity
+import com.example.myapplication.util.mapNasaPhotoEnityToFileName
+import java.io.File
 
-class nasaPhotoListAdapter : PagedListAdapter<nasaPhoto,nasaPhotoListAdapter.nasaPhotoHolder>(Diff_Callback()) {
+class nasaPhotoListAdapter : PagedListAdapter<nasaPhotoEntity,nasaPhotoListAdapter.nasaPhotoHolder>(Diff_Callback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): nasaPhotoHolder {
         return nasaPhotoHolder(
             LayoutInflater.from(parent.context).inflate(
@@ -40,7 +44,7 @@ class nasaPhotoListAdapter : PagedListAdapter<nasaPhoto,nasaPhotoListAdapter.nas
             photoDescription = itemView.findViewById(R.id.phot_description)
         }
 
-        fun bind(photo: nasaPhoto) {
+        fun bind(photo: nasaPhotoEntity) {
             photoDescription.text = photo.title
             photoImage.layoutParams.height = photoImage.resources.displayMetrics.widthPixels / 2
             photoImage.layoutParams.width = photoImage.layoutParams.height
@@ -48,16 +52,16 @@ class nasaPhotoListAdapter : PagedListAdapter<nasaPhoto,nasaPhotoListAdapter.nas
                 .asBitmap()
                 .load(if(photo.media_type.equals("image")) photo.url else R.drawable.saturn_card_view_default)
                 .into(photoImage)
-
         }
+
     }
 
-    class Diff_Callback : DiffUtil.ItemCallback<nasaPhoto>(){
-        override fun areItemsTheSame(oldItem: nasaPhoto, newItem: nasaPhoto): Boolean {
+    class Diff_Callback : DiffUtil.ItemCallback<nasaPhotoEntity>(){
+        override fun areItemsTheSame(oldItem: nasaPhotoEntity, newItem: nasaPhotoEntity): Boolean {
             return oldItem.date == newItem.date
         }
 
-        override fun areContentsTheSame(oldItem: nasaPhoto, newItem: nasaPhoto): Boolean {
+        override fun areContentsTheSame(oldItem: nasaPhotoEntity, newItem: nasaPhotoEntity): Boolean {
             return oldItem.url == newItem.url
         }
     }

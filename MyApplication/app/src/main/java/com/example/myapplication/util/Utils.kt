@@ -11,16 +11,13 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
 import com.example.myapplication.basic_03_android_test.model.Todo
 import java.io.File
-import java.lang.System.out
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.util.*
-import android.R.attr.scaleHeight
-import android.R.attr.scaleWidth
 import android.graphics.Matrix
 import androidx.exifinterface.media.ExifInterface
+import com.example.myapplication.basic_03_android_test.model.nasaPhoto
+import com.example.myapplication.basic_03_android_test.model.nasaPhotoEntity
+import java.time.*
+import java.time.format.DateTimeFormatter
 
 
 fun searchViewUtil(viewGroup : ViewGroup, viewId : Int) : View? {
@@ -112,4 +109,51 @@ fun toBitmapFile(originalFile : String, toWidth : Int, toHeight : Int) : String 
     genBitmap.recycle()
     scaleBitmap.recycle()
     return outFileName
+}
+
+//dateStr format: yyyy-MM-dd
+@RequiresApi(Build.VERSION_CODES.O)
+fun getDateStr(dateStr : String, offsetDays : Int) : String {
+    val posList = mutableListOf<Int>()
+    for(i in 0 until dateStr.length){
+        if(dateStr[i] == '-'){
+            posList.add(i)
+        }
+    }
+
+    if (posList.size >= 2) {
+        val year = dateStr.substring(0, posList[0]).toInt()
+        val month = dateStr.substring(posList[0] + 1, posList[1]).toInt()
+        val day = dateStr.substring(posList[1] + 1).toInt()
+
+        val getDate : LocalDate
+        var tempDays = offsetDays
+        if(offsetDays >= 0){
+            getDate = LocalDate.of(year, month, day).plusDays(tempDays.toLong())
+        }
+        else {
+            tempDays = -offsetDays
+            getDate = LocalDate.of(year, month, day).minusDays(tempDays.toLong())
+        }
+        return getDate.format(DateTimeFormatter.ofPattern("uuuu-MM-dd"))
+    } else {
+        return ""
+    }
+}
+
+fun mapNasaphotoToEntity(photo : nasaPhoto) : nasaPhotoEntity {
+    return nasaPhotoEntity(0,
+        if(photo.copyright != null) photo.copyright else "",
+        photo.date,
+        photo.explanation,
+        if(photo.hdurl != null) photo.hdurl else "",
+        photo.media_type,
+        photo.service_version,
+        photo.title,
+        photo.url
+        )
+}
+
+fun mapNasaPhotoEnityToFileName(photoEntity: nasaPhotoEntity) : String {
+    return photoEntity.date + "_" + photoEntity.url.substringAfterLast("/")
 }

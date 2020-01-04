@@ -1,12 +1,15 @@
 package com.example.myapplication.basic_03_android_test.nasaphotoRepository
 
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.paging.DataSource
 import com.example.myapplication.basic_03_android_test.model.nasaPhoto
+import com.example.myapplication.basic_03_android_test.model.nasaPhotoEntity
+import com.example.myapplication.util.getDateStr
 import io.reactivex.Observable
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.util.*
 
 class nasaRepository {
     companion object{
@@ -17,43 +20,34 @@ class nasaRepository {
 
         @RequiresApi(Build.VERSION_CODES.O)
         fun getNasaPhotos(date : String, hd : Boolean = false, size : Int = 1) : Observable<List<nasaPhoto>>{
-            var posLsit = mutableListOf<Int>()
-            for(i in 0 until date.length){
-                if(date[i] == '-'){
-                    posLsit.add(i)
+            val observableList = mutableListOf<Observable<nasaPhoto>>()
+            for (i in 0 until size) {
+                val getDate = getDateStr(date, -i)
+                if (Objects.equals(getDate, "")) {
+                    Log.d(TAG, "error date:" + getDate)
+                    continue
                 }
-            }
-
-            var parsedStrs = mutableListOf<String>()
-            if(posLsit.size >= 2){
-                var year = date.substring(0, posLsit[0]).toInt()
-                var month = date.substring(posLsit[0] + 1, posLsit[1]).toInt()
-                var day = date.substring(posLsit[1] + 1).toInt()
-
-                var observableList = mutableListOf<Observable<nasaPhoto>>()
-                for(i in 0 until size){
-                    var getDate = LocalDate.of(year, month, day).minusDays(i.toLong())
-
-                    observableList.add(
-                        nasaPhotoServiceFactory.getNasaPhotoService().getNasaPhoto(
-                            getDate.format(DateTimeFormatter.ofPattern("uuuu-MM-dd")),
-                            false
-                        )
+                observableList.add(
+                    nasaPhotoServiceFactory.getNasaPhotoService().getNasaPhoto(
+                        getDate,
+                        false
                     )
-                }
-
-                var photoList = mutableListOf<nasaPhoto>()
-                observableList.forEach { _photoObservable ->
-                    photoList.add(_photoObservable.blockingFirst())
-
-
-                }
-                return Observable.just(photoList)
+                )
             }
-            else {
-                Log.d(TAG, "error date:" + date)
-                return Observable.empty()
+
+            val photoList = mutableListOf<nasaPhoto>()
+            observableList.forEach { _photoObservable ->
+                photoList.add(_photoObservable.blockingFirst())
             }
+            return Observable.just(photoList)
+        }
+
+        fun getNasaPhotosFromDb(appContext : Context) : DataSource.Factory<Int, nasaPhotoEntity>{
+            return nasaPhotoDatabase.getIns(appContext).nasaPhotoDao().getNasaPhotos()
+        }
+
+        fun insertNasaPhotos(appContext: Context, photos : List<nasaPhotoEntity>) {
+            nasaPhotoDatabase.getIns(appContext).nasaPhotoDao().insertNasaPhotos(photos)
         }
     }
 }
