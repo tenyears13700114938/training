@@ -2,6 +2,7 @@ package com.example.myapplication.basic_03_android_test.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "nasa_photo")
 data class nasaPhotoEntity constructor(
@@ -15,4 +16,4 @@ data class nasaPhotoEntity constructor(
     var service_version : String,
     var title : String,
     var url : String
-)
+) : Serializable

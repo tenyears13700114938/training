@@ -6,7 +6,11 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:paddingBottom="2dp"
+        >
         <ImageView
             android:id="@+id/photo_image_view"
             android:layout_width="wrap_content"
@@ -20,7 +24,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/photo_image_view"
-            android:layout_alignRight="@+id/photo_image_view"
+            android:layout_alignRight="@id/photo_image_view"
+            android:layout_alignLeft="@id/photo_image_view"
+            android:gravity="center"
             android:maxLines="3"
             tools:text="nasa photo...." />
 

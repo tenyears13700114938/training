@@ -1,5 +1,6 @@
 package com.example.myapplication.basic_03_android_test.nasaphotoList
 
+import android.content.Intent
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,10 +11,15 @@ import android.widget.ProgressBar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.nasaPhotoLoadStatus
+import com.example.myapplication.basic_03_android_test.nasaPhotoContentDetails.nasaPhotoDetailsActivity
+import com.example.myapplication.basic_03_android_test.nasaPhotoContentDetails.nasaPhotoDetailsActivity.Companion.EXTRA_NASA_PHOTO_PARAM
+import com.example.myapplication.basic_03_android_test.nasaPhotoContentDetails.nasaPhotoDetailsFragment
 import kotlinx.android.synthetic.main.activity_navi_common.*
 
 class nasaPhotoListFragment : Fragment() {
@@ -41,6 +47,14 @@ class nasaPhotoListFragment : Fragment() {
                         it.layoutManager = mGridLayoutManager
                     }
                 mProgressBar = _rootView.findViewById(R.id.progressBar)
+                mNasaPhotoListAdapter.clickPublishSubject
+                    .subscribe {
+                       /* var detailAction = nasaPhotoListFragmentDirections.actionNasaPhotoListFragmentToNavaPhotoDetailsFragment(it)
+                        _rootView.findNavController().navigate(detailAction)*/
+                        val intent = Intent(activity, nasaPhotoDetailsActivity::class.java)
+                        intent.putExtra(EXTRA_NASA_PHOTO_PARAM, it)
+                        startActivity(intent)
+                    }
             }
     }
 
@@ -64,6 +78,13 @@ class nasaPhotoListFragment : Fragment() {
                     mProgressBar.visibility = View.INVISIBLE
                 }
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as NavCommonActivity).run {
+            setTitle("nasaPhoto List")
         }
     }
 }

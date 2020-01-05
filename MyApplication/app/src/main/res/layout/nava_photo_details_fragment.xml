@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navaphotodetails"
@@ -7,7 +7,64 @@
     android:layout_height="match_parent"
     tools:context=".basic_03_android_test.nasaPhotoContentDetails.nasaPhotoDetailsFragment">
 
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/nasa_photo_detail"
+        android:layout_marginLeft="@dimen/mtrl_card_spacing"
+        android:layout_marginTop="@dimen/mtrl_card_spacing"
+        android:layout_marginRight="@dimen/mtrl_card_spacing"
+        style="@style/Widget.MaterialComponents.CardView"
+        >
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
 
+        <ImageView
+            android:id="@+id/nasa_photo_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            tools:background="@drawable/saturn_card_view_default"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/nasa_photo_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:background="@color/cardview_dark_background"
+            android:textColor="@color/colorPrimary"
+            android:gravity="center"
+            android:textSize="18sp"
+            tools:text="2019/11/26" />
+
+            <TextView
+                android:id="@+id/nasa_photo_Title"
+                style="@style/ThemeOverlay.AppCompat.Dark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/nasa_photo_image"
+                android:fontFamily="@font/rubik_light"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:lines="1"
+                tools:text="title" />
+
+            <TextView
+                android:id="@+id/nasa_photo_explantion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/nasa_photo_Title"
+                android:textColor="?android:textColorSecondary"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                tools:text="description" />
+        </RelativeLayout>>
+
+    </com.google.android.material.card.MaterialCardView>>
+</ScrollView>

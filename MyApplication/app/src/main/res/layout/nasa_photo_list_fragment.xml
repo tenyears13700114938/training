@@ -5,6 +5,7 @@
     android:id="@+id/nasaphotolist"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="72dp"
     tools:context=".basic_03_android_test.nasaphotoList.nasaPhotoListFragment">
 
     <androidx.recyclerview.widget.RecyclerView

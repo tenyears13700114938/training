@@ -16,9 +16,11 @@ import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.model.nasaPhoto
 import com.example.myapplication.basic_03_android_test.model.nasaPhotoEntity
 import com.example.myapplication.util.mapNasaPhotoEnityToFileName
+import io.reactivex.subjects.PublishSubject
 import java.io.File
 
 class nasaPhotoListAdapter : PagedListAdapter<nasaPhotoEntity,nasaPhotoListAdapter.nasaPhotoHolder>(Diff_Callback()) {
+    val clickPublishSubject = PublishSubject.create<nasaPhotoEntity>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): nasaPhotoHolder {
         return nasaPhotoHolder(
             LayoutInflater.from(parent.context).inflate(
@@ -32,6 +34,9 @@ class nasaPhotoListAdapter : PagedListAdapter<nasaPhotoEntity,nasaPhotoListAdapt
     override fun onBindViewHolder(holder: nasaPhotoHolder, position: Int) {
         getItem(position)?.also {
             holder.bind(it)
+            holder.itemView.setOnClickListener{_view ->
+                clickPublishSubject.onNext(it)
+            }
         }
     }
 

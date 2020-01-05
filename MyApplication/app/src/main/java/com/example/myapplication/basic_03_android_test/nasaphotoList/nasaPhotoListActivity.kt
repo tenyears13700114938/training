@@ -1,5 +1,6 @@
 package com.example.myapplication.basic_03_android_test.nasaphotoList
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -18,7 +19,7 @@ class nasaPhotoListActivity : NavCommonActivity() {
             /*supportFragmentManager.beginTransaction()
                 .replace(R.id.container, nasaPhotoListFragment.newInstance())
                 .commitNow()*/
-            toolbar.title = "navaPhoto List"
+            toolbar.title = "nasaPhoto List"
             mNavController.graph = mNavController.navInflater.inflate(R.navigation.navi_photo_navigation)
 
             photoListViewModel = ViewModelProviders.of(this, object : ViewModelProvider.Factory{
@@ -28,6 +29,11 @@ class nasaPhotoListActivity : NavCommonActivity() {
 
             }).get(nasaPhotoListViewModel::class.java)
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
     }
 
 }

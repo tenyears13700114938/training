@@ -13,8 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".basic_03_android_test.nasaPhotoContentDetails.navaPhotoDetailsActivity"></activity>
-        <activity android:name=".basic_03_android_test.nasaphotoList.nasaPhotoListActivity" />
+        <activity android:name=".basic_03_android_test.nasaPhotoContentDetails.nasaPhotoDetailsActivity"></activity>
+        <activity android:name=".basic_03_android_test.nasaphotoList.nasaPhotoListActivity"
+            android:launchMode="singleTask"
+            />
 
         <receiver
             android:name=".basic_03_android_test.todoNotification.todoAlarmReceiver"
