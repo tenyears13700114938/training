@@ -21,7 +21,7 @@
         <receiver
             android:name=".basic_03_android_test.todoNotification.todoAlarmReceiver"
             android:enabled="true"
-            android:exported="false">
+            android:exported="true">
         </receiver>
 
         <activity android:name=".basic_03_android_test.todoSearch.TodoSearchableActivity">

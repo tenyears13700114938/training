@@ -20,7 +20,7 @@ class todoAlarmReceiver : BroadcastReceiver() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d(todoCheckWorker.TAG, "doWork......")
+        Log.d(todoCheckWorker.TAG, "debugAlarm doWork......")
         Observable.fromCallable(object : Callable<List<Todo>> {
             override fun call(): List<Todo> {
                 return todoRepository.getInstance(context)
