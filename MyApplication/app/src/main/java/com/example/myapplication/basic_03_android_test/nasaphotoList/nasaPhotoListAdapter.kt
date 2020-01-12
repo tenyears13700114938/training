@@ -15,6 +15,7 @@ import com.bumptech.glide.request.target.ViewTarget
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.model.nasaPhoto
 import com.example.myapplication.basic_03_android_test.model.nasaPhotoEntity
+import com.example.myapplication.util.getNasaPhotoFile
 import com.example.myapplication.util.mapNasaPhotoEnityToFileName
 import io.reactivex.subjects.PublishSubject
 import java.io.File
@@ -53,10 +54,20 @@ class nasaPhotoListAdapter : PagedListAdapter<nasaPhotoEntity,nasaPhotoListAdapt
             photoDescription.text = photo.title
             photoImage.layoutParams.height = photoImage.resources.displayMetrics.widthPixels / 2
             photoImage.layoutParams.width = photoImage.layoutParams.height
-            Glide.with(photoImage)
-                .asBitmap()
-                .load(if(photo.media_type.equals("image")) photo.url else R.drawable.saturn_card_view_default)
-                .into(photoImage)
+            getNasaPhotoFile(photo, photoImage.context).also { _photoFile ->
+                if (_photoFile.exists()) {
+                    Glide.with(photoImage)
+                        .asBitmap()
+                        .load(_photoFile)
+                        .into(photoImage)
+                } else {
+                    Glide.with(photoImage)
+                        .asBitmap()
+                        .load(if (photo.media_type.equals("image")) photo.url else R.drawable.saturn_card_view_default)
+                        .into(photoImage)
+                }
+            }
+
         }
 
     }

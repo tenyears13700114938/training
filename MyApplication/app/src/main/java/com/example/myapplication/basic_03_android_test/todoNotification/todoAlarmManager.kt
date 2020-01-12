@@ -36,8 +36,8 @@ class todoAlarmManager(val appContext: Context){
                 Log.d(TAG, "debugAlarm set alarm time to:" + LocalDateTime.ofInstant(Instant.ofEpochMilli(alarmMillis), ZoneId.systemDefault()).toString())*/
                 //val alarmMillis = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(2)
 
-                var targetDate = if(LocalTime.now().hour >= 6) LocalDate.now().plusDays(1)  else LocalDate.now()
-                var targeTime =  LocalTime.of(if(LocalTime.now().hour >= 6) 23 - LocalTime.now().hour + 6 else 6, 0)
+                var targetDate = if(LocalTime.now().hour >= 12) LocalDate.now().plusDays(1)  else LocalDate.now()
+                var targeTime =  LocalTime.of(if(LocalTime.now().hour >= 12) (23 - LocalTime.now().hour + 11) else 12, 0)
                 //val alarmMillis = LocalDateTime.of(targetDate, targeTime).toInstant(ZoneId.systemDefault().rules.getOffset(Instant.now())).toEpochMilli()
                 val alarmMillis = LocalDateTime.of(targetDate, targeTime).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 

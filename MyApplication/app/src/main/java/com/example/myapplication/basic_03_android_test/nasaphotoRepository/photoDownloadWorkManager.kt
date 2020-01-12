@@ -1,4 +1,4 @@
-package com.example.myapplication.basic_03_android_test.todoNotification
+package com.example.myapplication.basic_03_android_test.nasaphotoRepository
 
 import android.content.Context
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -7,7 +7,8 @@ import androidx.work.WorkManager
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 
-class todoWorkManager(val appontext : Context) {
+class photoDownloadWorkManager(val appontext : Context) {
+    private val WORKER_NAME = "com.example.myapplication.basic_03_android_test.nasaphotoRepository.photoDownloadWorkManager"
     val mWorkManager : WorkManager
 
     init {
@@ -18,20 +19,22 @@ class todoWorkManager(val appontext : Context) {
         mWorkManager.enqueueUniquePeriodicWork(
             WORKER_NAME,
             ExistingPeriodicWorkPolicy.REPLACE,
-            PeriodicWorkRequestBuilder<todoCheckWorker>(20, TimeUnit.MINUTES)
+            PeriodicWorkRequestBuilder<photoDownloadWorker>(24, TimeUnit.HOURS)
                 .setInitialDelay(1, TimeUnit.MINUTES)
                 .build()
         )
     }
 
     companion object{
-        private val WORKER_NAME = "com.example.myapplication.basic_03_android_test.todoNotification.TodoExpiredCheck"
-        var mIns : todoWorkManager? = null
+        var mIns : photoDownloadWorkManager? = null
         val reentrantLock = ReentrantLock()
-        fun getIns(appContext: Context) : todoWorkManager {
+        fun getIns(appContext: Context) : photoDownloadWorkManager {
             reentrantLock.lock()
             if(mIns == null){
-                mIns = todoWorkManager(appContext)
+                mIns =
+                    photoDownloadWorkManager(
+                        appContext
+                    )
             }
             reentrantLock.unlock()
             return mIns!!

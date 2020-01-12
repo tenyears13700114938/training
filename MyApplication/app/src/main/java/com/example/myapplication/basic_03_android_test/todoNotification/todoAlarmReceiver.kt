@@ -17,10 +17,10 @@ import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Callable
 
 class todoAlarmReceiver : BroadcastReceiver() {
-
+    private val TAG = todoAlarmReceiver::class.java.simpleName
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d(todoCheckWorker.TAG, "debugAlarm doWork......")
+        Log.d(TAG, "debugAlarm doWork......")
         Observable.fromCallable(object : Callable<List<Todo>> {
             override fun call(): List<Todo> {
                 return todoRepository.getInstance(context)

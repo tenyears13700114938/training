@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.myapplication.basic_03_android_test.model.nasaPhotoEntity
+import io.reactivex.Observable
 
 @Dao
 interface nasaPhotoDao {
@@ -13,4 +14,6 @@ interface nasaPhotoDao {
     fun insertNasaPhotos(photos : List<nasaPhotoEntity>)
     @Query("select * from nasa_photo order by date  desc")
     fun getNasaPhotos() : DataSource.Factory<Int, nasaPhotoEntity>
+    @Query("select * from nasa_photo order by date  desc")
+    fun getAllNasaPhotos() : List<nasaPhotoEntity>
 }

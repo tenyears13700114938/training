@@ -11,6 +11,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.model.nasaPhotoEntity
+import com.example.myapplication.util.getNasaPhotoFile
 
 class nasaPhotoDetailsFragment : Fragment() {
 
@@ -52,10 +53,20 @@ class nasaPhotoDetailsFragment : Fragment() {
 
         photoImageView.layoutParams.height = photoImageView.resources.displayMetrics.widthPixels
         photoImageView.layoutParams.width = photoImageView.layoutParams.height
-        Glide.with(photoImageView)
-            .asBitmap()
-            .load(if(entity.media_type.equals("image")) entity.url else  R.drawable.saturn_card_view_default)
-            .into(photoImageView)
+
+        getNasaPhotoFile(entity, photoImageView.context).also {_photoFile ->
+            if (_photoFile.exists()) {
+                Glide.with(photoImageView)
+                    .asBitmap()
+                    .load(_photoFile)
+                    .into(photoImageView)
+            } else {
+                Glide.with(photoImageView)
+                    .asBitmap()
+                    .load(if (entity.media_type.equals("image")) entity.url else R.drawable.saturn_card_view_default)
+                    .into(photoImageView)
+            }
+        }
     }
 
 }

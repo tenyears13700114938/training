@@ -3,8 +3,8 @@ package com.example.myapplication
 import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.example.myapplication.basic_03_android_test.nasaphotoRepository.photoDownloadWorkManager
 import com.example.myapplication.basic_03_android_test.todoNotification.todoAlarmManager
-import com.example.myapplication.basic_03_android_test.todoNotification.todoWorkManager
 import com.example.myapplication.util.dagger.DaggerAppComponent
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -25,6 +25,7 @@ class MyApplication : Application(),HasAndroidInjector {
         DaggerAppComponent.builder().myApp(this).build().inject(this)
         //todo start workmanager
         todoAlarmManager.getInstance(this).run()
+        photoDownloadWorkManager.getIns(this).run()
     }
 
     override fun onTerminate() {

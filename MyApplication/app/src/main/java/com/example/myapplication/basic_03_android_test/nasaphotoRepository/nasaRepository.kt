@@ -49,5 +49,9 @@ class nasaRepository {
         fun insertNasaPhotos(appContext: Context, photos : List<nasaPhotoEntity>) {
             nasaPhotoDatabase.getIns(appContext).nasaPhotoDao().insertNasaPhotos(photos)
         }
+
+        fun getAllNasaPhotos(appContext: Context) =
+            nasaPhotoDatabase.getIns(appContext).nasaPhotoDao().getAllNasaPhotos()
+
     }
 }

@@ -13,6 +13,7 @@ import com.example.myapplication.basic_03_android_test.model.Todo
 import java.io.File
 import java.util.*
 import android.graphics.Matrix
+import android.os.Environment
 import androidx.exifinterface.media.ExifInterface
 import com.example.myapplication.basic_03_android_test.model.nasaPhoto
 import com.example.myapplication.basic_03_android_test.model.nasaPhotoEntity
@@ -67,6 +68,22 @@ fun getFileDirs(dirName : String, context: Context) : String{
     }
 }
 
+fun getExternalFilesDir(dirName : String, context: Context) : String {
+    return File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath + "/" + context.packageName + "/files", dirName).let {
+        it.mkdirs()
+        it.absolutePath
+    }
+}
+
+fun convertToFileName(entity : nasaPhotoEntity) : String {
+    return entity.date.replace("-", "_") + "_" + entity.url.substringAfterLast("/")
+}
+
+fun getNasaPhotoFile(photo : nasaPhotoEntity, context : Context) : File {
+    val dir = getExternalFilesDir("nasaPhoto", context)
+    val name = convertToFileName(photo)
+    return File(dir, name)
+}
 
 fun toBitmapFile(originalFile : String, toWidth : Int, toHeight : Int) : String {
     val sizeOptions = BitmapFactory.Options()
