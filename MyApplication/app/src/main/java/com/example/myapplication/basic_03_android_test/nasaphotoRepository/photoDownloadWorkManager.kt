@@ -7,13 +7,9 @@ import androidx.work.WorkManager
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 
-class photoDownloadWorkManager(val appontext : Context) {
+class photoDownloadWorkManager(appContext : Context) {
     private val WORKER_NAME = "com.example.myapplication.basic_03_android_test.nasaphotoRepository.photoDownloadWorkManager"
-    val mWorkManager : WorkManager
-
-    init {
-        mWorkManager = WorkManager.getInstance(appontext)
-    }
+    private val mWorkManager : WorkManager = WorkManager.getInstance(appContext)
 
     fun run(){
         mWorkManager.enqueueUniquePeriodicWork(
@@ -27,7 +23,7 @@ class photoDownloadWorkManager(val appontext : Context) {
 
     companion object{
         var mIns : photoDownloadWorkManager? = null
-        val reentrantLock = ReentrantLock()
+        private val reentrantLock = ReentrantLock()
         fun getIns(appContext: Context) : photoDownloadWorkManager {
             reentrantLock.lock()
             if(mIns == null){

@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import java.io.Serializable
 
 @Entity(tableName = "nasa_photo")
-data class nasaPhotoEntity constructor(
+data class NasaPhotoEntity (
     @PrimaryKey(autoGenerate = true)
     var id : Long,
     var copyright :String,

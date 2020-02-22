@@ -14,7 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
-import com.example.myapplication.basic_03_android_test.nasaphotoList.nasaPhotoListActivity
+import com.example.myapplication.basic_03_android_test.nasaphotoList.NasaPhotoListActivity
 import com.example.myapplication.basic_03_android_test.todoList.TodoListActivity
 import com.example.myapplication.util.searchViewUtil
 import com.google.android.material.navigation.NavigationView
@@ -63,7 +63,7 @@ open class NavCommonActivity : AppCompatActivity() {
                         .into(_imageView)
                 }
             }
-            var menuIterator = it.menu.iterator()
+            val menuIterator = it.menu.iterator()
             while (menuIterator.hasNext()) {
                 menuIterator.next().let {
                     it.setOnMenuItemClickListener() { item ->
@@ -78,7 +78,7 @@ open class NavCommonActivity : AppCompatActivity() {
                                 true
                             }
                             R.id.nasa_world -> {
-                                Intent(applicationContext, nasaPhotoListActivity::class.java).also {
+                                Intent(applicationContext, NasaPhotoListActivity::class.java).also {
                                     startActivity(it)
                                 }
                                 true

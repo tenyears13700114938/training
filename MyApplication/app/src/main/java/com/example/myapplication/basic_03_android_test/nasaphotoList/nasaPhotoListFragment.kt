@@ -11,16 +11,13 @@ import android.widget.ProgressBar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
-import com.example.myapplication.basic_03_android_test.model.nasaPhotoLoadStatus
-import com.example.myapplication.basic_03_android_test.nasaPhotoContentDetails.nasaPhotoDetailsActivity
-import com.example.myapplication.basic_03_android_test.nasaPhotoContentDetails.nasaPhotoDetailsActivity.Companion.EXTRA_NASA_PHOTO_PARAM
-import com.example.myapplication.basic_03_android_test.nasaPhotoContentDetails.nasaPhotoDetailsFragment
-import kotlinx.android.synthetic.main.activity_navi_common.*
+import com.example.myapplication.basic_03_android_test.model.NasaPhotoLoadStatus
+import com.example.myapplication.basic_03_android_test.nasaPhotoContentDetails.NasaPhotoDetailsActivity
+import com.example.myapplication.basic_03_android_test.nasaPhotoContentDetails.NasaPhotoDetailsActivity.Companion.EXTRA_NASA_PHOTO_PARAM
 
 class nasaPhotoListFragment : Fragment() {
 
@@ -29,7 +26,7 @@ class nasaPhotoListFragment : Fragment() {
             nasaPhotoListFragment()
     }
 
-    private lateinit var viewModel: nasaPhotoListViewModel
+    private lateinit var viewModel: NasaPhotoListViewModel
     private lateinit var mNasaPhotoListView: RecyclerView
     private lateinit var mProgressBar: ProgressBar
     private val mNasaPhotoListAdapter: nasaPhotoListAdapter = nasaPhotoListAdapter()
@@ -51,7 +48,7 @@ class nasaPhotoListFragment : Fragment() {
                     .subscribe {
                        /* var detailAction = nasaPhotoListFragmentDirections.actionNasaPhotoListFragmentToNavaPhotoDetailsFragment(it)
                         _rootView.findNavController().navigate(detailAction)*/
-                        val intent = Intent(activity, nasaPhotoDetailsActivity::class.java)
+                        val intent = Intent(activity, NasaPhotoDetailsActivity::class.java)
                         intent.putExtra(EXTRA_NASA_PHOTO_PARAM, it)
                         startActivity(intent)
                     }
@@ -62,16 +59,16 @@ class nasaPhotoListFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, object : ViewModelProvider.Factory{
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return nasaPhotoListViewModel(this@nasaPhotoListFragment.requireContext()) as T
+                return NasaPhotoListViewModel(this@nasaPhotoListFragment.requireContext()) as T
             }
 
-        }).get(nasaPhotoListViewModel::class.java)
+        }).get(NasaPhotoListViewModel::class.java)
         viewModel.nasaPhotoList.observe(this) { _pagedPhotoList ->
             mNasaPhotoListAdapter.submitList(_pagedPhotoList)
         }
         viewModel.loadStatusLiveData.observe(this) {
             when (it) {
-                nasaPhotoLoadStatus.LOADING -> {
+                NasaPhotoLoadStatus.LOADING -> {
                     mProgressBar.visibility = View.VISIBLE
                 }
                 else -> {
@@ -84,7 +81,7 @@ class nasaPhotoListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as NavCommonActivity).run {
-            setTitle("nasaPhoto List")
+            setTitle("NasaPhoto List")
         }
     }
 }

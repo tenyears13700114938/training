@@ -5,7 +5,7 @@
     android:id="@+id/navaphotodetails"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".basic_03_android_test.nasaPhotoContentDetails.nasaPhotoDetailsFragment">
+    tools:context=".basic_03_android_test.nasaPhotoContentDetails.NasaPhotoDetailsFragment">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"

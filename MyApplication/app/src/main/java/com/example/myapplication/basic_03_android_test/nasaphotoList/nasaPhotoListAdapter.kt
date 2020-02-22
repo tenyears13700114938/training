@@ -1,6 +1,5 @@
 package com.example.myapplication.basic_03_android_test.nasaphotoList
 
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,20 +7,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.ViewTarget
 import com.example.myapplication.R
-import com.example.myapplication.basic_03_android_test.model.nasaPhoto
-import com.example.myapplication.basic_03_android_test.model.nasaPhotoEntity
+import com.example.myapplication.basic_03_android_test.model.NasaPhotoEntity
 import com.example.myapplication.util.getNasaPhotoFile
-import com.example.myapplication.util.mapNasaPhotoEnityToFileName
 import io.reactivex.subjects.PublishSubject
-import java.io.File
 
-class nasaPhotoListAdapter : PagedListAdapter<nasaPhotoEntity,nasaPhotoListAdapter.nasaPhotoHolder>(Diff_Callback()) {
-    val clickPublishSubject = PublishSubject.create<nasaPhotoEntity>()
+class nasaPhotoListAdapter : PagedListAdapter<NasaPhotoEntity,nasaPhotoListAdapter.nasaPhotoHolder>(Diff_Callback()) {
+    val clickPublishSubject = PublishSubject.create<NasaPhotoEntity>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): nasaPhotoHolder {
         return nasaPhotoHolder(
             LayoutInflater.from(parent.context).inflate(
@@ -50,7 +44,7 @@ class nasaPhotoListAdapter : PagedListAdapter<nasaPhotoEntity,nasaPhotoListAdapt
             photoDescription = itemView.findViewById(R.id.phot_description)
         }
 
-        fun bind(photo: nasaPhotoEntity) {
+        fun bind(photo: NasaPhotoEntity) {
             photoDescription.text = photo.title
             photoImage.layoutParams.height = photoImage.resources.displayMetrics.widthPixels / 2
             photoImage.layoutParams.width = photoImage.layoutParams.height
@@ -72,12 +66,12 @@ class nasaPhotoListAdapter : PagedListAdapter<nasaPhotoEntity,nasaPhotoListAdapt
 
     }
 
-    class Diff_Callback : DiffUtil.ItemCallback<nasaPhotoEntity>(){
-        override fun areItemsTheSame(oldItem: nasaPhotoEntity, newItem: nasaPhotoEntity): Boolean {
+    class Diff_Callback : DiffUtil.ItemCallback<NasaPhotoEntity>(){
+        override fun areItemsTheSame(oldItem: NasaPhotoEntity, newItem: NasaPhotoEntity): Boolean {
             return oldItem.date == newItem.date
         }
 
-        override fun areContentsTheSame(oldItem: nasaPhotoEntity, newItem: nasaPhotoEntity): Boolean {
+        override fun areContentsTheSame(oldItem: NasaPhotoEntity, newItem: NasaPhotoEntity): Boolean {
             return oldItem.url == newItem.url
         }
     }

@@ -2,7 +2,7 @@ package com.example.myapplication.basic_03_android_test.model
 
 import com.google.gson.annotations.SerializedName
 
-data class nasaPhoto constructor(
+data class NasaPhoto (
     @SerializedName("copyright")
     var copyright :String,
     @SerializedName("date")

@@ -1,6 +1,6 @@
 package com.example.myapplication.basic_03_android_test.nasaphotoRepository
 
-import com.example.myapplication.basic_03_android_test.model.nasaPhoto
+import com.example.myapplication.basic_03_android_test.model.NasaPhoto
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -13,7 +13,7 @@ interface nasaPhotoService {
     @GET("apod")
     fun getNasaPhoto(@Query("date") dateVal: String,
                      @Query("hd") hdVal: Boolean = false,
-                     @Query("api_key") apiKey: String = appKey): Observable<nasaPhoto>
+                     @Query("api_key") apiKey: String = appKey): Observable<NasaPhoto>
 
     @GET
     fun downloadPhoto(@Url url : String) : Call<ResponseBody>

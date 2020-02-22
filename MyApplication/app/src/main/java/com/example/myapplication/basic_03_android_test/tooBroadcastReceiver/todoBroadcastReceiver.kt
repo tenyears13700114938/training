@@ -7,6 +7,11 @@ import java.util.function.Consumer
 
 class todoBroadcastReceiver(val consumer: Consumer<Intent>) : BroadcastReceiver() {
 
+    constructor() : this(object : Consumer<Intent>{
+        override fun accept(t: Intent) {
+        }
+    })
+
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
         consumer.accept(intent)

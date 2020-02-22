@@ -49,7 +49,7 @@ class TodoListAdapter(val context: Context) :
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        var todo = todoList[position]
+        val todo = todoList[position]
         holder.bind(todoList[position], position)
         holder.photoImageView.setOnClickListener { _view ->
             clickItemEventSubject.onNext(Pair(todo, R.id.todoItemImage))

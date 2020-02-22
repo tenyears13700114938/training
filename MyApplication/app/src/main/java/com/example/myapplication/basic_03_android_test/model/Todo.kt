@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull
 import java.io.Serializable
 
 @Entity(tableName = "todo_table")
-data class Todo constructor(
+data class Todo (
     @PrimaryKey(autoGenerate = true)
     var id: Long,
     @ColumnInfo(name = "content")
@@ -27,8 +27,5 @@ data class Todo constructor(
         description = ""
         imageUrl = ""
         targetTime = null
-    }
-    fun empty() : Boolean {
-        return thing.equals("") && (completed == false) && description.equals("") && imageUrl.equals("") && (targetTime == null)
     }
 }

@@ -48,7 +48,7 @@ class TodoTimeEditFragment : Fragment() {
 
         view.findViewById<Button>(R.id.next_button).setOnClickListener {
              SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.JAPAN).apply {
-                 var timeString =    StringBuilder().append(String.format("%4d",mDatePicker.year))
+                 this.parse(StringBuilder().append(String.format("%4d",mDatePicker.year))
                     .append("-")
                     .append(String.format("%2d", mDatePicker.month + 1))
                     .append("-")
@@ -58,9 +58,9 @@ class TodoTimeEditFragment : Fragment() {
                     .append(":")
                     .append(String.format("%2d", mTimePicker.minute))
                      .append(":00")
-                    .toString()
-                todoViewModel.todoInfo.targetTime = this.parse(timeString).time
-
+                    .toString())?.also { _date ->
+                     todoViewModel.todoInfo.targetTime = _date.time
+                 }
             }
             val photoAction = TodoTimeEditFragmentDirections.actionTodoTimeEditToPhotoEdit(args.editType)
             it.findNavController().navigate(photoAction)

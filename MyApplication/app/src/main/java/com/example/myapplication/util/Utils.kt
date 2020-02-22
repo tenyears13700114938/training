@@ -15,8 +15,8 @@ import java.util.*
 import android.graphics.Matrix
 import android.os.Environment
 import androidx.exifinterface.media.ExifInterface
-import com.example.myapplication.basic_03_android_test.model.nasaPhoto
-import com.example.myapplication.basic_03_android_test.model.nasaPhotoEntity
+import com.example.myapplication.basic_03_android_test.model.NasaPhoto
+import com.example.myapplication.basic_03_android_test.model.NasaPhotoEntity
 import java.time.*
 import java.time.format.DateTimeFormatter
 
@@ -75,12 +75,12 @@ fun getExternalFilesDir(dirName : String, context: Context) : String {
     }
 }
 
-fun convertToFileName(entity : nasaPhotoEntity) : String {
+fun convertToFileName(entity : NasaPhotoEntity) : String {
     return entity.date.replace("-", "_") + "_" + entity.url.substringAfterLast("/")
 }
 
-fun getNasaPhotoFile(photo : nasaPhotoEntity, context : Context) : File {
-    val dir = getExternalFilesDir("nasaPhoto", context)
+fun getNasaPhotoFile(photo : NasaPhotoEntity, context : Context) : File {
+    val dir = getExternalFilesDir("NasaPhoto", context)
     val name = convertToFileName(photo)
     return File(dir, name)
 }
@@ -158,8 +158,8 @@ fun getDateStr(dateStr : String, offsetDays : Int) : String {
     }
 }
 
-fun mapNasaphotoToEntity(photo : nasaPhoto) : nasaPhotoEntity {
-    return nasaPhotoEntity(0,
+fun mapNasaphotoToEntity(photo : NasaPhoto) : NasaPhotoEntity {
+    return NasaPhotoEntity(0,
         if(photo.copyright != null) photo.copyright else "",
         photo.date,
         photo.explanation,
@@ -171,6 +171,6 @@ fun mapNasaphotoToEntity(photo : nasaPhoto) : nasaPhotoEntity {
         )
 }
 
-fun mapNasaPhotoEnityToFileName(photoEntity: nasaPhotoEntity) : String {
+fun mapNasaPhotoEnityToFileName(photoEntity: NasaPhotoEntity) : String {
     return photoEntity.date + "_" + photoEntity.url.substringAfterLast("/")
 }

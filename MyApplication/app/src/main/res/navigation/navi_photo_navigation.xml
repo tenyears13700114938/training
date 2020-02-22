@@ -13,7 +13,7 @@
     </fragment>
     <fragment
         android:id="@+id/navaPhotoDetailsFragment"
-        android:name="com.example.myapplication.basic_03_android_test.nasaPhotoContentDetails.nasaPhotoDetailsFragment"
+        android:name="com.example.myapplication.basic_03_android_test.nasaPhotoContentDetails.NasaPhotoDetailsFragment"
         android:label="NavaPhotoDetailsFragment" >
         <argument
             android:name="photoEntity"

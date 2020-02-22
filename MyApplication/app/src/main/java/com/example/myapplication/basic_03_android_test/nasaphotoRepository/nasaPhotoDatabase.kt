@@ -5,12 +5,11 @@ import androidx.room.Database
 import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.myapplication.basic_03_android_test.model.nasaPhoto
-import com.example.myapplication.basic_03_android_test.model.nasaPhotoEntity
+import com.example.myapplication.basic_03_android_test.model.NasaPhotoEntity
 
-@Database(entities = [nasaPhotoEntity::class], version = 1, exportSchema = false)
+@Database(entities = [NasaPhotoEntity::class], version = 1, exportSchema = false)
 abstract class nasaPhotoDatabase : RoomDatabase() {
-    abstract fun nasaPhotoDao() :nasaPhotoDao
+    abstract fun nasaPhotoDao() :NasaPhotoDao
 
     companion object{
         var mIns : nasaPhotoDatabase? = null

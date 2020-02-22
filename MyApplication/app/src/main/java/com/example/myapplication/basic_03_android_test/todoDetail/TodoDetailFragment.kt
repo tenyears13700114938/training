@@ -98,7 +98,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
                 .subscribe() { viewId ->
                     when (viewId) {
                         R.id.todo_complete_button -> {
-                            var copy = Todo()
+                            val copy = Todo()
                             copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
                             copy.completed = if (copy.completed) false else true
                             context?.also {
@@ -107,7 +107,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
                         }
                         R.id.todo_comment_save_button -> {
                             if(!Objects.equals(todoDetailViewModel.todoDetail.value?.comment, mCommentEdit.text.toString())){
-                                var copy = Todo()
+                                val copy = Todo()
                                 copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
                                 copy.comment = mCommentEdit.text.toString()
                                 context?.also {
@@ -142,10 +142,6 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         root.findViewById<ImageButton>(R.id.todo_complete_button)?.let { _completeBtn ->
             _completeBtn.setOnClickListener { _view ->
                 completeSubject.onNext(R.id.todo_complete_button)
-                /*todoDetailViewModel.todoDetail.value?.completed = true;
-                Glide.with(activity!!)
-                    .load(R.drawable.ic_check_box_black_24dp)
-                    .into(mStatusIconImage)*/
             }
         }
         //status icon
