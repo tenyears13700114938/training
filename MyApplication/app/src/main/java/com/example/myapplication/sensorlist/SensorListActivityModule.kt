@@ -1,12 +1,11 @@
-package com.example.myapplication.util.dagger
+package com.example.myapplication.sensorlist
 
 import android.hardware.SensorManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import com.example.myapplication.sensorlist.SensorListActivity
-import com.example.myapplication.sensorlist.SensorListFragment
 import com.example.myapplication.sensorlist.model.sensorsViewModel
+import com.example.myapplication.util.dagger.ActivityScope
 import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
@@ -20,7 +19,7 @@ abstract class SensorListActivityBindingModule {
 @Module
 class SensorListActivityInsModule {
     @Provides
-    @SensorListActivityScope
+    @ActivityScope
     fun providesSensorsViewModel(activity : SensorListActivity, sensorManager: SensorManager) : sensorsViewModel{
         return activity.run {
             ViewModelProviders.of(activity, object : ViewModelProvider.Factory {

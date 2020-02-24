@@ -1,4 +1,4 @@
-package com.example.myapplication.util.dagger
+package com.example.myapplication.sensordetails
 
 import com.example.myapplication.sensordetails.SensorDetailsFragment
 import dagger.Module

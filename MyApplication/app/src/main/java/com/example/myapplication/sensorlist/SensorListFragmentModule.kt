@@ -1,13 +1,13 @@
-package com.example.myapplication.util.dagger
+package com.example.myapplication.sensorlist
 
 import android.view.LayoutInflater
-import com.example.myapplication.sensorlist.SensorListAdapter
+import com.example.myapplication.util.dagger.ActivityScope
 import dagger.Module
 import dagger.Provides
 
 @Module
 class SensorListFragmentModule {
-    @SensorListActivityScope
+    @ActivityScope
     @Provides
     fun providesSensorListAdapter(layoutInflater: LayoutInflater) : SensorListAdapter{
         return SensorListAdapter(layoutInflater)
