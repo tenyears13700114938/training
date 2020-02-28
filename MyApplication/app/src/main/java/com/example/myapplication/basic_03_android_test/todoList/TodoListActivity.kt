@@ -13,6 +13,7 @@ import androidx.core.view.iterator
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.example.myapplication.MyApplication
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
@@ -24,25 +25,36 @@ import com.example.myapplication.basic_03_android_test.todoSearch.TodoSearchable
 import kotlinx.android.synthetic.main.activity_navi_common.*
 import kotlinx.coroutines.*
 import java.io.File
+import javax.inject.Inject
 
 class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
-    private lateinit var todoListViewModel: TodoListViewModel
-    private lateinit var todoViewModel: TodoViewModel
+    @Inject
+    lateinit var todoListViewModel: TodoListViewModel
+    @Inject
+    lateinit var todoViewModel: TodoViewModel
+
+    lateinit var todoListComponent: TodoListComponent
 
     companion object {
         val EXTRA_PARAMETER_START_TYPE = "EXTRA_PARAMETER_START_TYPE"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        todoListComponent =
+            (application as MyApplication).appComponent.registrationComponent().create(this, intent)
+                .apply {
+                    inject(this@TodoListActivity)
+                }
+
         super.onCreate(savedInstanceState)
 
         toolbar.title = if(intent.getIntExtra(EXTRA_PARAMETER_START_TYPE, 0) == 0)"ToDo List" else "Attention Todos"
         mNavController.graph = mNavController.navInflater.inflate(R.navigation.todo_navigation)
 
-        todoViewModel = ViewModelProviders.of(this).get(TodoViewModel::class.java)
-        todoListViewModel = TodoListViewModel.getTodoListViewModel(this,
+        //todoViewModel = ViewModelProviders.of(this).get(TodoViewModel::class.java)
+        /*todoListViewModel = TodoListViewModel.getTodoListViewModel(this,
             if(intent.getIntExtra(TodoListActivity.EXTRA_PARAMETER_START_TYPE, 0) == 1) StartType.search else StartType.all
-            )
+            )*/
     }
 
     fun saveTodo(_todo: Todo) {

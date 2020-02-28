@@ -1,6 +1,8 @@
 package com.example.myapplication.basic_03_android_test.todoList
 
 
+import android.app.Activity
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -22,15 +24,22 @@ import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
  */
 class TodoTimeEditFragment : Fragment() {
-    private lateinit var todoViewModel: TodoViewModel
+    @Inject
+    lateinit var todoViewModel: TodoViewModel
     private lateinit var mDatePicker: DatePicker
     private lateinit var mTimePicker: TimePicker
     private val args : TodoTimeEditFragmentArgs by navArgs()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (activity as TodoListActivity).todoListComponent.inject(this)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -42,9 +51,9 @@ class TodoTimeEditFragment : Fragment() {
         mDatePicker = view.findViewById(R.id.datePicker)
         mTimePicker = view.findViewById(R.id.timePicker)
 
-        todoViewModel = activity?.run {
+        /*todoViewModel = activity?.run {
             ViewModelProviders.of(this).get(TodoViewModel::class.java)
-        } ?: return view
+        } ?: return view*/
 
         view.findViewById<Button>(R.id.next_button).setOnClickListener {
              SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.JAPAN).apply {

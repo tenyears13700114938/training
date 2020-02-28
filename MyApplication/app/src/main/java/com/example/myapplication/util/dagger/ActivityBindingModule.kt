@@ -6,6 +6,7 @@ import com.example.myapplication.basic_01_02_firstApp.firstAppActivityModule
 import com.example.myapplication.basic_01_03_text_scrollingView.ScrollingTextActivity
 import com.example.myapplication.basic_02_Activity.IntentReceiveActivity
 import com.example.myapplication.basic_02_Activity.IntentSendActivity
+import com.example.myapplication.basic_03_android_test.todoList.TodoListComponent
 import com.example.myapplication.main.MainActivity
 import com.example.myapplication.sensordetails.SensorDetailsActivity
 import com.example.myapplication.sensordetails.SensorDetailsActivityModule
@@ -18,7 +19,7 @@ import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.ClassKey
 import dagger.multibindings.IntoMap
 
-@Module(subcomponents = [SensorListActivityComponent::class])
+@Module(subcomponents = [SensorListActivityComponent::class, TodoListComponent::class])
 interface ActivityBindingModule {
     /*@Binds
     @IntoMap

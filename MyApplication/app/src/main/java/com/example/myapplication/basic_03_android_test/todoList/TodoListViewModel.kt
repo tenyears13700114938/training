@@ -5,8 +5,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
+import javax.inject.Inject
 
-class TodoListViewModel(app : Application,  var type : StartType) : AndroidViewModel(app) {
+class TodoListViewModel @Inject constructor(app : Application, var type : StartType) : AndroidViewModel(app) {
     val todoList : LiveData<List<Todo>> by lazy {
         when(type) {
             StartType.all -> todoRepository.getInstance(app.applicationContext).alltodos

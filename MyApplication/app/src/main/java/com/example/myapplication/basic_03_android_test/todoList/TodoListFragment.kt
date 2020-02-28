@@ -1,6 +1,8 @@
 package com.example.myapplication.basic_03_android_test.todoList
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -23,6 +25,7 @@ import kotlinx.coroutines.*
 import java.util.*
 import java.util.stream.Collectors
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.example.myapplication.MyApplication
 import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.todoDetail.DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO
@@ -33,6 +36,7 @@ import com.example.myapplication.util.copyTodo
 import kotlinx.android.synthetic.main.todo_item.*
 import java.io.File
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 /**
  * A placeholder fragment containing a simple view.
@@ -40,9 +44,16 @@ import java.util.concurrent.TimeUnit
 class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by MainScope() {
     private lateinit var todoListView: RecyclerView
     private lateinit var todoListAdapter: TodoListAdapter
-    private lateinit var todoListViewModel: TodoListViewModel
-    private lateinit var todoViewModel: TodoViewModel
+    @Inject
+    lateinit var todoListViewModel: TodoListViewModel
+    @Inject
+    lateinit var todoViewModel: TodoViewModel
     private val TAG = TodoListFragment::class.java.simpleName
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (activity as TodoListActivity).todoListComponent.inject(this)
+    }
 
     @SuppressLint("RestrictedApi")
     override fun onCreateView(
@@ -97,11 +108,11 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
             _list.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         }
 
-        todoListViewModel = activity?.run {
+        /*todoListViewModel = activity?.run {
             TodoListViewModel.getTodoListViewModel(this,
                 if(intent.getIntExtra(TodoListActivity.EXTRA_PARAMETER_START_TYPE, 0) == 1) StartType.search else StartType.all
             )
-        } ?: throw Exception("Invalid activity")
+        } ?: throw Exception("Invalid activity")*/
         todoListViewModel.todoList.observe(this) {
             updateList(it, todoListViewModel.displayType.value)
         }
@@ -109,9 +120,9 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
             updateList(todoListViewModel.todoList.value, it)
         }
 
-        todoViewModel = activity?.let {
+        /*todoViewModel = activity?.let {
             ViewModelProviders.of(it).get(TodoViewModel::class.java)
-        } ?: throw Exception("no activity")
+        } ?: throw Exception("no activity")*/
 
         fragmentView.findViewById<FloatingActionButton>(R.id.fab).also {_floatBtn ->
             _floatBtn.visibility = if(this@TodoListFragment.activity?.intent?.getIntExtra(EXTRA_PARAMETER_START_TYPE, 0) == 1) INVISIBLE else VISIBLE

@@ -2,6 +2,7 @@ package com.example.myapplication.basic_03_android_test.todoList
 
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.TextUtils
@@ -35,6 +36,7 @@ import com.example.myapplication.util.getFileDirs
 import com.example.myapplication.util.toBitmapFile
 import java.io.File
 import java.util.concurrent.Executors
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
@@ -46,12 +48,18 @@ class TodoPhotoEditFragment : Fragment() {
     private lateinit var  viewFinder : TextureView
     private lateinit var mPhotoImage : ImageView
     private val captureExecutor = Executors.newSingleThreadExecutor()
-    private lateinit var todoViewModel : TodoViewModel
+    @Inject
+    lateinit var todoViewModel : TodoViewModel
     private lateinit var todoDetailViewModel: TodoDetailViewModel
     private var preview : Preview? = null
     private var imageCapture : ImageCapture? = null
     private lateinit var imageButton: ImageButton
     private val args : TodoPhotoEditFragmentArgs by navArgs()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (activity as TodoListActivity).todoListComponent.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -137,9 +145,9 @@ class TodoPhotoEditFragment : Fragment() {
             }
         }
 
-        todoViewModel = activity?.run{
+        /*todoViewModel = activity?.run{
             ViewModelProviders.of(this).get(TodoViewModel::class.java)
-        } ?: return view
+        } ?: return view*/
 
         todoDetailViewModel = activity?.run {
             ViewModelProviders.of(this).get(TodoDetailViewModel::class.java)

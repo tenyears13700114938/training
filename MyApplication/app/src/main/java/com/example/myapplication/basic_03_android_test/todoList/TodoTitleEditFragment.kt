@@ -22,15 +22,22 @@ import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonA
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.util.hideSoftInput
 import java.io.File
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
  */
 class TodoTitleEditFragment : Fragment() {
-    private lateinit var todoViewModel: TodoViewModel
+    @Inject
+    lateinit var todoViewModel: TodoViewModel
     private lateinit var titleEdit : EditText
     private lateinit var descriptionEdit : EditText
     private val args : TodoTitleEditFragmentArgs by navArgs()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (activity as TodoListActivity).todoListComponent.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,9 +48,9 @@ class TodoTitleEditFragment : Fragment() {
         titleEdit = view.findViewById(R.id.todo_title)
         descriptionEdit = view.findViewById(R.id.todo_description)
 
-        todoViewModel = activity?.run{
+        /*todoViewModel = activity?.run{
             ViewModelProviders.of(this).get(TodoViewModel::class.java)
-        } ?: return view
+        } ?: return view*/
 
         view.findViewById<Button>(R.id.next_button).setOnClickListener{
             todoViewModel.todoInfo.thing = titleEdit.text?.toString() ?: ""
