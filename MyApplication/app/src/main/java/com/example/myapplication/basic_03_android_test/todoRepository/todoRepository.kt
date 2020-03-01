@@ -5,21 +5,24 @@ import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import com.example.myapplication.basic_03_android_test.model.Todo
 import java.io.File
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class todoRepository(val context : Context) {
-    val alltodos : LiveData<List<Todo>> by lazy {
+@Singleton
+class todoRepository @Inject constructor(val context : Context) : ITodoRepository {
+    override val alltodos : LiveData<List<Todo>> by lazy {
         todoDatabase.getInstance(context).todoDao().getAll()
     }
 
-    fun addToDo(todo: Todo) {
+    override fun addToDo(todo: Todo) {
         todoDatabase.getInstance(context).todoDao().insertTodo(todo)
     }
 
-    fun updateToDo(todo : Todo){
+    override fun updateToDo(todo : Todo){
         todoDatabase.getInstance(context).todoDao().updateTodo(todo)
     }
 
-    fun deleteToDo(todo : Todo){
+    override fun deleteToDo(todo : Todo){
         todo.imageUrl?.also {
             File(it).delete()
         }
@@ -30,15 +33,15 @@ class todoRepository(val context : Context) {
         return todoDatabase.getInstance(context).todoDao().searchByTitleOrDescription(key)
     }
 
-    fun getNotificationTodo(limitTime : Long) : List<Todo>{
+    override fun getNotificationTodo(limitTime : Long) : List<Todo>{
         return todoDatabase.getInstance(context).todoDao().getNotificationTodo(limitTime)
     }
 
-    fun getLiveNotificationTodo(limitTime : Long) : LiveData<List<Todo>>{
+    override fun getLiveNotificationTodo(limitTime : Long) : LiveData<List<Todo>>{
         return todoDatabase.getInstance(context).todoDao().getLiveNotificationTodo(limitTime)
     }
 
-    companion object {
+    /*companion object {
         private var todoIns : todoRepository? = null
         fun getInstance(context: Context) : todoRepository {
             synchronized(todoRepository::class.java) {
@@ -48,5 +51,5 @@ class todoRepository(val context : Context) {
                 return todoIns as todoRepository
             }
         }
-    }
+    }*/
 }

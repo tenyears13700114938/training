@@ -1,5 +1,6 @@
 package com.example.myapplication.basic_03_android_test.todoSearch
 
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
@@ -13,6 +14,7 @@ import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.MyApplication
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.TodoService.OpResult
 import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
@@ -28,6 +30,7 @@ import io.reactivex.exceptions.Exceptions
 import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope by MainScope(){
@@ -41,12 +44,20 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
                 it
             }
     }
-
+    @Inject
+    lateinit var todoRepository: todoRepository
+    @Inject
+    lateinit var todoOpMng: TodoOpMng
     private lateinit var viewModel: TodoSearchableViewModel
     private lateinit var listView : RecyclerView
     private lateinit var listAdapter : TodoListAdapter
     private lateinit var noresultTextView : TextView
     private val compositeDisposable = CompositeDisposable()
+
+    override fun onAttach(context: Context) {
+        (context.applicationContext as? MyApplication)?.appComponent?.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,7 +87,7 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
         //get view model
         viewModel = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return TodoSearchableViewModel(todoRepository.getInstance(this@TodoSearchableFragment.requireContext())) as T
+                return TodoSearchableViewModel(todoRepository) as T
             }
 
         }).get(TodoSearchableViewModel::class.java)
@@ -113,11 +124,11 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
                         copyTodo(_pair.first, copy)
                         copy.completed = if(copy.completed) false else true
                         context?.also{
-                            TodoOpMng.getIns(it).updateTodo(copy)
+                            todoOpMng.updateTodo(copy)
                         }
                     }
                     R.id.todo_delete_button -> {
-                        if (TodoOpMng.getIns(_activity).deleteTodo(_pair.first) == OpResult.TODO_ALREADY_DOING) {
+                        if (todoOpMng.deleteTodo(_pair.first) == OpResult.TODO_ALREADY_DOING) {
                             Toast.makeText(_activity, "Todo IsEditing", Toast.LENGTH_SHORT).show()
                         }
                     }

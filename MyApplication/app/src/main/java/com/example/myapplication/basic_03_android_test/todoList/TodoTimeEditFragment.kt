@@ -1,11 +1,9 @@
 package com.example.myapplication.basic_03_android_test.todoList
 
 
-import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,16 +11,13 @@ import android.widget.Button
 import android.widget.DatePicker
 import android.widget.TimePicker
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.util.localDateOfTimeFromUtc
-import java.lang.StringBuilder
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
 
@@ -78,9 +73,7 @@ class TodoTimeEditFragment : Fragment() {
             it.findNavController().popBackStack()
         }
 
-        if(activity is NavCommonActivity){
-            (activity as NavCommonActivity).setTitle("Edit Time")
-        }
+        (activity as? NavCommonActivity)?.setTitle("Edit Time")
         setView()
         return view
     }
@@ -88,13 +81,15 @@ class TodoTimeEditFragment : Fragment() {
     //set time display accord todoViewModel
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setView(){
-        todoViewModel.todoInfo.targetTime?.also{
-            if(it != 0L){
-                localDateOfTimeFromUtc(todoViewModel.todoInfo.targetTime!!).also { _localDateTime ->
-                    mDatePicker.updateDate(_localDateTime.year, _localDateTime.monthValue - 1, _localDateTime.dayOfMonth)
-                    mTimePicker.hour = _localDateTime.hour
-                    mTimePicker.minute = _localDateTime.minute
-                }
+        todoViewModel.todoInfo.targetTime?.takeIf { it != 0L }.let {
+            localDateOfTimeFromUtc(todoViewModel.todoInfo.targetTime!!).also { _localDateTime ->
+                mDatePicker.updateDate(
+                    _localDateTime.year,
+                    _localDateTime.monthValue - 1,
+                    _localDateTime.dayOfMonth
+                )
+                mTimePicker.hour = _localDateTime.hour
+                mTimePicker.minute = _localDateTime.minute
             }
         }
     }

@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import com.example.myapplication.util.dagger.ActivityScope
 import dagger.Module
 import dagger.Provides
@@ -14,10 +15,10 @@ import javax.inject.Scope
 class TodoListViewModule {
     @Provides
     @ActivityScope
-    fun provideTodoListViewModel(activity : TodoListActivity, type : StartType) : TodoListViewModel{
+    fun provideTodoListViewModel(activity : TodoListActivity, type : StartType, todoRepository: todoRepository) : TodoListViewModel{
         return ViewModelProviders.of(activity, object : ViewModelProvider.Factory{
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return TodoListViewModel(activity.application, type) as T
+                return TodoListViewModel(activity.application, type, todoRepository) as T
             }
         }).get(TodoListViewModel::class.java)
     }

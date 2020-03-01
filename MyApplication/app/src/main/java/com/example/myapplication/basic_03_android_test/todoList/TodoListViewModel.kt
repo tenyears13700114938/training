@@ -1,22 +1,23 @@
 package com.example.myapplication.basic_03_android_test.todoList
 
 import android.app.Application
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.myapplication.basic_03_android_test.model.Todo
+import com.example.myapplication.basic_03_android_test.todoRepository.ITodoRepository
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
-import javax.inject.Inject
 
-class TodoListViewModel @Inject constructor(app : Application, var type : StartType) : AndroidViewModel(app) {
+class TodoListViewModel constructor(val app : Application, var type : StartType, val todoRepository: ITodoRepository) : AndroidViewModel(app) {
     val todoList : LiveData<List<Todo>> by lazy {
         when(type) {
-            StartType.all -> todoRepository.getInstance(app.applicationContext).alltodos
-            else -> todoRepository.getInstance(app.applicationContext).getLiveNotificationTodo(System.currentTimeMillis())
+            StartType.all -> todoRepository.alltodos
+            else -> todoRepository.getLiveNotificationTodo(System.currentTimeMillis())
         }
     }
     var displayType : MutableLiveData<Pair<ListDisplayType, ListDisplayType>> = MutableLiveData(Pair(ListDisplayType.none, ListDisplayType.all))
 
-    companion object {
+    /*companion object {
         fun getTodoListViewModel(activity : FragmentActivity, type : StartType) : TodoListViewModel{
             return ViewModelProviders.of(activity, object : ViewModelProvider.Factory{
                 override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -24,7 +25,7 @@ class TodoListViewModel @Inject constructor(app : Application, var type : StartT
                 }
             }).get(TodoListViewModel::class.java)
         }
-    }
+    }*/
 }
 
 enum class ListDisplayType {

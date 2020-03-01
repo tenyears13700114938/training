@@ -10,11 +10,19 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.myapplication.R
 import java.util.concurrent.locks.ReentrantLock
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class todoNotificationManager(val mContext: Context) {
-    lateinit var mNotificationManager : NotificationManagerCompat
+@RequiresApi(Build.VERSION_CODES.O)
+@Singleton
+class todoNotificationManager @Inject constructor(val mContext: Context) {
+    private var mNotificationManager : NotificationManagerCompat  = NotificationManagerCompat.from(mContext)
     lateinit var mNotificationChannel: NotificationChannel
     val TODO_NOTIFICATION_ID = 100
+
+    init {
+        createTodoNotificationChannel()
+    }
 
     fun notifyTodoToDeal(pendingIntent: PendingIntent?) {
         NotificationCompat.Builder(mContext, TODO_CHANNEL_ID)
@@ -57,7 +65,7 @@ class todoNotificationManager(val mContext: Context) {
 
     companion object {
         private val TODO_CHANNEL_ID = "TODO_CHANNEL_ID"
-        private var mIns: todoNotificationManager? = null
+        /*private var mIns: todoNotificationManager? = null
         private val insLock = ReentrantLock()
         @RequiresApi(Build.VERSION_CODES.O)
         fun getInstance(appContext: Context): todoNotificationManager {
@@ -71,6 +79,6 @@ class todoNotificationManager(val mContext: Context) {
             }
             insLock.unlock()
             return mIns as todoNotificationManager
-        }
+        }*/
     }
 }

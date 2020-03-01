@@ -1,5 +1,6 @@
 package com.example.myapplication.basic_03_android_test.todoDetail
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -44,6 +45,7 @@ import java.io.File
 import java.security.Signature
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_TODO_DETAIL = "Todo_Detail"
@@ -59,8 +61,12 @@ private const val ARG_TODO_DETAIL = "Todo_Detail"
 class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
     private var todoParam: Todo? = null
     private var listener: OnFragmentInteractionListener? = null
-    private lateinit var todoDetailViewModel: TodoDetailViewModel
-    private  lateinit var todoViewModel : TodoViewModel
+    @Inject
+    lateinit var todoDetailViewModel: TodoDetailViewModel
+    @Inject
+    lateinit var todoViewModel : TodoViewModel
+    @Inject
+    lateinit var todoOpMng: TodoOpMng
     private lateinit var mTitleText : TextView
     private lateinit var mDescriptionText : TextView
     private lateinit var mEditBtn : ImageButton
@@ -85,8 +91,8 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
     ): View? {
         // Inflate the layout for this fragment
         detailsView = inflater.inflate(R.layout.fragment_todo_detail, container, false)
-        todoDetailViewModel = activity?.run{ ViewModelProviders.of(activity as FragmentActivity).get(TodoDetailViewModel::class.java)} ?: throw Exception("no activity")
-        todoViewModel = activity?.run {ViewModelProviders.of(activity as FragmentActivity).get(TodoViewModel::class.java)} ?: throw Exception("no activity")
+        //todoDetailViewModel = activity?.run{ ViewModelProviders.of(activity as FragmentActivity).get(TodoDetailViewModel::class.java)} ?: throw Exception("no activity")
+        //todoViewModel = activity?.run {ViewModelProviders.of(activity as FragmentActivity).get(TodoViewModel::class.java)} ?: throw Exception("no activity")
         todoDetailViewModel.todoDetail.observe(this){
             setCardView(detailsView, null, it)
         }
@@ -101,18 +107,14 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
                             val copy = Todo()
                             copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
                             copy.completed = if (copy.completed) false else true
-                            context?.also {
-                                    TodoOpMng.getIns(it).updateTodo(copy)
-                                }
+                            todoOpMng.updateTodo(copy)
                         }
                         R.id.todo_comment_save_button -> {
                             if(!Objects.equals(todoDetailViewModel.todoDetail.value?.comment, mCommentEdit.text.toString())){
                                 val copy = Todo()
                                 copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
                                 copy.comment = mCommentEdit.text.toString()
-                                context?.also {
-                                    TodoOpMng.getIns(it).updateTodo(copy)
-                                }
+                                todoOpMng.updateTodo(copy)
                             }
                         }
                     }
@@ -180,14 +182,14 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         root.findViewById<ImageButton>(R.id.todo_delete_button)?.let { _deleteBtn ->
             _deleteBtn.setOnClickListener { _view ->
                 todoViewModel.todoInfo.let {
-                    if (TodoOpMng.getIns(_view.context).isTodoEditing(it)) {
+                    if (todoOpMng.isTodoEditing(it)) {
                         Toast.makeText(
                             _view.context,
                             "Todo is Editing...",
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
-                        TodoOpMng.getIns(_view.context).deleteTodo(it)
+                        todoOpMng.deleteTodo(it)
                     }
                 }
                 activity?.finish()
@@ -286,7 +288,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         //edit Button
         mEditBtn.setOnClickListener {_editBtn ->
             todoViewModel.todoInfo.let {
-                if(TodoOpMng.getIns(_editBtn.context).isTodoEditing(it)){
+                if(todoOpMng.isTodoEditing(it)){
                     Toast.makeText(_editBtn.context, "Todo is Editing", Toast.LENGTH_SHORT).show()
                 }
                 else {
@@ -311,6 +313,8 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        (activity as TodoDetailActivity).todoDetailComponent.inject(this)
+
         if (context is OnFragmentInteractionListener) {
             listener = context
         } else {

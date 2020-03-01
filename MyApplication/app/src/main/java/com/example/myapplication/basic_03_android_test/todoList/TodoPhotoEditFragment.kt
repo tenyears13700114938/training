@@ -11,27 +11,20 @@ import android.util.Size
 import android.view.*
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import androidx.fragment.app.Fragment
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.camera.core.*
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
-import com.bumptech.glide.util.Util
-
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
-import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailViewModel
-import com.example.myapplication.util.copyTodo
 import com.example.myapplication.util.getFileDirs
 import com.example.myapplication.util.toBitmapFile
 import java.io.File
@@ -50,7 +43,7 @@ class TodoPhotoEditFragment : Fragment() {
     private val captureExecutor = Executors.newSingleThreadExecutor()
     @Inject
     lateinit var todoViewModel : TodoViewModel
-    private lateinit var todoDetailViewModel: TodoDetailViewModel
+    //private lateinit var todoDetailViewModel: TodoDetailViewModel
     private var preview : Preview? = null
     private var imageCapture : ImageCapture? = null
     private lateinit var imageButton: ImageButton
@@ -149,9 +142,9 @@ class TodoPhotoEditFragment : Fragment() {
             ViewModelProviders.of(this).get(TodoViewModel::class.java)
         } ?: return view*/
 
-        todoDetailViewModel = activity?.run {
+        /*todoDetailViewModel = activity?.run {
             ViewModelProviders.of(this).get(TodoDetailViewModel::class.java)
-        } ?: return view
+        } ?: return view*/
 
         configPhotoImageOrCamera()
 

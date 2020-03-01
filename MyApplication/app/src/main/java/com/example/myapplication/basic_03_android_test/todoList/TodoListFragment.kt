@@ -1,11 +1,9 @@
 package com.example.myapplication.basic_03_android_test.todoList
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,29 +11,25 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
-import com.example.myapplication.basic_03_android_test.model.Todo
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.*
-import java.util.*
-import java.util.stream.Collectors
-import androidx.recyclerview.widget.ItemTouchHelper
-import com.example.myapplication.MyApplication
 import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
+import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoDetail.DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
 import com.example.myapplication.basic_03_android_test.todoList.TodoListActivity.Companion.EXTRA_PARAMETER_START_TYPE
-import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import com.example.myapplication.util.copyTodo
-import kotlinx.android.synthetic.main.todo_item.*
-import java.io.File
-import java.util.concurrent.TimeUnit
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import java.util.*
+import java.util.stream.Collectors
 import javax.inject.Inject
 
 /**
@@ -48,6 +42,8 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
     lateinit var todoListViewModel: TodoListViewModel
     @Inject
     lateinit var todoViewModel: TodoViewModel
+    @Inject
+    lateinit var todoOpMng: TodoOpMng
     private val TAG = TodoListFragment::class.java.simpleName
 
     override fun onAttach(context: Context) {
@@ -71,7 +67,7 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                     }
 
                     R.id.todo_complete_button -> {
-                        if (TodoOpMng.getIns(this.requireContext()).isTodoEditing(_pair.first)) {
+                        if (todoOpMng.isTodoEditing(_pair.first)) {
                             Toast.makeText(
                                 this.requireContext(),
                                 "Todo is Editing...",
@@ -81,12 +77,12 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                             var copy = Todo()
                             copyTodo(_pair.first, copy)
                             copy.completed = if(copy.completed) false else true
-                            TodoOpMng.getIns(this.requireContext()).updateTodo(copy)
+                            todoOpMng.updateTodo(copy)
                         }
                     }
 
                     R.id.todoItemImage -> {
-                        if (TodoOpMng.getIns(this.requireContext()).isTodoEditing(_pair.first)) {
+                        if (todoOpMng.isTodoEditing(_pair.first)) {
                             Toast.makeText(
                                 this.requireContext(),
                                 "Todo is Editing...",
@@ -137,14 +133,14 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
     }
 
     private fun deleteTodo(todo: Todo) {
-        if (TodoOpMng.getIns(this.requireContext()).isTodoEditing(todo)) {
+        if (todoOpMng.isTodoEditing(todo)) {
             Toast.makeText(
                 this.requireContext(),
                 "Todo is Editing...",
                 Toast.LENGTH_SHORT
             ).show()
         } else {
-            TodoOpMng.getIns(this.requireContext()).deleteTodo(todo)
+            todoOpMng.deleteTodo(todo)
         }
     }
 

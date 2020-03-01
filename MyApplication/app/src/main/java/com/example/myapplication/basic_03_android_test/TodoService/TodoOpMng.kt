@@ -11,6 +11,8 @@ import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
 import com.example.myapplication.util.copyTodo
 import java.util.concurrent.locks.ReentrantLock
+import javax.inject.Inject
+import javax.inject.Singleton
 
 enum class OpResult(val result: Int) {
     DELETE_OK(0),
@@ -23,7 +25,8 @@ enum class OpResult(val result: Int) {
     REQUEST_ACCEPT(-5)
 }
 
-class TodoOpMng(val appContext: Context) : ResultReceiver(Handler()) {
+@Singleton
+class TodoOpMng @Inject constructor(val appContext: Context) : ResultReceiver(Handler()) {
     val RESULT_EXTRA_PARAM_TODO = "RESULT_EXTRA_PARAM_TODO"
     private val TAG = TodoOpMng::class.java.simpleName
     private val editMapLock = ReentrantLock()
@@ -155,7 +158,7 @@ class TodoOpMng(val appContext: Context) : ResultReceiver(Handler()) {
     val mEditTodoMap = hashMapOf<Long, Todo>()
     val mAddTodoList = mutableListOf<Todo>()
 
-    companion object {
+    /*companion object {
         private var mIns: TodoOpMng? = null
         fun getIns(appContext: Context): TodoOpMng {
             if (mIns == null) {
@@ -164,5 +167,5 @@ class TodoOpMng(val appContext: Context) : ResultReceiver(Handler()) {
 
             return mIns!!
         }
-    }
+    }*/
 }

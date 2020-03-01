@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.myapplication.MyApplication
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.TodoService.OpResult
 import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
@@ -16,23 +17,31 @@ import com.example.myapplication.util.copyTodo
 import kotlinx.android.synthetic.main.activity_navi_common.*
 import kotlinx.coroutines.*
 import java.util.function.Consumer
+import javax.inject.Inject
 
 val DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO = "START_PARAM_TO_DO"
 class TodoDetailActivity : NavCommonActivity(), TodoDetailFragment.OnFragmentInteractionListener, CoroutineScope by MainScope(){
-    private lateinit var todoDetailViewModel: TodoDetailViewModel
-    private lateinit var todoViewModel: TodoViewModel
+    @Inject
+    lateinit var todoDetailViewModel: TodoDetailViewModel
+    @Inject
+    lateinit var todoViewModel: TodoViewModel
+    @Inject
+    lateinit var todoOpMng: TodoOpMng
+    lateinit var todoDetailComponent : TodoDetailComponent
     private lateinit var broadcastReceiver: todoBroadcastReceiver
     override fun onFragmentInteraction(uri: Uri) {
         //todo
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        todoDetailComponent = (application as MyApplication).appComponent.registrationTodoDetailComponent().create(this)
+
         super.onCreate(savedInstanceState)
 
         toolbar.title = "Todo Detail"
 
-        todoDetailViewModel = ViewModelProviders.of(this).get(TodoDetailViewModel::class.java)
-        todoViewModel = ViewModelProviders.of(this).get(TodoViewModel::class.java)
+        //todoDetailViewModel = ViewModelProviders.of(this).get(TodoDetailViewModel::class.java)
+        //todoViewModel = ViewModelProviders.of(this).get(TodoViewModel::class.java)
 
         val todoInfo = intent?.getSerializableExtra(
             DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO
@@ -70,6 +79,6 @@ class TodoDetailActivity : NavCommonActivity(), TodoDetailFragment.OnFragmentInt
                 todoRepository.getInstance(this@TodoDetailActivity).updateToDo(todo)
             }
         }*/
-        TodoOpMng.getIns(applicationContext).updateTodo(todo)
+        todoOpMng.updateTodo(todo)
     }
 }

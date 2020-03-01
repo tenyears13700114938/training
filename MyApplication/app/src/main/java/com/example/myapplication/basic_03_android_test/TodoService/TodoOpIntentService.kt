@@ -6,9 +6,11 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.os.ResultReceiver
 import android.util.Log
+import com.example.myapplication.MyApplication
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
 private const val ACTION_ADD_TODO =
     "com.example.myapplication.basic_03_android_test.TodoService.action.ADD_TODO"
@@ -26,8 +28,16 @@ private const val EXTRA_PARAM_RECEIVER =
  * An [IntentService] subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  */
-class TodoOpIntentService : IntentService("TodoOpIntentService") {
+class TodoOpIntentService() : IntentService("TodoOpIntentService") {
     private val TAG = TodoOpIntentService::class.java.simpleName
+    @Inject
+    lateinit var todoRepository: todoRepository
+
+    override fun onCreate() {
+        super.onCreate()
+        (application as? MyApplication)?.appComponent?.inject(this)
+    }
+
     override fun onHandleIntent(intent: Intent?) {
         Log.d(TAG, "onHandleIntent todo.." + intent?.action)
         when (intent?.action) {
@@ -80,7 +90,7 @@ class TodoOpIntentService : IntentService("TodoOpIntentService") {
     suspend fun handleAddTodo(todo: Todo?) {
         todo?.also {
             Log.d(TAG, "add todo.....")
-            todoRepository.getInstance(this@TodoOpIntentService).addToDo(todo)
+            todoRepository.addToDo(todo)
         }
     }
 
@@ -90,7 +100,7 @@ class TodoOpIntentService : IntentService("TodoOpIntentService") {
      */
     suspend fun handleUpdateTodo(todo : Todo?) {
         todo?.also {
-            todoRepository.getInstance(this@TodoOpIntentService).updateToDo(it)
+            todoRepository.updateToDo(it)
         }
     }
 
@@ -101,7 +111,7 @@ class TodoOpIntentService : IntentService("TodoOpIntentService") {
     suspend fun handleDeleteTodo(todo : Todo?) {
         todo?.also {
             Log.d(TAG, "delete todo.....")
-            todoRepository.getInstance(this@TodoOpIntentService).deleteToDo(it)
+            todoRepository.deleteToDo(it)
         }
     }
 

@@ -13,9 +13,12 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import android.os.SystemClock
 import java.time.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
-class todoAlarmManager(val appContext: Context){
+@Singleton
+class todoAlarmManager @Inject constructor(val appContext: Context){
     private val pendingIntent : PendingIntent
     private val mIntent : Intent
     private val TAG = todoAlarmManager::class.java.simpleName
@@ -52,7 +55,7 @@ class todoAlarmManager(val appContext: Context){
          }
     }
 
-    companion object {
+    /*companion object {
         private var mIns: todoAlarmManager? = null
         private val reentrantLock = ReentrantLock()
         fun getInstance(appContext: Context) : todoAlarmManager {
@@ -63,7 +66,5 @@ class todoAlarmManager(val appContext: Context){
             reentrantLock.unlock()
             return mIns!!
         }
-    }
-
-
+    }*/
 }

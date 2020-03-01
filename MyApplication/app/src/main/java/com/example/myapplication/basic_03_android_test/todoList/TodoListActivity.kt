@@ -4,26 +4,19 @@ import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils
-import android.view.*
-import android.widget.SearchView
-import androidx.core.view.iterator
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import android.view.Menu
+import android.view.MenuItem
 import com.example.myapplication.MyApplication
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
-import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailFragment
-import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import com.example.myapplication.basic_03_android_test.todoSearch.TodoSearchableActivity
-
 import kotlinx.android.synthetic.main.activity_navi_common.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import java.io.File
 import javax.inject.Inject
 
@@ -32,6 +25,8 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
     lateinit var todoListViewModel: TodoListViewModel
     @Inject
     lateinit var todoViewModel: TodoViewModel
+    @Inject
+    lateinit var todoOpMng: TodoOpMng
 
     lateinit var todoListComponent: TodoListComponent
 
@@ -58,7 +53,7 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
     }
 
     fun saveTodo(_todo: Todo) {
-        TodoOpMng.getIns(applicationContext).addTodo(_todo)
+        todoOpMng.addTodo(_todo)
     }
 
     override fun onResume() {
@@ -77,10 +72,10 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_todo_list, menu)
 
-        var searchItem = menu?.findItem(R.id.action_search)
+        val searchItem = menu?.findItem(R.id.action_search)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as  SearchManager
         val searchView = searchItem?.actionView as androidx.appcompat.widget.SearchView
-        searchView?.setSearchableInfo(searchManager.getSearchableInfo(ComponentName(this,TodoSearchableActivity::class.java)))
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(ComponentName(this,TodoSearchableActivity::class.java)))
 
         return true
     }

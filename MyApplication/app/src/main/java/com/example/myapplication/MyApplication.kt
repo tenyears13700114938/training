@@ -14,6 +14,8 @@ import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
 class MyApplication : Application(),HasAndroidInjector, Configuration.Provider {
+    @Inject
+    lateinit var todoAlarmManager: todoAlarmManager
     lateinit var appComponent: AppComponent
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder().build()
@@ -33,7 +35,7 @@ class MyApplication : Application(),HasAndroidInjector, Configuration.Provider {
             inject(this@MyApplication)
         }
         //todo start workmanager
-        todoAlarmManager.getInstance(this).run()
+        todoAlarmManager.run()
         photoDownloadWorkManager.getIns(this).run()
     }
 

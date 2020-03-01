@@ -3,20 +3,15 @@ package com.example.myapplication.basic_03_android_test.todoList
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.Navigation
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
@@ -56,8 +51,8 @@ class TodoTitleEditFragment : Fragment() {
             todoViewModel.todoInfo.thing = titleEdit.text?.toString() ?: ""
             todoViewModel.todoInfo.description = descriptionEdit.text?.toString() ?: ""
 
-            activity?.apply {
-                hideSoftInput(this)
+            activity?.let {
+                hideSoftInput(it)
             }
             val timeAction = TodoTitleEditFragmentDirections.actionTodoTitleEditToTimeEdit(args.editType)
             it.findNavController().navigate(timeAction)
