@@ -14,6 +14,8 @@ import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoList.TodoViewModel
 import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
 import com.example.myapplication.util.copyTodo
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialContainerTransformSharedElementCallback
 import kotlinx.android.synthetic.main.activity_navi_common.*
 import kotlinx.coroutines.*
 import java.util.function.Consumer
@@ -35,6 +37,10 @@ class TodoDetailActivity : NavCommonActivity(), TodoDetailFragment.OnFragmentInt
 
     override fun onCreate(savedInstanceState: Bundle?) {
         todoDetailComponent = (application as MyApplication).appComponent.registrationTodoDetailComponent().create(this)
+        todoDetailComponent.inject(this)
+
+        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+        postponeEnterTransition()
 
         super.onCreate(savedInstanceState)
 

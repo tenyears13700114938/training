@@ -111,9 +111,9 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
         listAdapter.clickItemEventSubject
             .subscribe { _pair ->
             this@TodoSearchableFragment.activity?.also { _activity ->
-                when (_pair.second) {
+                when (_pair.second.id) {
                     // todo details
-                    R.id.todoItemImage -> {
+                    R.id.content_card -> {
                         Intent(_activity, TodoDetailActivity::class.java).also { _intent ->
                             _intent.putExtra(DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO, _pair.first)
                             startActivity(_intent)

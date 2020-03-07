@@ -1,6 +1,7 @@
 package com.example.myapplication.basic_03_android_test.todoList
 
 import android.annotation.SuppressLint
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.observe
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -61,7 +63,7 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
             //it.clickItemEventSubject.debounce(100, TimeUnit.MILLISECONDS)
             it.clickItemEventSubject
                 .subscribe() { _pair ->
-                when (_pair.second) {
+                when (_pair.second.id) {
                     R.id.todo_delete_button -> {
                         deleteTodo(_pair.first)
                     }
@@ -81,7 +83,7 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                         }
                     }
 
-                    R.id.todoItemImage -> {
+                    R.id.content_card -> {
                         if (todoOpMng.isTodoEditing(_pair.first)) {
                             Toast.makeText(
                                 this.requireContext(),
@@ -90,8 +92,9 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                             ).show()
                         } else {
                             Intent(activity, TodoDetailActivity::class.java).apply {
+                                val options = ActivityOptions.makeSceneTransitionAnimation(activity,_pair.second,"shared_todo_card")
                                 putExtra(DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO, _pair.first)
-                                activity?.startActivity(this)
+                                activity?.startActivity(this, options.toBundle())
                             }
                         }
                     }
@@ -124,7 +127,8 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
             _floatBtn.visibility = if(this@TodoListFragment.activity?.intent?.getIntExtra(EXTRA_PARAMETER_START_TYPE, 0) == 1) INVISIBLE else VISIBLE
             _floatBtn.setOnClickListener { view ->
                 todoViewModel.todoInfo = Todo()
-                view.findNavController().navigate(R.id.todo_edit_navigation, null)
+                val extras = FragmentNavigatorExtras(_floatBtn to "shared_todo_add")
+                view.findNavController().navigate(R.id.todo_edit_navigation, null, null, extras)
             }
         }
 

@@ -16,6 +16,8 @@ import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.util.hideSoftInput
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialSharedAxis
 import java.io.File
 import javax.inject.Inject
 
@@ -32,6 +34,16 @@ class TodoTitleEditFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         (activity as TodoListActivity).todoListComponent.inject(this)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedElementEnterTransition = MaterialContainerTransform(requireContext()).apply {
+            fadeMode = MaterialContainerTransform.FADE_MODE_OUT
+        }
+        sharedElementReturnTransition = MaterialContainerTransform(requireContext()).apply {
+            fadeMode = MaterialContainerTransform.FADE_MODE_OUT
+        }
     }
 
     override fun onCreateView(

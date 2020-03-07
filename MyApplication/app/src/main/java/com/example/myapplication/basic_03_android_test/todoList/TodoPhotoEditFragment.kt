@@ -27,6 +27,7 @@ import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
 import com.example.myapplication.util.getFileDirs
 import com.example.myapplication.util.toBitmapFile
+import com.google.android.material.transition.MaterialSharedAxis
 import java.io.File
 import java.util.concurrent.Executors
 import javax.inject.Inject
@@ -152,6 +153,22 @@ class TodoPhotoEditFragment : Fragment() {
             (activity as NavCommonActivity).setTitle("Take a photo")
         }
         return view
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val backward = MaterialSharedAxis.create(requireContext(), MaterialSharedAxis.X, false).apply {
+            secondaryTransition = null
+            duration = 100
+        }
+        exitTransition = backward
+
+        val forward = MaterialSharedAxis.create(requireContext(), MaterialSharedAxis.X, true).apply {
+            secondaryTransition = null
+            duration = 100
+        }
+        enterTransition = forward
     }
 
     private fun configPhotoImageOrCamera() {

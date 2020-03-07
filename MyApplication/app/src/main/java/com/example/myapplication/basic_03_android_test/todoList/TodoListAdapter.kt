@@ -26,7 +26,7 @@ import io.reactivex.subjects.PublishSubject
 class TodoListAdapter(val context: Context) :
     RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
     val todoList: MutableList<Todo> = mutableListOf()
-    val clickItemEventSubject = PublishSubject.create<Pair<Todo, Int>>()
+    val clickItemEventSubject = PublishSubject.create<Pair<Todo, View>>()
     fun updateList(todos: List<Todo>) {
         todoList.clear()
         todoList.addAll(todos)
@@ -51,8 +51,8 @@ class TodoListAdapter(val context: Context) :
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         val todo = todoList[position]
         holder.bind(todoList[position], position)
-        holder.photoImageView.setOnClickListener { _view ->
-            clickItemEventSubject.onNext(Pair(todo, R.id.todoItemImage))
+        holder.itemView.setOnClickListener { _view ->
+            clickItemEventSubject.onNext(Pair(todo, holder.itemView))
         }
     }
 
@@ -140,15 +140,15 @@ class TodoListAdapter(val context: Context) :
                 expandButtonArea.visibility =
                     if (expandButtonArea.visibility == VISIBLE) GONE else VISIBLE
             }
-            completeButton.setOnClickListener {
+            completeButton.setOnClickListener {_view ->
                 todoList.indexOf(item).takeIf { index -> index != -1 }?.also {
-                    clickItemEventSubject.onNext(Pair(item, R.id.todo_complete_button))
+                    clickItemEventSubject.onNext(Pair(item, _view))
                 }
             }
-            deleteButton.setOnClickListener {
+            deleteButton.setOnClickListener {_view ->
                 todoList.indexOf(item).takeIf { index -> index != -1 }?.also {
                     todoList.removeAt(it)
-                    clickItemEventSubject.onNext(Pair(item, R.id.todo_delete_button))
+                    clickItemEventSubject.onNext(Pair(item, _view))
                 }
             }
         }

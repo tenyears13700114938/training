@@ -37,6 +37,7 @@ import com.example.myapplication.basic_03_android_test.todoRepository.todoReposi
 import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
 import com.example.myapplication.util.copyTodo
 import com.example.myapplication.util.localDateOfTimeFromUtc
+import com.google.android.material.transition.MaterialContainerTransform
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_navi_common.*
@@ -91,6 +92,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
     ): View? {
         // Inflate the layout for this fragment
         detailsView = inflater.inflate(R.layout.fragment_todo_detail, container, false)
+        detailsView.transitionName = "shared_todo_card"
         //todoDetailViewModel = activity?.run{ ViewModelProviders.of(activity as FragmentActivity).get(TodoDetailViewModel::class.java)} ?: throw Exception("no activity")
         //todoViewModel = activity?.run {ViewModelProviders.of(activity as FragmentActivity).get(TodoViewModel::class.java)} ?: throw Exception("no activity")
         todoDetailViewModel.todoDetail.observe(this){
@@ -127,6 +129,21 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
     override fun onDestroyView() {
         compositeDisposable.clear()
         super.onDestroyView()
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        activity?.let {
+            it.window.sharedElementEnterTransition = MaterialContainerTransform(it).apply {
+                addTarget(detailsView)
+                duration = 200L
+            }
+            it.window.sharedElementReturnTransition = MaterialContainerTransform(it).apply {
+                addTarget(detailsView)
+                duration = 200L
+            }
+            it.startPostponedEnterTransition()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

@@ -13,6 +13,8 @@ import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoSearch.TodoSearchableActivity
+import com.google.android.material.transition.MaterialContainerTransformSharedElementCallback
+import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.android.synthetic.main.activity_navi_common.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -41,6 +43,9 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
                     inject(this@TodoListActivity)
                 }
 
+        setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+        window.sharedElementsUseOverlay = false
+        
         super.onCreate(savedInstanceState)
 
         toolbar.title = if(intent.getIntExtra(EXTRA_PARAMETER_START_TYPE, 0) == 0)"ToDo List" else "Attention Todos"

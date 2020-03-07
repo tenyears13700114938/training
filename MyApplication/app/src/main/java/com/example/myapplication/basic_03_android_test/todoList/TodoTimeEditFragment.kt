@@ -17,6 +17,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.util.localDateOfTimeFromUtc
+import com.google.android.material.transition.MaterialSharedAxis
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -81,7 +82,7 @@ class TodoTimeEditFragment : Fragment() {
     //set time display accord todoViewModel
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setView(){
-        todoViewModel.todoInfo.targetTime?.takeIf { it != 0L }.let {
+        todoViewModel.todoInfo.targetTime?.takeIf { it != 0L }?.let {
             localDateOfTimeFromUtc(todoViewModel.todoInfo.targetTime!!).also { _localDateTime ->
                 mDatePicker.updateDate(
                     _localDateTime.year,
@@ -94,4 +95,19 @@ class TodoTimeEditFragment : Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val forward = MaterialSharedAxis.create(requireContext(), MaterialSharedAxis.X, true).apply {
+            secondaryTransition = null
+            duration = 100
+        }
+        enterTransition = forward
+
+        val backward = MaterialSharedAxis.create(requireContext(), MaterialSharedAxis.X,  false).apply {
+            secondaryTransition = null
+            duration = 100
+        }
+        exitTransition = backward
+    }
 }

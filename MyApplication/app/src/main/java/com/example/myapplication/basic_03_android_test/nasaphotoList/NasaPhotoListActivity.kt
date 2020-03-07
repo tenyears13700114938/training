@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
+import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.android.synthetic.main.activity_navi_common.*
 
 class NasaPhotoListActivity : NavCommonActivity() {
