@@ -3,7 +3,6 @@
     <string name="button_label_count">Count</string>
     <string name="button_label_toast">Toast</string>
     <string name="count_initial_value">0</string>
-    <string name="toast_message">Hello Toast!</string>
     <string name="button_label_zero">ZERO</string>
     <string name="home_work_toast">DoHomeWork</string>
     <string name="article_title">Article Title</string>
@@ -28,8 +27,6 @@
         \"<b>future is done by yourself</b>\"\n\n
         \"if you any question, please visi\" <b><i>www.google.com</i></b>
     </string>
-    <string name="title_activity_intents_common">ActivityIntentsCommon</string>
-    <string name="message">Message...</string>
     <string name="no_message">No Message...</string>
     <string name="input_message_here">Input message here</string>
     <string-array name="actionActivity">
@@ -43,7 +40,6 @@
         <item>.basic_02_Activity.ImplicitIntentActivity</item>
     </string-array>
     <string name="title_activity_implicit_intent">ImplicitIntent</string>
-    <string name="action_settings">Settings</string>
     <string name="share_this_text">Share This Text</string>
     <string name="open_location">Open Location</string>
     <string name="open_website">Open WebSite</string>
@@ -51,8 +47,6 @@
     <string name="golden_gate_bridge">Golden Gate Bridge</string>
     <string name="http_developer_android_com">http://developer.android.com</string>
     <string name="title_activity_todo_list">TodoListActivity</string>
-    <string name="title_activity_todo_add">TodoAddActivity</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

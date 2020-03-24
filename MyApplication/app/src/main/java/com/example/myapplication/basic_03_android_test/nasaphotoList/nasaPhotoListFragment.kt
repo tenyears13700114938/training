@@ -18,6 +18,7 @@ import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonA
 import com.example.myapplication.basic_03_android_test.model.NasaPhotoLoadStatus
 import com.example.myapplication.basic_03_android_test.nasaPhotoContentDetails.NasaPhotoDetailsActivity
 import com.example.myapplication.basic_03_android_test.nasaPhotoContentDetails.NasaPhotoDetailsActivity.Companion.EXTRA_NASA_PHOTO_PARAM
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class nasaPhotoListFragment : Fragment() {
 
@@ -52,6 +53,12 @@ class nasaPhotoListFragment : Fragment() {
                         intent.putExtra(EXTRA_NASA_PHOTO_PARAM, it)
                         startActivity(intent)
                     }
+                _rootView.findViewById<View>(R.id.bottom_sheet).apply{
+                    BottomSheetBehavior.from(this).also {
+                        it.halfExpandedRatio = 0.6f
+                        it.isFitToContents = false
+                    }
+                }
             }
     }
 
@@ -80,8 +87,8 @@ class nasaPhotoListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        (activity as NavCommonActivity).run {
+        /*(activity as NavCommonActivity).run {
             setTitle("NasaPhoto List")
-        }
+        }*/
     }
 }
