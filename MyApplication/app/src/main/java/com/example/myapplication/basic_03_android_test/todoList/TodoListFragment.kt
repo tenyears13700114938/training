@@ -105,6 +105,7 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
         todoListView = fragmentView.findViewById<RecyclerView>(R.id.todoList).also { _list ->
             _list.adapter = todoListAdapter
             _list.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            _list.addItemDecoration(TodoListItemDecoration(_list, todoListAdapter))
         }
 
         /*todoListViewModel = activity?.run {
@@ -162,7 +163,10 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
             public override fun onSwiped(viewHolder : RecyclerView.ViewHolder, direction : Int) {
                 // remove from adapter
                 Log.d(TAG, "todolist onSwiped pos:" + viewHolder.adapterPosition)
-                deleteTodo(todoListAdapter.todoList[viewHolder.getAdapterPosition()])
+                var todo = todoListAdapter.todoList[viewHolder.getAdapterPosition()]
+                if(todo is Todo) {
+                    deleteTodo(todo)
+                }
             }
         }
         ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(todoListView)

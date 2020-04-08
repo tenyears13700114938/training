@@ -77,6 +77,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignBottom="@+id/todoItemDescription"
             android:background="@drawable/ic_arrow_drop_down_black_24dp"
+            android:visibility="invisible"
             />
 
         <LinearLayout
@@ -85,7 +86,7 @@
             android:id="@+id/expand_button_area"
             android:layout_below="@+id/todoItemDescription"
             android:orientation="horizontal"
-            android:visibility="gone"
+            android:visibility="invisible"
             >
 
             <ImageButton

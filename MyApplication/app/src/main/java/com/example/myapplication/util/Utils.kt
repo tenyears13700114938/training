@@ -58,6 +58,7 @@ fun copyTodo(from: Todo, to: Todo) {
     to.completed = from.completed
     to.description = from.description
     to.comment = from.comment
+    to.priority = from.priority
 }
 
 fun getFileDirs(dirName : String, context: Context) : String{

@@ -3,18 +3,19 @@ package com.example.myapplication.basic_03_android_test.todoList
 
 import android.content.Context
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
+import com.example.myapplication.basic_03_android_test.model.TodoPriority
 import com.example.myapplication.util.hideSoftInput
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialSharedAxis
@@ -29,6 +30,7 @@ class TodoTitleEditFragment : Fragment() {
     lateinit var todoViewModel: TodoViewModel
     private lateinit var titleEdit : EditText
     private lateinit var descriptionEdit : EditText
+    private lateinit var prioritySpinner : Spinner
     private val args : TodoTitleEditFragmentArgs by navArgs()
 
     override fun onAttach(context: Context) {
@@ -54,7 +56,7 @@ class TodoTitleEditFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_todo_title_edit, container, false)
         titleEdit = view.findViewById(R.id.todo_title)
         descriptionEdit = view.findViewById(R.id.todo_description)
-
+        prioritySpinner = view.findViewById(R.id.todo_priority)
         /*todoViewModel = activity?.run{
             ViewModelProviders.of(this).get(TodoViewModel::class.java)
         } ?: return view*/
@@ -93,6 +95,31 @@ class TodoTitleEditFragment : Fragment() {
     private fun setView() {
         titleEdit.setText(todoViewModel.todoInfo.thing)
         descriptionEdit.setText(todoViewModel.todoInfo.description)
+        val priorityList = mutableListOf<String>().apply {
+            add(TodoPriority.EMERGENCY.name)
+            add(TodoPriority.HIGH.name)
+            add(TodoPriority.MIDDLE.name)
+            add(TodoPriority.LOW.name)
+        }
+        prioritySpinner.adapter = ArrayAdapter<String>(this.requireContext(), android.R.layout.simple_spinner_item, priorityList)
+        prioritySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                todoViewModel.todoInfo.priority = parent?.getItemAtPosition(position) as String
+            }
+        }
+        prioritySpinner.setSelection(
+            if (TextUtils.isEmpty(todoViewModel.todoInfo.priority)) 0 else priorityList.indexOf(
+                todoViewModel.todoInfo.priority
+            )
+        )
     }
 
     override fun onResume() {

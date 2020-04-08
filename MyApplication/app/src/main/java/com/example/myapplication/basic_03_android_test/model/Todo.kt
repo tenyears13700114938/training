@@ -18,7 +18,8 @@ data class Todo (
     var imageUrl: String? = "",
     @ColumnInfo(name = "target_time")
     var targetTime: Long? = 0,
-    var comment: String? = ""
+    var comment: String? = "",
+    var priority: String? = TodoPriority.LOW.name
 ) : Serializable {
     constructor() : this(0, "", false,"", "", null)
     fun reset() {
@@ -28,4 +29,11 @@ data class Todo (
         imageUrl = ""
         targetTime = null
     }
+}
+
+enum class TodoPriority{
+    EMERGENCY,
+    HIGH,
+    MIDDLE,
+    LOW
 }
