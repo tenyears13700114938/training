@@ -5,9 +5,13 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.TextUtils
+import android.util.AttributeSet
+import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -21,8 +25,10 @@ import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.databinding.TodoItemBinding
 import com.example.myapplication.util.localDateOfTimeFromUtc
+import kotlinx.android.synthetic.main.todo_item.view.*
 
-class TodoCardView(context: Context, var mode: Int = NORMAL_MODE) : FrameLayout(context) {
+class TodoCardView(context: Context, attrs: AttributeSet? = null) : FrameLayout(context, attrs) {
+    private val TAG = TodoCardView::class.java.simpleName
     private val binding = TodoItemBinding.inflate(LayoutInflater.from(context), this, true)
     private val photoImageView: ImageView
     private val statusImageView: ImageView
@@ -33,11 +39,13 @@ class TodoCardView(context: Context, var mode: Int = NORMAL_MODE) : FrameLayout(
     private val completeButton: ImageButton
     private val deleteButton: ImageButton
     private val dateView: TextView
-
-    var completeClickListener = View.OnClickListener{}
+    private val displayMode: Int
+    var completeClickListener = View.OnClickListener {}
     var deleteClickListener = View.OnClickListener {}
     var cardClickListener = View.OnClickListener {}
     var statusImageClickListener = View.OnClickListener {}
+    var saveClickListener = View.OnClickListener {}
+    var editClickListener = View.OnClickListener {}
 
     init {
         photoImageView = binding.todoItemImage
@@ -50,10 +58,43 @@ class TodoCardView(context: Context, var mode: Int = NORMAL_MODE) : FrameLayout(
         deleteButton = binding.todoDeleteButton
         dateView = binding.todoTargetDate
 
+        context.theme.obtainStyledAttributes(attrs, R.styleable.TodoCardView, 0, 0).apply {
+            try {
+                displayMode = getInt(R.styleable.TodoCardView_displayMode, 0)
+            } finally {
+                recycle()
+            }
+        }
+
+        Log.d(TAG, "displayMode: {$displayMode}")
+        configCard(displayMode)
+
         completeButton.setOnClickListener { completeClickListener.onClick(it) }
         deleteButton.setOnClickListener { deleteClickListener.onClick(it) }
-        photoImageView.setOnClickListener{ cardClickListener.onClick(it) }
-        statusImageView.setOnClickListener{ statusImageClickListener.onClick(it)}
+        photoImageView.setOnClickListener { cardClickListener.onClick(it) }
+        statusImageView.setOnClickListener { statusImageClickListener.onClick(it) }
+        binding.todoEditButton.setOnClickListener{ editClickListener.onClick(it) }
+        binding.todoCommentSaveButton.setOnClickListener { saveClickListener.onClick(it) }
+    }
+
+    private fun configCard(displayMode : Int){
+        if(displayMode == 1){
+            titleView.maxLines = 2
+            descriptionView.maxLines = 4
+            expandButtonArea.visibility = View.VISIBLE
+            binding.todoCommentEditTextArea.visibility = View.VISIBLE
+
+            binding.todoCommentEditText.setOnEditorActionListener { v, actionId, event ->
+                if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) ||
+                    event != null &&
+                    event.action == KeyEvent.ACTION_DOWN &&
+                    event.keyCode == KeyEvent.KEYCODE_ENTER
+                ) {
+                    binding.todoCommentSaveButton.visibility = View.VISIBLE
+                }
+                false
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -69,7 +110,7 @@ class TodoCardView(context: Context, var mode: Int = NORMAL_MODE) : FrameLayout(
         }
 
         photoImageView.layoutParams.height =
-            context.resources.displayMetrics.widthPixels * 1 / 2
+            if(displayMode == 0) context.resources.displayMetrics.widthPixels * 1 / 2 else context.resources.displayMetrics.widthPixels
         Glide.with(context)
             .asBitmap()
             .load(if (TextUtils.isEmpty(item.imageUrl)) R.drawable.saturn_card_view_default else item.imageUrl)
@@ -112,10 +153,11 @@ class TodoCardView(context: Context, var mode: Int = NORMAL_MODE) : FrameLayout(
     }
 }
 
-enum class CardEvent{
+enum class CardEvent {
     COMPLETE,
     DELETE,
     EDIT,
+    SAVE_COMMENT,
     STATUS_CHANGE,
     SELECTED
 }

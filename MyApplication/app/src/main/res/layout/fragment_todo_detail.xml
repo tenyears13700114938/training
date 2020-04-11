@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="40dp"
-    xmlns:toos="http://schemas.android.com/apk/res-auto"
-    tools:context=".basic_03_android_test.todoDetail.TodoDetailFragment">
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:toos="http://schemas.android.com/apk/res-auto">
+    <data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    </data>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp"
+        tools:context=".basic_03_android_test.todoDetail.TodoDetailFragment">
 
-        <FrameLayout
-            android:id="@+id/card_container"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            toos:layout_constraintEnd_toEndOf="parent"
-            toos:layout_constraintStart_toStartOf="parent"
-            toos:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content">
 
-            <include layout="@layout/todo_item" />
-        </FrameLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+            <com.example.myapplication.basic_03_android_test.uiCommon.TodoCardView
+                android:id="@+id/todo_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                custom:displayMode="expand"
+                toos:layout_constraintEnd_toEndOf="parent"
+                toos:layout_constraintStart_toStartOf="parent"
+                toos:layout_constraintTop_toTopOf="parent">
+            </com.example.myapplication.basic_03_android_test.uiCommon.TodoCardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

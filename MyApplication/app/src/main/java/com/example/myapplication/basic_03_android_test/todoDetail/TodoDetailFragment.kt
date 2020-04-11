@@ -32,9 +32,12 @@ import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
+import com.example.myapplication.basic_03_android_test.model.TodoEvent
 import com.example.myapplication.basic_03_android_test.todoList.TodoViewModel
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
+import com.example.myapplication.basic_03_android_test.uiCommon.CardEvent
+import com.example.myapplication.databinding.FragmentTodoDetailBinding
 import com.example.myapplication.util.copyTodo
 import com.example.myapplication.util.localDateOfTimeFromUtc
 import com.google.android.material.transition.MaterialContainerTransform
@@ -62,20 +65,17 @@ private const val ARG_TODO_DETAIL = "Todo_Detail"
 class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
     private var todoParam: Todo? = null
     private var listener: OnFragmentInteractionListener? = null
+
     @Inject
     lateinit var todoDetailViewModel: TodoDetailViewModel
+
     @Inject
-    lateinit var todoViewModel : TodoViewModel
+    lateinit var todoViewModel: TodoViewModel
+
     @Inject
     lateinit var todoOpMng: TodoOpMng
-    private lateinit var mTitleText : TextView
-    private lateinit var mDescriptionText : TextView
-    private lateinit var mEditBtn : ImageButton
-    private lateinit var mCommentSaveBtn : ImageButton
-    private lateinit var mCommentEdit : EditText
-    private lateinit var mStatusIconImage : ImageView
-    private lateinit var detailsView : View
-    private val completeSubject  = PublishSubject.create<Int>()
+    private lateinit var binding: FragmentTodoDetailBinding
+    private val completeSubject = PublishSubject.create<TodoEvent>()
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,39 +91,35 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        detailsView = inflater.inflate(R.layout.fragment_todo_detail, container, false)
-        detailsView.transitionName = "shared_todo_card"
+        binding = FragmentTodoDetailBinding.inflate(LayoutInflater.from(context), container, false)
+        //binding.todoCard.detailsView.transitionName = "shared_todo_card"
         //todoDetailViewModel = activity?.run{ ViewModelProviders.of(activity as FragmentActivity).get(TodoDetailViewModel::class.java)} ?: throw Exception("no activity")
         //todoViewModel = activity?.run {ViewModelProviders.of(activity as FragmentActivity).get(TodoViewModel::class.java)} ?: throw Exception("no activity")
-        todoDetailViewModel.todoDetail.observe(this){
-            setCardView(detailsView, null, it)
+        todoDetailViewModel.todoDetail.observe(this) {
+            setCardView(null, it)
         }
-        configCardView(detailsView)
-        //setCardView(detailsView, null, todoDetailViewModel.todoDetail.value!!)
+        configCardView()
         compositeDisposable.add(
-            //completeSubject.debounce(100, TimeUnit.MILLISECONDS)
             completeSubject
-                .subscribe() { viewId ->
-                    when (viewId) {
-                        R.id.todo_complete_button -> {
+                .subscribe() { todoEvent ->
+                    when (todoEvent.cardEvent) {
+                        CardEvent.COMPLETE -> {
                             val copy = Todo()
                             copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
-                            copy.completed = if (copy.completed) false else true
+                            copy.completed = !copy.completed
                             todoOpMng.updateTodo(copy)
                         }
-                        R.id.todo_comment_save_button -> {
-                            if(!Objects.equals(todoDetailViewModel.todoDetail.value?.comment, mCommentEdit.text.toString())){
-                                val copy = Todo()
-                                copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
-                                copy.comment = mCommentEdit.text.toString()
-                                todoOpMng.updateTodo(copy)
-                            }
+                        CardEvent.SAVE_COMMENT -> {
+                            val copy = Todo()
+                            copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
+                            //todo
+                            //copy.comment = mCommentEdit.text.toString()
+                            todoOpMng.updateTodo(copy)
                         }
                     }
                 }
         )
-
-        return detailsView
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -135,11 +131,11 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         super.onActivityCreated(savedInstanceState)
         activity?.let {
             it.window.sharedElementEnterTransition = MaterialContainerTransform(it).apply {
-                addTarget(detailsView)
+                addTarget(binding.root)
                 duration = 200L
             }
             it.window.sharedElementReturnTransition = MaterialContainerTransform(it).apply {
-                addTarget(detailsView)
+                addTarget(binding.root)
                 duration = 200L
             }
             it.startPostponedEnterTransition()
@@ -152,169 +148,63 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         (activity as NavCommonActivity).run {
             setTitle("Todo Detail")
         }
-        setCardView(detailsView, null, todoDetailViewModel.todoDetail.value!!)
+        setCardView(null, todoDetailViewModel.todoDetail.value!!)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun configCardView(root: View) {
+    fun configCardView() {
         //complete button, delete button
-        root.findViewById<ImageButton>(R.id.todo_complete_button)?.let { _completeBtn ->
-            _completeBtn.setOnClickListener { _view ->
-                completeSubject.onNext(R.id.todo_complete_button)
+        View.OnClickListener { _view ->
+            val todo = todoDetailViewModel.todoDetail.value
+            todo?.let {
+                completeSubject.onNext(TodoEvent(CardEvent.COMPLETE, todo, _view))
+            }
+        }.let {
+            binding.todoCard.completeClickListener = it
+            binding.todoCard.statusImageClickListener = it
+        }
+
+        binding.todoCard.saveClickListener = View.OnClickListener { _view ->
+            val todo = todoDetailViewModel.todoDetail.value
+            todo?.let {
+                completeSubject.onNext(TodoEvent(CardEvent.SAVE_COMMENT, todo, _view))
             }
         }
-        //status icon
-        mStatusIconImage = root.findViewById(R.id.todo_statusIcon)
-        //Title Text max 2 line
-        mTitleText = root.findViewById<TextView>(R.id.todoItemTitle)!!.let { _titleText ->
-            _titleText.maxLines = 2
-            _titleText
-        }
-        //description Text max 4 Line
-        mDescriptionText = root.findViewById<TextView>(R.id.todoItemDescription)!!.let { _descriptionText ->
-            _descriptionText.maxLines = 4
-            _descriptionText
-        }
-        //expaned area visible
-        root.findViewById<View>(R.id.expand_button_area)?.let { _expandButtonArea ->
-            _expandButtonArea.visibility = View.VISIBLE
-        }
-        //expaned ctl button invisible
-        root.findViewById<View>(R.id.expand_button)?.let { _expandBtn ->
-            _expandBtn.visibility = View.INVISIBLE
-        }
-        //edit button visible
-        mEditBtn = root.findViewById<ImageButton>(R.id.todo_edit_button)!!.let { _imageEditBtn ->
-            _imageEditBtn.visibility = View.VISIBLE
-            _imageEditBtn
-        }
-        mCommentSaveBtn = root.findViewById<ImageButton>(R.id.todo_comment_save_button)
-        mCommentSaveBtn.setOnClickListener(object : View.OnClickListener{
-            override fun onClick(v: View?) {
-                completeSubject.onNext(R.id.todo_comment_save_button)
-            }
-        })
 
         //delete button
-        root.findViewById<ImageButton>(R.id.todo_delete_button)?.let { _deleteBtn ->
-            _deleteBtn.setOnClickListener { _view ->
-                todoViewModel.todoInfo.let {
-                    if (todoOpMng.isTodoEditing(it)) {
-                        Toast.makeText(
-                            _view.context,
-                            "Todo is Editing...",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        todoOpMng.deleteTodo(it)
-                    }
+        binding.todoCard.deleteClickListener = View.OnClickListener { _view ->
+            todoViewModel.todoInfo.let {
+                if (todoOpMng.isTodoEditing(it)) {
+                    Toast.makeText(
+                        _view.context,
+                        "Todo is Editing...",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    todoOpMng.deleteTodo(it)
                 }
-                activity?.finish()
             }
-        }
-        //comment area
-        root.findViewById<View>(R.id.todo_comment_edit_text_area).also {_commentArea ->
-            _commentArea.visibility = View.VISIBLE
+            activity?.finish()
         }
 
-        mCommentEdit = root.findViewById<EditText>(R.id.todo_comment_edit_text)
+        binding.todoCard.editClickListener = View.OnClickListener { _view ->
+            todoViewModel.todoInfo.let {
+                if (todoOpMng.isTodoEditing(it)) {
+                    Toast.makeText(_view.context, "Todo is Editing", Toast.LENGTH_SHORT).show()
+                } else {
+                    val totitleAction =
+                        TodoDetailFragmentDirections.actionTodoDetailFragmentToTodoTitleEditFragment2(
+                            TodoEditType.UPDATE
+                        )
+                    _view.findNavController().navigate(totitleAction)
+                }
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun setCardView(root : View, oldInfo : Todo?, newInfo : Todo){
-        if (oldInfo == null || !Objects.equals(oldInfo.completed, newInfo.completed)) {
-            Glide.with(activity!!)
-                .load(if (newInfo.completed) R.drawable.ic_check_box_black_24dp else R.drawable.ic_check_box_outline_blank_black_24dp)
-                .into(mStatusIconImage)
-        }
-        //image card size
-        if (oldInfo == null || !Objects.equals(oldInfo.imageUrl, newInfo.imageUrl)) {
-            root.findViewById<ImageView>(R.id.todoItemImage)?.let { _todoImage ->
-                _todoImage.layoutParams.height =
-                    _todoImage.context.resources.displayMetrics.widthPixels
-                Glide.with(activity!!)
-                    .asBitmap()
-                    .load(if (TextUtils.isEmpty(newInfo.imageUrl)) R.drawable.saturn_card_view_default else newInfo.imageUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    //.skipMemoryCache(true)
-                    .override(_todoImage.context.resources.displayMetrics.widthPixels,_todoImage.layoutParams.height)
-                    .into(object : CustomTarget<Bitmap>(_todoImage.resources.displayMetrics.widthPixels, _todoImage.resources.displayMetrics.widthPixels) {
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                        }
-
-                        override fun onResourceReady(
-                            resource: Bitmap,
-                            transition: Transition<in Bitmap>?
-                        ) {
-                            _todoImage.setImageBitmap(resource)
-                           // resource.recycle()
-                        }
-
-                        override fun onLoadStarted(placeholder: Drawable?) {
-                            super.onLoadStarted(placeholder)
-                        }
-
-                        override fun onLoadFailed(errorDrawable: Drawable?) {
-                            super.onLoadFailed(errorDrawable)
-                        }
-                    })
-            }
-        }
-        //Title Text max 2 line
-        if (oldInfo == null || !Objects.equals(oldInfo.thing, newInfo.thing)) {
-            mTitleText.text = newInfo.thing
-        }
-        //description Text max 4 Line
-        if (oldInfo == null || !Objects.equals(oldInfo.description, newInfo.description)) {
-            mDescriptionText.text = newInfo.description
-        }
-        //date
-        if (oldInfo == null || oldInfo.targetTime != newInfo.targetTime) {
-            root.findViewById<TextView>(R.id.todo_target_date)?.let { _todoTargetDate ->
-                if (newInfo.targetTime != 0L) {
-                    _todoTargetDate.text =
-                        localDateOfTimeFromUtc(newInfo.targetTime!!).toString()
-                            .substringBefore("T")
-                    _todoTargetDate.visibility = View.VISIBLE
-                } else {
-                    _todoTargetDate.visibility = View.INVISIBLE
-                }
-            }
-        }
-        //comment
-        if (oldInfo == null || !Objects.equals(oldInfo.comment, newInfo.comment)) {
-            mCommentEdit.setText(newInfo.comment)
-            mCommentEdit.setOnEditorActionListener(object : TextView.OnEditorActionListener {
-                override fun onEditorAction(
-                    v: TextView?,
-                    actionId: Int,
-                    event: KeyEvent?
-                ): Boolean {
-                    if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) ||
-                        event != null &&
-                        event.action == KeyEvent.ACTION_DOWN &&
-                        event.keyCode == KeyEvent.KEYCODE_ENTER
-                    ) {
-                        mCommentSaveBtn.visibility = View.VISIBLE
-                    }
-                    return false
-                }
-            })
-        }
-
-        //edit Button
-        mEditBtn.setOnClickListener {_editBtn ->
-            todoViewModel.todoInfo.let {
-                if(todoOpMng.isTodoEditing(it)){
-                    Toast.makeText(_editBtn.context, "Todo is Editing", Toast.LENGTH_SHORT).show()
-                }
-                else {
-                    val totitleAction =
-                        TodoDetailFragmentDirections.actionTodoDetailFragmentToTodoTitleEditFragment2(TodoEditType.UPDATE)
-                    _editBtn.findNavController().navigate(totitleAction)
-                }
-            }
-        }
+    fun setCardView(oldInfo: Todo?, newInfo: Todo) {
+        binding.todoCard.bind(newInfo)
     }
 
 
