@@ -1,141 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/content_card"
-    android:layout_marginLeft="@dimen/mtrl_card_spacing"
-    android:layout_marginTop="@dimen/mtrl_card_spacing"
-    android:layout_marginRight="@dimen/mtrl_card_spacing"
-    style="@style/Widget.MaterialComponents.CardView"
-    >
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <data>
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:orientation="horizontal">
+        android:id="@+id/content_card"
 
-        <ImageView
-            android:id="@+id/todoItemImage"
+        style="@style/Widget.MaterialComponents.CardView">
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            tools:background="@drawable/saturn_card_view_default"/>
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/todo_target_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignBottom="@+id/todo_statusIcon"
-            android:background="@color/cardview_dark_background"
-            android:textColor="@color/colorPrimary"
-            android:gravity="center"
-            android:textSize="18sp"
-            tools:text="2019/11/26" />
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/todo_statusIcon"
-            android:padding="2dp"
-            android:background="@color/cardview_dark_background"
-            android:layout_alignStart="@+id/todoItemImage"
-            android:layout_alignTop="@+id/todoItemImage"
-            tools:src="@drawable/ic_check_box_black_24dp" />
-
-        <TextView
-            android:id="@+id/todoItemTitle"
-            style="@style/ThemeOverlay.AppCompat.Dark"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/todoItemImage"
-            android:fontFamily="@font/rubik_light"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:lines="1"
-            tools:text="title" />
-
-        <TextView
-            android:id="@+id/todoItemDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/todoItemTitle"
-            android:textColor="?android:textColorSecondary"
-            android:textSize="14sp"
-            android:maxLines="2"
-            android:textStyle="normal"
-            tools:text="description" />
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/expand_button"
-            android:layout_alignParentEnd="true"
-            android:layout_alignBottom="@+id/todoItemDescription"
-            android:background="@drawable/ic_arrow_drop_down_black_24dp"
-            android:visibility="invisible"
-            />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/expand_button_area"
-            android:layout_below="@+id/todoItemDescription"
-            android:orientation="horizontal"
-            android:visibility="invisible"
-            >
-
-            <ImageButton
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/todo_complete_button"
-                android:src="@drawable/ic_build_black_24dp"
-                android:contentDescription="let todo completed.."
-                />
-            <ImageButton
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/todo_delete_button"
-                android:src="@drawable/ic_delete_black_24dp"
-                android:contentDescription="delete todo..."
-                />
-
-            <ImageButton
-                android:id="@+id/todo_edit_button"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_edit_black_24dp"
-                android:visibility="invisible" />
-
-            <ImageButton
-                android:id="@+id/todo_comment_save_button"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_save_black_24dp"
-                android:visibility="invisible" />
-
-        </LinearLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:visibility="gone"
-            android:id="@+id/todo_comment_edit_text_area"
-            android:layout_below="@+id/expand_button_area">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <ImageView
+                android:id="@+id/todoItemImage"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/todo_comment_edit_text"
-                android:gravity="top"
-                android:hint="how about your work, write it..." />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                tools:background="@drawable/saturn_card_view_default" />
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/todo_target_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignBottom="@+id/todo_statusIcon"
+                android:background="@color/cardview_dark_background"
+                android:textColor="@color/colorPrimary"
+                android:gravity="center"
+                android:textSize="18sp"
+                tools:text="2019/11/26" />
 
-</com.google.android.material.card.MaterialCardView>
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/todo_statusIcon"
+                android:padding="2dp"
+                android:background="@color/cardview_dark_background"
+                android:layout_alignStart="@+id/todoItemImage"
+                android:layout_alignTop="@+id/todoItemImage"
+                tools:src="@drawable/ic_check_box_black_24dp" />
+
+            <TextView
+                android:id="@+id/todoItemTitle"
+                style="@style/ThemeOverlay.AppCompat.Dark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/todoItemImage"
+                android:fontFamily="@font/rubik_light"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:lines="1"
+                tools:text="title" />
+
+            <TextView
+                android:id="@+id/todoItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/todoItemTitle"
+                android:textColor="?android:textColorSecondary"
+                android:textSize="14sp"
+                android:maxLines="2"
+                android:textStyle="normal"
+                tools:text="description" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/expand_button"
+                android:layout_alignParentEnd="true"
+                android:layout_alignBottom="@+id/todoItemDescription"
+                android:background="@drawable/ic_arrow_drop_down_black_24dp"
+                android:visibility="invisible" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/expand_button_area"
+                android:layout_below="@+id/todoItemDescription"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageButton
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/todo_complete_button"
+                    android:src="@drawable/ic_build_black_24dp"
+                    android:contentDescription="let todo completed.." />
+
+                <ImageButton
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/todo_delete_button"
+                    android:src="@drawable/ic_delete_black_24dp"
+                    android:contentDescription="delete todo..." />
+
+                <ImageButton
+                    android:id="@+id/todo_edit_button"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_edit_black_24dp"
+                    android:visibility="invisible" />
+
+                <ImageButton
+                    android:id="@+id/todo_comment_save_button"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_save_black_24dp"
+                    android:visibility="invisible" />
+
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:visibility="gone"
+                android:id="@+id/todo_comment_edit_text_area"
+                android:layout_below="@+id/expand_button_area">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/todo_comment_edit_text"
+                    android:gravity="top"
+                    android:hint="how about your work, write it..." />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>
 

@@ -108,7 +108,7 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
 
         //item click callback
         //listAdapter.clickItemEventSubject.skipLast(500, TimeUnit.MILLISECONDS)
-        listAdapter.clickItemEventSubject
+       /* listAdapter.clickItemEventSubject
             .subscribe { _pair ->
             this@TodoSearchableFragment.activity?.also { _activity ->
                 when (_pair.second.id) {
@@ -136,7 +136,7 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
             }
         }.also {
             compositeDisposable.add(it)
-        }
+        }*/
     }
 
     override fun onStart() {

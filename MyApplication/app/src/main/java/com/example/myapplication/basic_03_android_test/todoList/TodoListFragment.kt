@@ -25,6 +25,7 @@ import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoDetail.DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO
 import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
 import com.example.myapplication.basic_03_android_test.todoList.TodoListActivity.Companion.EXTRA_PARAMETER_START_TYPE
+import com.example.myapplication.basic_03_android_test.uiCommon.CardEvent
 import com.example.myapplication.util.copyTodo
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
@@ -62,14 +63,10 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
         todoListAdapter = TodoListAdapter(context!!).also {
             //it.clickItemEventSubject.debounce(100, TimeUnit.MILLISECONDS)
             it.clickItemEventSubject
-                .subscribe() { _pair ->
-                when (_pair.second.id) {
-                    R.id.todo_delete_button -> {
-                        deleteTodo(_pair.first)
-                    }
-
-                    R.id.todo_complete_button -> {
-                        if (todoOpMng.isTodoEditing(_pair.first)) {
+                .subscribe() { cardEventInfo ->
+                when (cardEventInfo.cardEvent) {
+                    CardEvent.STATUS_CHANGE -> {
+                        if (todoOpMng.isTodoEditing(cardEventInfo.todo)) {
                             Toast.makeText(
                                 this.requireContext(),
                                 "Todo is Editing...",
@@ -77,14 +74,14 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                             ).show()
                         } else {
                             var copy = Todo()
-                            copyTodo(_pair.first, copy)
+                            copyTodo(cardEventInfo.todo, copy)
                             copy.completed = if(copy.completed) false else true
                             todoOpMng.updateTodo(copy)
                         }
                     }
 
-                    R.id.content_card -> {
-                        if (todoOpMng.isTodoEditing(_pair.first)) {
+                    CardEvent.SELECTED -> {
+                        if (todoOpMng.isTodoEditing(cardEventInfo.todo)) {
                             Toast.makeText(
                                 this.requireContext(),
                                 "Todo is Editing...",
@@ -92,8 +89,8 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                             ).show()
                         } else {
                             Intent(activity, TodoDetailActivity::class.java).apply {
-                                val options = ActivityOptions.makeSceneTransitionAnimation(activity,_pair.second,"shared_todo_card")
-                                putExtra(DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO, _pair.first)
+                                val options = ActivityOptions.makeSceneTransitionAnimation(activity,cardEventInfo.refView,"shared_todo_card")
+                                putExtra(DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO, cardEventInfo.todo)
                                 activity?.startActivity(this, options.toBundle())
                             }
                         }
