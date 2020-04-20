@@ -9,7 +9,10 @@ import com.example.myapplication.basic_03_android_test.model.TodoSearch
 @Dao
 interface todoDao {
     @Query("select * from todo_table")
-    fun getAll() : LiveData<List<Todo>>
+    fun getAllLiveData() : LiveData<List<Todo>>
+
+    @Query("select * from todo_table")
+    fun getAllTodos() : List<Todo>
 
     @Query("delete from todo_table")
     fun deleteAll()

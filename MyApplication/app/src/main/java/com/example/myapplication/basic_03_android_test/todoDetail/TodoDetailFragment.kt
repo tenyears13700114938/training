@@ -1,54 +1,32 @@
 package com.example.myapplication.basic_03_android_test.todoDetail
 
-import android.app.Activity
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.TextUtils
-import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import androidx.navigation.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
-import com.bumptech.glide.signature.ObjectKey
 
-import com.example.myapplication.R
-import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
+import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.basic_03_android_test.model.TodoEvent
 import com.example.myapplication.basic_03_android_test.todoList.TodoViewModel
-import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
-import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
 import com.example.myapplication.basic_03_android_test.uiCommon.CardEvent
 import com.example.myapplication.databinding.FragmentTodoDetailBinding
 import com.example.myapplication.util.copyTodo
-import com.example.myapplication.util.localDateOfTimeFromUtc
 import com.google.android.material.transition.MaterialContainerTransform
+import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.activity_navi_common.*
 import kotlinx.coroutines.*
-import java.io.File
-import java.security.Signature
-import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -62,7 +40,7 @@ private const val ARG_TODO_DETAIL = "Todo_Detail"
  * Use the [TodoDetailFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
+class TodoDetailFragment : DaggerFragment(), CoroutineScope by MainScope() {
     private var todoParam: Todo? = null
     private var listener: OnFragmentInteractionListener? = null
 
@@ -73,7 +51,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
     lateinit var todoViewModel: TodoViewModel
 
     @Inject
-    lateinit var todoOpMng: TodoOpMng
+    lateinit var todoLogic: TodoLogic
     private lateinit var binding: FragmentTodoDetailBinding
     private val completeSubject = PublishSubject.create<TodoEvent>()
     private val compositeDisposable = CompositeDisposable()
@@ -107,14 +85,14 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
                             val copy = Todo()
                             copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
                             copy.completed = !copy.completed
-                            todoOpMng.updateTodo(copy)
+                            todoLogic.updateTodo(copy)
                         }
                         CardEvent.SAVE_COMMENT -> {
                             val copy = Todo()
                             copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
                             //todo
                             //copy.comment = mCommentEdit.text.toString()
-                            todoOpMng.updateTodo(copy)
+                            todoLogic.updateTodo(copy)
                         }
                     }
                 }
@@ -174,14 +152,14 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
         //delete button
         binding.todoCard.deleteClickListener = View.OnClickListener { _view ->
             todoViewModel.todoInfo.let {
-                if (todoOpMng.isTodoEditing(it)) {
+                if (todoLogic.isTodoEditing(it)) {
                     Toast.makeText(
                         _view.context,
                         "Todo is Editing...",
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    todoOpMng.deleteTodo(it)
+                    todoLogic.deleteTodo(it)
                 }
             }
             activity?.finish()
@@ -189,7 +167,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
 
         binding.todoCard.editClickListener = View.OnClickListener { _view ->
             todoViewModel.todoInfo.let {
-                if (todoOpMng.isTodoEditing(it)) {
+                if (todoLogic.isTodoEditing(it)) {
                     Toast.makeText(_view.context, "Todo is Editing", Toast.LENGTH_SHORT).show()
                 } else {
                     val totitleAction =
@@ -220,7 +198,7 @@ class TodoDetailFragment : Fragment(), CoroutineScope by MainScope() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (activity as TodoDetailActivity).todoDetailComponent.inject(this)
+        /*(activity as TodoDetailActivity).todoDetailComponent.inject(this)*/
 
         if (context is OnFragmentInteractionListener) {
             listener = context

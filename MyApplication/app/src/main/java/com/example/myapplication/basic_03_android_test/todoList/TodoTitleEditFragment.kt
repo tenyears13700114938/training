@@ -19,13 +19,14 @@ import com.example.myapplication.basic_03_android_test.model.TodoPriority
 import com.example.myapplication.util.hideSoftInput
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialSharedAxis
+import dagger.android.support.DaggerFragment
 import java.io.File
 import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
  */
-class TodoTitleEditFragment : Fragment() {
+class TodoTitleEditFragment : DaggerFragment() {
     @Inject
     lateinit var todoViewModel: TodoViewModel
     private lateinit var titleEdit : EditText
@@ -35,7 +36,7 @@ class TodoTitleEditFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (activity as TodoListActivity).todoListComponent.inject(this)
+        /*(activity as TodoListActivity).todoListComponent.inject(this)*/
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

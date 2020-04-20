@@ -1,5 +1,8 @@
-package com.example.myapplication.basic_03_android_test.todoDetail
+package com.example.myapplication.basic_03_android_test.todoDetail.di
 
+/*
+import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
+import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailFragment
 import com.example.myapplication.util.dagger.ActivityScope
 import dagger.BindsInstance
 import dagger.Subcomponent
@@ -14,4 +17,4 @@ interface TodoDetailComponent {
 
     fun inject(activity: TodoDetailActivity)
     fun inject(detailFragment: TodoDetailFragment)
-}
+}*/

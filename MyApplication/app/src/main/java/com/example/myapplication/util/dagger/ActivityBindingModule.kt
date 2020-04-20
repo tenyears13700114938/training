@@ -6,21 +6,21 @@ import com.example.myapplication.basic_01_02_firstApp.firstAppActivityModule
 import com.example.myapplication.basic_01_03_text_scrollingView.ScrollingTextActivity
 import com.example.myapplication.basic_02_Activity.IntentReceiveActivity
 import com.example.myapplication.basic_02_Activity.IntentSendActivity
-import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailComponent
-import com.example.myapplication.basic_03_android_test.todoList.TodoListComponent
+import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
+import com.example.myapplication.basic_03_android_test.todoDetail.di.FragmentBindingModule
+import com.example.myapplication.basic_03_android_test.todoDetail.di.TodoDetailViewModule
+import com.example.myapplication.basic_03_android_test.todoList.TodoListActivity
+import com.example.myapplication.basic_03_android_test.todoList.di.TodoListViewModule
+import com.example.myapplication.basic_03_android_test.todoList.di.fragmentBindingModule
 import com.example.myapplication.main.MainActivity
 import com.example.myapplication.sensordetails.SensorDetailsActivity
 import com.example.myapplication.sensordetails.SensorDetailsActivityModule
-import com.example.myapplication.sensorlist.SensorListActivity
 import com.example.myapplication.sensorlist.SensorListActivityComponent
-import dagger.Binds
 import dagger.Module
-import dagger.android.AndroidInjector
+import dagger.android.AndroidInjectionModule
 import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.ClassKey
-import dagger.multibindings.IntoMap
 
-@Module(subcomponents = [SensorListActivityComponent::class, TodoListComponent::class, TodoDetailComponent::class])
+@Module(subcomponents = [SensorListActivityComponent::class/*, TodoListComponent::class, TodoDetailComponent::class*/])
 interface ActivityBindingModule {
     /*@Binds
     @IntoMap
@@ -47,4 +47,12 @@ interface ActivityBindingModule {
 
     @ContributesAndroidInjector(modules = [SensorDetailsActivityModule::class])
     fun contributeSensorDetailsActivity() : SensorDetailsActivity
+
+    @ContributesAndroidInjector(modules = [TodoListViewModule::class, fragmentBindingModule::class, AndroidInjectionModule::class])
+    @ActivityScope
+    fun contributeTodoListActivity() : TodoListActivity
+
+    @ContributesAndroidInjector(modules = [TodoDetailViewModule::class, AndroidInjectionModule::class, FragmentBindingModule::class])
+    @ActivityScope
+    fun contributeTodoDetailActivity() : TodoDetailActivity
 }

@@ -26,9 +26,9 @@ enum class OpResult(val result: Int) {
 }
 
 @Singleton
-class TodoOpMng @Inject constructor(val appContext: Context) : ResultReceiver(Handler()) {
+class TodoLogic @Inject constructor(val appContext: Context) : ResultReceiver(Handler()) {
     val RESULT_EXTRA_PARAM_TODO = "RESULT_EXTRA_PARAM_TODO"
-    private val TAG = TodoOpMng::class.java.simpleName
+    private val TAG = TodoLogic::class.java.simpleName
     private val editMapLock = ReentrantLock()
     private val addListLock = ReentrantLock()
 

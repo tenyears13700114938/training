@@ -19,7 +19,10 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
-import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
+import com.example.myapplication.basic_03_android_test.Flux.CoroutineDispatcher
+import com.example.myapplication.basic_03_android_test.Flux.TodoActionCreator
+import com.example.myapplication.basic_03_android_test.Flux.TodoStore
+import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoDetail.DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO
@@ -28,7 +31,9 @@ import com.example.myapplication.basic_03_android_test.todoList.TodoListActivity
 import com.example.myapplication.basic_03_android_test.uiCommon.CardEvent
 import com.example.myapplication.util.copyTodo
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import java.util.*
@@ -38,7 +43,7 @@ import javax.inject.Inject
 /**
  * A placeholder fragment containing a simple view.
  */
-class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by MainScope() {
+class TodoListFragment :  DaggerFragment(), CoroutineScope by MainScope() {
     private lateinit var todoListView: RecyclerView
     private lateinit var todoListAdapter: TodoListAdapter
     @Inject
@@ -46,12 +51,18 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
     @Inject
     lateinit var todoViewModel: TodoViewModel
     @Inject
-    lateinit var todoOpMng: TodoOpMng
+    lateinit var todoLogic: TodoLogic
     private val TAG = TodoListFragment::class.java.simpleName
+    @Inject
+    lateinit var dispatcher : CoroutineDispatcher
+    @Inject
+    lateinit var actionCreator : TodoActionCreator
+    @Inject
+    lateinit var todoStore: TodoStore
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (activity as TodoListActivity).todoListComponent.inject(this)
+        /*(activity as TodoListActivity).todoListComponent.inject(this)*/
     }
 
     @SuppressLint("RestrictedApi")
@@ -66,7 +77,7 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                 .subscribe() { cardEventInfo ->
                 when (cardEventInfo.cardEvent) {
                     CardEvent.STATUS_CHANGE -> {
-                        if (todoOpMng.isTodoEditing(cardEventInfo.todo)) {
+                        if (todoLogic.isTodoEditing(cardEventInfo.todo)) {
                             Toast.makeText(
                                 this.requireContext(),
                                 "Todo is Editing...",
@@ -76,12 +87,12 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                             var copy = Todo()
                             copyTodo(cardEventInfo.todo, copy)
                             copy.completed = if(copy.completed) false else true
-                            todoOpMng.updateTodo(copy)
+                            todoLogic.updateTodo(copy)
                         }
                     }
 
                     CardEvent.SELECTED -> {
-                        if (todoOpMng.isTodoEditing(cardEventInfo.todo)) {
+                        if (todoLogic.isTodoEditing(cardEventInfo.todo)) {
                             Toast.makeText(
                                 this.requireContext(),
                                 "Todo is Editing...",
@@ -110,12 +121,13 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
                 if(intent.getIntExtra(TodoListActivity.EXTRA_PARAMETER_START_TYPE, 0) == 1) StartType.search else StartType.all
             )
         } ?: throw Exception("Invalid activity")*/
-        todoListViewModel.todoList.observe(this) {
+        //debug
+        /*todoListViewModel.todoList.observe(this) {
             updateList(it, todoListViewModel.displayType.value)
         }
         todoListViewModel.displayType.observe(this){
             updateList(todoListViewModel.todoList.value, it)
-        }
+        }*/
 
         /*todoViewModel = activity?.let {
             ViewModelProviders.of(it).get(TodoViewModel::class.java)
@@ -135,14 +147,14 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
     }
 
     private fun deleteTodo(todo: Todo) {
-        if (todoOpMng.isTodoEditing(todo)) {
+        if (todoLogic.isTodoEditing(todo)) {
             Toast.makeText(
                 this.requireContext(),
                 "Todo is Editing...",
                 Toast.LENGTH_SHORT
             ).show()
         } else {
-            todoOpMng.deleteTodo(todo)
+            todoLogic.deleteTodo(todo)
         }
     }
 
@@ -167,6 +179,21 @@ class TodoListFragment :  androidx.fragment.app.Fragment(), CoroutineScope by Ma
             }
         }
         ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(todoListView)
+    }
+
+    @ExperimentalCoroutinesApi
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        Log.d("DebugCoroutine", "onActiviy result...")
+        dispatcher.dispatch(actionCreator.LoadTodoList)
+        todoStore.loadTodoListActioned.observe(this){
+            Log.d("DebugCoroutine", "update...")
+            updateList(it.todoList, Pair(ListDisplayType.none, ListDisplayType.all))
+        }
+
+        todoStore.addTodoActioned.observe(this){
+
+        }
     }
 
     override fun onResume() {

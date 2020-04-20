@@ -28,6 +28,7 @@ import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActi
 import com.example.myapplication.util.getFileDirs
 import com.example.myapplication.util.toBitmapFile
 import com.google.android.material.transition.MaterialSharedAxis
+import dagger.android.support.DaggerFragment
 import java.io.File
 import java.util.concurrent.Executors
 import javax.inject.Inject
@@ -37,7 +38,7 @@ import javax.inject.Inject
  */
 private const val REQUEST_CODE_CAMERA_PERMISSION = 10
 
-class TodoPhotoEditFragment : Fragment() {
+class TodoPhotoEditFragment : DaggerFragment() {
     private val REQUEST_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     private lateinit var  viewFinder : TextureView
     private lateinit var mPhotoImage : ImageView
@@ -52,7 +53,7 @@ class TodoPhotoEditFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (activity as TodoListActivity).todoListComponent.inject(this)
+        /*(activity as TodoListActivity).todoListComponent.inject(this)*/
     }
 
     override fun onCreateView(

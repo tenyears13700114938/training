@@ -1,37 +1,22 @@
 package com.example.myapplication.basic_03_android_test.todoSearch
 
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.lifecycle.*
-import androidx.paging.LivePagedListBuilder
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.MyApplication
 import com.example.myapplication.R
-import com.example.myapplication.basic_03_android_test.TodoService.OpResult
-import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
-import com.example.myapplication.basic_03_android_test.model.Todo
-import com.example.myapplication.basic_03_android_test.todoDetail.DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO
-import com.example.myapplication.basic_03_android_test.todoDetail.TodoDetailActivity
+import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.todoList.TodoListAdapter
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
-import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
-import com.example.myapplication.util.copyTodo
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.exceptions.Exceptions
 import kotlinx.coroutines.*
-import java.util.concurrent.TimeUnit
-import java.util.function.Consumer
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope by MainScope(){
     companion object {
@@ -47,7 +32,7 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
     @Inject
     lateinit var todoRepository: todoRepository
     @Inject
-    lateinit var todoOpMng: TodoOpMng
+    lateinit var todoLogic: TodoLogic
     private lateinit var viewModel: TodoSearchableViewModel
     private lateinit var listView : RecyclerView
     private lateinit var listAdapter : TodoListAdapter

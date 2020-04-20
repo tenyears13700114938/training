@@ -10,9 +10,12 @@ import javax.inject.Singleton
 
 @Singleton
 class todoRepository @Inject constructor(val context : Context) : ITodoRepository {
-    override val alltodos : LiveData<List<Todo>> by lazy {
-        todoDatabase.getInstance(context).todoDao().getAll()
+    override val alltodosLiveData : LiveData<List<Todo>> by lazy {
+        todoDatabase.getInstance(context).todoDao().getAllLiveData()
     }
+
+    override val alltodos: List<Todo>
+        get() = todoDatabase.getInstance(context).todoDao().getAllTodos()
 
     override fun addToDo(todo: Todo) {
         todoDatabase.getInstance(context).todoDao().insertTodo(todo)

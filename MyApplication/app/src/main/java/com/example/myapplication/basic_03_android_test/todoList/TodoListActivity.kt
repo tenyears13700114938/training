@@ -7,14 +7,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import com.example.myapplication.MyApplication
 import com.example.myapplication.R
-import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
+import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoSearch.TodoSearchableActivity
 import com.google.android.material.transition.MaterialContainerTransformSharedElementCallback
-import com.google.android.material.transition.MaterialFadeThrough
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
 import kotlinx.android.synthetic.main.activity_navi_common.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -22,27 +24,27 @@ import kotlinx.coroutines.cancel
 import java.io.File
 import javax.inject.Inject
 
-class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
+class TodoListActivity : NavCommonActivity(), HasAndroidInjector,CoroutineScope by MainScope() {
     @Inject
     lateinit var todoListViewModel: TodoListViewModel
     @Inject
     lateinit var todoViewModel: TodoViewModel
     @Inject
-    lateinit var todoOpMng: TodoOpMng
+    lateinit var todoLogic: TodoLogic
 
-    lateinit var todoListComponent: TodoListComponent
-
+    @Inject
+    lateinit var dispatchingAndroidInjector : DispatchingAndroidInjector<Any>
     companion object {
         val EXTRA_PARAMETER_START_TYPE = "EXTRA_PARAMETER_START_TYPE"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        todoListComponent =
+        /*todoListComponent =
             (application as MyApplication).appComponent.registrationComponent().create(this, intent)
                 .apply {
                     inject(this@TodoListActivity)
-                }
-
+                }*/
+        AndroidInjection.inject(this)
         setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
         window.sharedElementsUseOverlay = false
         
@@ -58,7 +60,7 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
     }
 
     fun saveTodo(_todo: Todo) {
-        todoOpMng.addTodo(_todo)
+        todoLogic.addTodo(_todo)
     }
 
     override fun onResume() {
@@ -112,6 +114,10 @@ class TodoListActivity : NavCommonActivity(), CoroutineScope by MainScope() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
+    }
+
+    override fun androidInjector(): AndroidInjector<Any> {
+        return dispatchingAndroidInjector
     }
 }
 

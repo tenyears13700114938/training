@@ -6,12 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoRepository.ITodoRepository
-import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 
 class TodoListViewModel constructor(val app : Application, var type : StartType, val todoRepository: ITodoRepository) : AndroidViewModel(app) {
     val todoList : LiveData<List<Todo>> by lazy {
         when(type) {
-            StartType.all -> todoRepository.alltodos
+            StartType.all -> todoRepository.alltodosLiveData
             else -> todoRepository.getLiveNotificationTodo(System.currentTimeMillis())
         }
     }

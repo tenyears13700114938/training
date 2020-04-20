@@ -18,6 +18,7 @@ import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.util.localDateOfTimeFromUtc
 import com.google.android.material.transition.MaterialSharedAxis
+import dagger.android.support.DaggerFragment
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -25,7 +26,7 @@ import javax.inject.Inject
 /**
  * A simple [Fragment] subclass.
  */
-class TodoTimeEditFragment : Fragment() {
+class TodoTimeEditFragment : DaggerFragment() {
     @Inject
     lateinit var todoViewModel: TodoViewModel
     private lateinit var mDatePicker: DatePicker
@@ -34,7 +35,7 @@ class TodoTimeEditFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (activity as TodoListActivity).todoListComponent.inject(this)
+        /*(activity as TodoListActivity).todoListComponent.inject(this)*/
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

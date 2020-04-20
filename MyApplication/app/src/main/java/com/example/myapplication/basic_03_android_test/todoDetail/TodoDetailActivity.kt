@@ -3,41 +3,45 @@ package com.example.myapplication.basic_03_android_test.todoDetail
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.myapplication.MyApplication
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.TodoService.OpResult
-import com.example.myapplication.basic_03_android_test.TodoService.TodoOpMng
+import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoList.TodoViewModel
 import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
 import com.example.myapplication.util.copyTodo
-import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialContainerTransformSharedElementCallback
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
 import kotlinx.android.synthetic.main.activity_navi_common.*
 import kotlinx.coroutines.*
 import java.util.function.Consumer
 import javax.inject.Inject
 
 val DETAIL_ACTIVITY_START_PARAM_TO_DO_INFO = "START_PARAM_TO_DO"
-class TodoDetailActivity : NavCommonActivity(), TodoDetailFragment.OnFragmentInteractionListener, CoroutineScope by MainScope(){
+class TodoDetailActivity : NavCommonActivity(), HasAndroidInjector, TodoDetailFragment.OnFragmentInteractionListener, CoroutineScope by MainScope(){
     @Inject
     lateinit var todoDetailViewModel: TodoDetailViewModel
     @Inject
     lateinit var todoViewModel: TodoViewModel
     @Inject
-    lateinit var todoOpMng: TodoOpMng
-    lateinit var todoDetailComponent : TodoDetailComponent
+    lateinit var todoLogic: TodoLogic
+    @Inject
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
+
     private lateinit var broadcastReceiver: todoBroadcastReceiver
     override fun onFragmentInteraction(uri: Uri) {
         //todo
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        todoDetailComponent = (application as MyApplication).appComponent.registrationTodoDetailComponent().create(this)
-        todoDetailComponent.inject(this)
+        /*todoDetailComponent = (application as MyApplication).appComponent.registrationTodoDetailComponent().create(this)
+        todoDetailComponent.inject(this)*/
+        AndroidInjection.inject(this)
 
         setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
         postponeEnterTransition()
@@ -85,6 +89,8 @@ class TodoDetailActivity : NavCommonActivity(), TodoDetailFragment.OnFragmentInt
                 todoRepository.getInstance(this@TodoDetailActivity).updateToDo(todo)
             }
         }*/
-        todoOpMng.updateTodo(todo)
+        todoLogic.updateTodo(todo)
     }
+
+    override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
 }
