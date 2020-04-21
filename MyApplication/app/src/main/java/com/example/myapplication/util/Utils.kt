@@ -50,19 +50,6 @@ fun localDateOfTimeFromUtc(millseconds : Long) : LocalDateTime {
     return  ZonedDateTime.ofInstant(utcInstant, ZoneId.systemDefault()).toLocalDateTime()
 }
 
-fun Todo.copy() : Todo {
-    return Todo().apply {
-        id = this@copy.id
-        thing = this@copy.thing
-        targetTime = this@copy.targetTime
-        imageUrl = this@copy.imageUrl
-        completed = this@copy.completed
-        description = this@copy.description
-        comment = this@copy.comment
-        priority = this@copy.priority
-    }
-}
-
 fun getFileDirs(dirName : String, context: Context) : String{
     //return File(context.filesDir.absolutePath, dirName).let {
       return File("/data/data/" + context.packageName + "/files/", dirName).let {
