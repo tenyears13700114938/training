@@ -1,16 +1,12 @@
 package com.example.myapplication.basic_03_android_test.TodoService
 
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import android.os.Handler
-import android.support.v4.os.ResultReceiver
 import android.util.Log
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.myapplication.basic_03_android_test.Flux.TodoAdded
+import com.example.myapplication.basic_03_android_test.Flux.TodoDeleted
+import com.example.myapplication.basic_03_android_test.Flux.TodoUpdated
 import com.example.myapplication.basic_03_android_test.model.Todo
-import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
-import com.example.myapplication.util.copyTodo
-import java.util.concurrent.locks.ReentrantLock
+import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,18 +17,19 @@ enum class OpResult(val result: Int) {
     DB_ADD_FAILED(-1),
     DB_DELETE_FAILED(-2),
     DB_UPDATE_FAILED(-3),
-    TODO_ALREADY_DOING(-4),
-    REQUEST_ACCEPT(-5)
+    TODO_ALREADY_DOING(-4)
 }
 
 @Singleton
-class TodoLogic @Inject constructor(val appContext: Context) : ResultReceiver(Handler()) {
+class TodoLogic @Inject constructor(
+    val appContext: Context,
+    val todoRepository: todoRepository
+)/* : ResultReceiver(Handler())*/ {
     val RESULT_EXTRA_PARAM_TODO = "RESULT_EXTRA_PARAM_TODO"
     private val TAG = TodoLogic::class.java.simpleName
-    private val editMapLock = ReentrantLock()
-    private val addListLock = ReentrantLock()
 
-    override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
+    // sample code of service return value.
+    /*override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
         when (resultCode) {
             OpResult.ADD_OK.result, OpResult.DB_ADD_FAILED.result -> {
                 resultData?.getSerializable(RESULT_EXTRA_PARAM_TODO).also {
@@ -56,116 +53,90 @@ class TodoLogic @Inject constructor(val appContext: Context) : ResultReceiver(Ha
             else -> {
             }
         }
-    }
+    }*/
 
     fun isTodoEditing(todo: Todo): Boolean {
-        var isEditing = false
-        try {
-            editMapLock.lock()
-            isEditing = mEditTodoMap.containsKey(todo.id)
-        } finally {
-            editMapLock.unlock()
+        synchronized(mEditTodoMap) {
+            return mEditTodoMap.containsKey(todo.id)
         }
-        return isEditing
     }
 
     fun isTodoAdding(todo: Todo): Boolean {
-        var isAdding = false
-        try {
-            addListLock.lock()
-            isAdding = mAddTodoList.contains(todo)
-        } finally {
-            addListLock.unlock()
+        synchronized(mAddTodoList) {
+            return mAddTodoList.contains(todo)
         }
-        return isAdding
     }
 
     fun popEditMap(todo: Todo) {
-        try {
-            editMapLock.lock()
+        synchronized(mEditTodoMap) {
             mEditTodoMap.remove(todo.id)
-        } finally {
-            editMapLock.unlock()
         }
     }
 
-    fun updateTodo(todo: Todo): OpResult {
-        var result = OpResult.REQUEST_ACCEPT
-        try {
-            editMapLock.lock()
+    suspend fun updateTodo(todo: Todo): TodoUpdated {
+        var result = OpResult.UPDATE_OK
+        val copy = todo.copy()
+        synchronized(mEditTodoMap) {
             if (isTodoEditing(todo)) {
                 result = OpResult.TODO_ALREADY_DOING
             } else {
-                val copy = Todo()
-                copyTodo(todo, copy)
                 mEditTodoMap[copy.id] = copy
-                TodoOpIntentService.startActionUpdateTodo(appContext, copy, this)
+                //TodoOpIntentService.startActionUpdateTodo(appContext, copy, this)
             }
-        } finally {
-            editMapLock.unlock()
         }
-        return result
+        if (result != OpResult.TODO_ALREADY_DOING) {
+            todoRepository.updateToDo(copy)
+            popEditMap(copy)
+        }
+        return TodoUpdated(copy, result)
     }
 
-    fun deleteTodo(todo: Todo): OpResult {
-        var result = OpResult.REQUEST_ACCEPT
-        try {
-            editMapLock.lock()
+    suspend fun deleteTodo(todo: Todo): TodoDeleted {
+        var result = OpResult.DELETE_OK
+        val copy = todo.copy()
+        synchronized(mEditTodoMap) {
             if (isTodoEditing(todo)) {
                 result = OpResult.TODO_ALREADY_DOING
             } else {
                 Log.d(TAG, "delete todo....")
-                val copy = Todo()
-                copyTodo(todo, copy)
                 mEditTodoMap[copy.id] = todo
-                TodoOpIntentService.startActionDeleteTodo(appContext, copy, this)
+                //TodoOpIntentService.startActionDeleteTodo(appContext, copy, this)
             }
-        } finally {
-            editMapLock.unlock()
         }
-        return result
+        if (result != OpResult.TODO_ALREADY_DOING) {
+            todoRepository.deleteToDo(copy)
+            popEditMap(copy)
+        }
+
+        return TodoDeleted(copy, result)
     }
 
-    fun addTodo(todo: Todo): OpResult {
-        var result = OpResult.REQUEST_ACCEPT
-        try {
-            addListLock.lock()
-            val copy = Todo()
-            copyTodo(todo,copy)
+    suspend fun addTodo(todo: Todo): TodoAdded {
+        var result = OpResult.ADD_OK
+        val copy = todo.copy()
+        synchronized(mAddTodoList) {
             if (isTodoAdding(copy)) {
                 result = OpResult.TODO_ALREADY_DOING
             } else {
                 Log.d(TAG, "add todo....")
                 mAddTodoList.add(copy)
-                TodoOpIntentService.starAddTodo(appContext, copy, this)
+                //TodoOpIntentService.starAddTodo(appContext, copy, this)
             }
-        } finally {
-            addListLock.unlock()
         }
-        return result
+        if (result != OpResult.TODO_ALREADY_DOING) {
+            todoRepository.addToDo(copy)
+            removeTodo(copy)
+        }
+        return TodoAdded(copy, result)
     }
 
     fun removeTodo(todo: Todo) {
-        try {
-            addListLock.lock()
+        synchronized(mAddTodoList) {
             mAddTodoList.remove(todo)
-        } finally {
-            addListLock.unlock()
         }
     }
 
 
     val mEditTodoMap = hashMapOf<Long, Todo>()
     val mAddTodoList = mutableListOf<Todo>()
-
-    /*companion object {
-        private var mIns: TodoOpMng? = null
-        fun getIns(appContext: Context): TodoOpMng {
-            if (mIns == null) {
-                mIns = TodoOpMng(appContext)
-            }
-
-            return mIns!!
-        }
-    }*/
 }

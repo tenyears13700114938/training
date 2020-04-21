@@ -11,7 +11,6 @@ import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonA
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoList.TodoViewModel
 import com.example.myapplication.basic_03_android_test.tooBroadcastReceiver.todoBroadcastReceiver
-import com.example.myapplication.util.copyTodo
 import com.google.android.material.transition.MaterialContainerTransformSharedElementCallback
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
@@ -58,7 +57,7 @@ class TodoDetailActivity : NavCommonActivity(), HasAndroidInjector, TodoDetailFr
         ) ?: return
 
         todoDetailViewModel.todoDetail.value= todoInfo as Todo
-        copyTodo(todoDetailViewModel.todoDetail.value!!, todoViewModel.todoInfo )
+        todoViewModel.todoInfo = todoDetailViewModel.todoDetail.value!!.copy()
 
         val bundle = Bundle()
         bundle.putSerializable("Todo_Detail", todoInfo)
@@ -84,12 +83,9 @@ class TodoDetailActivity : NavCommonActivity(), HasAndroidInjector, TodoDetailFr
     }
 
     fun updateTodo(todo: Todo){
-        /*launch {
-            withContext(Dispatchers.IO) {
-                todoRepository.getInstance(this@TodoDetailActivity).updateToDo(todo)
-            }
-        }*/
-        todoLogic.updateTodo(todo)
+        launch {
+            todoLogic.updateTodo(todo)
+        }
     }
 
     override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector

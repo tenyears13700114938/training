@@ -101,7 +101,7 @@ class TodoCardView(context: Context, attrs: AttributeSet? = null) : FrameLayout(
     fun bind(item: Todo) {
         titleView.text = item.thing
         descriptionView.text = item.description
-        if (item.targetTime != 0L) {
+        if (item.targetTime != 0L && item.targetTime != null) {
             dateView.text =
                 localDateOfTimeFromUtc(item.targetTime!!).toString().substringBefore("T")
             dateView.visibility = View.VISIBLE

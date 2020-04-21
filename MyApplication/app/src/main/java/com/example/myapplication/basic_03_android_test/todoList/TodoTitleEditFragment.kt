@@ -8,18 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.Flux.CoroutineDispatcher
+import com.example.myapplication.basic_03_android_test.Flux.TodoActionCreator
+import com.example.myapplication.basic_03_android_test.Flux.TodoStore
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
+import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.basic_03_android_test.model.TodoPriority
+import com.example.myapplication.databinding.FragmentTodoTitleEditBinding
 import com.example.myapplication.util.hideSoftInput
 import com.google.android.material.transition.MaterialContainerTransform
-import com.google.android.material.transition.MaterialSharedAxis
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.nav_buttons.view.*
 import java.io.File
 import javax.inject.Inject
 
@@ -27,12 +31,18 @@ import javax.inject.Inject
  * A simple [Fragment] subclass.
  */
 class TodoTitleEditFragment : DaggerFragment() {
+    lateinit var binding: FragmentTodoTitleEditBinding
+
     @Inject
-    lateinit var todoViewModel: TodoViewModel
-    private lateinit var titleEdit : EditText
-    private lateinit var descriptionEdit : EditText
-    private lateinit var prioritySpinner : Spinner
-    private val args : TodoTitleEditFragmentArgs by navArgs()
+    lateinit var todoStore: TodoStore
+
+    @Inject
+    lateinit var dispatcher: CoroutineDispatcher
+
+    @Inject
+    lateinit var actionCreator: TodoActionCreator
+
+    private val args: TodoTitleEditFragmentArgs by navArgs()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -54,56 +64,58 @@ class TodoTitleEditFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_todo_title_edit, container, false)
-        titleEdit = view.findViewById(R.id.todo_title)
-        descriptionEdit = view.findViewById(R.id.todo_description)
-        prioritySpinner = view.findViewById(R.id.todo_priority)
-        /*todoViewModel = activity?.run{
-            ViewModelProviders.of(this).get(TodoViewModel::class.java)
-        } ?: return view*/
+        binding = FragmentTodoTitleEditBinding.inflate(inflater, container, false)
 
-        view.findViewById<Button>(R.id.next_button).setOnClickListener{
-            todoViewModel.todoInfo.thing = titleEdit.text?.toString() ?: ""
-            todoViewModel.todoInfo.description = descriptionEdit.text?.toString() ?: ""
-
+        binding.navButtons.next_button.setOnClickListener {
+            (todoStore.editingTodo.value?.copy() ?: Todo()).apply {
+                thing = binding.todoTitle.text?.toString() ?: ""
+                description = binding.todoDescription.text?.toString() ?: ""
+                priority = binding.todoPriority.selectedItem as String
+                dispatcher.dispatch(actionCreator.editedTodo(this))
+            }
             activity?.let {
                 hideSoftInput(it)
             }
-            val timeAction = TodoTitleEditFragmentDirections.actionTodoTitleEditToTimeEdit(args.editType)
+            val timeAction =
+                TodoTitleEditFragmentDirections.actionTodoTitleEditToTimeEdit(args.editType)
             it.findNavController().navigate(timeAction)
         }
 
-        view.findViewById<Button>(R.id.back_button).setOnClickListener {
+        binding.navButtons.back_button.setOnClickListener {
             it.findNavController().popBackStack()
-            if(args.editType == TodoEditType.CREATE) {
-                todoViewModel.todoInfo.imageUrl?.also { _imageUrl ->
+            if (args.editType == TodoEditType.CREATE) {
+                todoStore.editingTodo.value?.imageUrl?.also { _imageUrl ->
                     File(_imageUrl).delete()
                 }
-                todoViewModel.todoInfo.reset()
+                dispatcher.dispatch(actionCreator.editedTodo(Todo()))
             }
         }
 
-        if(activity is NavCommonActivity){
+        if (activity is NavCommonActivity) {
             (activity as NavCommonActivity).apply {
                 setMenuVisibility(false)
                 setTitle("Edit Title and description")
             }
         }
         setView()
-        return view;
+        return binding.root;
     }
 
     private fun setView() {
-        titleEdit.setText(todoViewModel.todoInfo.thing)
-        descriptionEdit.setText(todoViewModel.todoInfo.description)
+        binding.todoTitle.setText(todoStore.editingTodo.value?.thing)
+        binding.todoDescription.setText(todoStore.editingTodo.value?.description)
         val priorityList = mutableListOf<String>().apply {
             add(TodoPriority.EMERGENCY.name)
             add(TodoPriority.HIGH.name)
             add(TodoPriority.MIDDLE.name)
             add(TodoPriority.LOW.name)
         }
-        prioritySpinner.adapter = ArrayAdapter<String>(this.requireContext(), android.R.layout.simple_spinner_item, priorityList)
-        prioritySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        binding.todoPriority.adapter = ArrayAdapter<String>(
+            this.requireContext(),
+            android.R.layout.simple_spinner_item,
+            priorityList
+        )
+        /*binding.todoPriority.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
 
@@ -113,20 +125,20 @@ class TodoTitleEditFragment : DaggerFragment() {
                 position: Int,
                 id: Long
             ) {
-                todoViewModel.todoInfo.priority = parent?.getItemAtPosition(position) as String
             }
-        }
-        prioritySpinner.setSelection(
-            if (TextUtils.isEmpty(todoViewModel.todoInfo.priority)) 0 else priorityList.indexOf(
-                todoViewModel.todoInfo.priority
-            )
+        }*/
+        binding.todoPriority.setSelection(
+            todoStore.editingTodo.value?.priority.takeIf { !TextUtils.isEmpty(it) }?.let {
+                priorityList.indexOf(it)
+            } ?: 0
         )
     }
 
     override fun onResume() {
         super.onResume()
         activity?.window?.decorView?.setOnClickListener {
-            val inputManager : InputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val inputManager: InputMethodManager =
+                activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputManager.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, 0)
         }
     }

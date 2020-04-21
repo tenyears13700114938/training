@@ -10,26 +10,26 @@ class TodoListItemDecoration(
     val recyclerView: RecyclerView,
     val stickyHeaderInterface: StickyHeaderInterface
 ) : RecyclerView.ItemDecoration() {
-    var mCurrentHeader : View? = null
-    var mCurrentHeaderPos : Int = -1
+    var mCurrentHeader: View? = null
+    var mCurrentHeaderPos: Int = -1
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
         val topChild = parent.getChildAt(0)
-        if(topChild == null){
+        if (topChild == null) {
             return
         }
-        val topChildPosition  = parent.getChildAdapterPosition(topChild)
-        if(topChildPosition == RecyclerView.NO_POSITION){
+        val topChildPosition = parent.getChildAdapterPosition(topChild)
+        if (topChildPosition == RecyclerView.NO_POSITION) {
             return
         }
         val currentHeader = getHeaderViewForItem(topChildPosition, parent)
         //fixLayoutSize(parent, currentHeader)
         val contactPoint = currentHeader.bottom
         val childInContact = getChildInContact(parent, contactPoint)
-        if(childInContact == null){
+        if (childInContact == null) {
             return
         }
-        if(stickyHeaderInterface.isHeader(parent.getChildAdapterPosition(childInContact))){
+        if (stickyHeaderInterface.isHeader(parent.getChildAdapterPosition(childInContact))) {
             moveHeader(c, currentHeader, childInContact)
             return
         }
@@ -40,9 +40,9 @@ class TodoListItemDecoration(
         super.onDraw(c, parent, state)
     }
 
-    fun getHeaderViewForItem(itemPosition: Int, parent: RecyclerView) : View {
+    fun getHeaderViewForItem(itemPosition: Int, parent: RecyclerView): View {
         val headerPosition = stickyHeaderInterface.getHeaderPositionForItem(itemPosition)
-        if(headerPosition == mCurrentHeaderPos){
+        if (headerPosition == mCurrentHeaderPos) {
             return mCurrentHeader!!
         }
         val layoutResId = stickyHeaderInterface.getHeaderLayout(headerPosition)
@@ -53,23 +53,23 @@ class TodoListItemDecoration(
         return mCurrentHeader!!
     }
 
-    fun drawHeader(c : Canvas, header : View){
+    fun drawHeader(c: Canvas, header: View) {
         c.save()
-        c.translate(0f,0f)
+        c.translate(0f, 0f)
         header.draw(c)
         c.restore()
     }
 
-    fun moveHeader(c: Canvas, currentHeader : View, nextHeader : View){
+    fun moveHeader(c: Canvas, currentHeader: View, nextHeader: View) {
         c.save()
         c.translate(0f, (nextHeader.top - currentHeader.height).toFloat())
         currentHeader.draw(c)
         c.restore()
     }
 
-    fun getChildInContact(parent: RecyclerView, contactPoint : Int) : View? {
-        var childInContact : View? = null
-        for(count in 0..parent.childCount){
+    fun getChildInContact(parent: RecyclerView, contactPoint: Int): View? {
+        var childInContact: View? = null
+        for (count in 0..parent.childCount) {
             if (parent.getChildAt(count) != null &&
                 parent.getChildAt(count).bottom > contactPoint &&
                 parent.getChildAt(count).top <= contactPoint
@@ -81,9 +81,10 @@ class TodoListItemDecoration(
         return childInContact
     }
 
-    fun fixLayoutSize(parent : ViewGroup, view : View){
+    fun fixLayoutSize(parent: ViewGroup, view: View) {
         val parentWidth = View.MeasureSpec.makeMeasureSpec(parent.width, View.MeasureSpec.EXACTLY)
-        val parentHeight = View.MeasureSpec.makeMeasureSpec(parent.height, View.MeasureSpec.UNSPECIFIED)
+        val parentHeight =
+            View.MeasureSpec.makeMeasureSpec(parent.height, View.MeasureSpec.UNSPECIFIED)
 
         val childWidth = ViewGroup.getChildMeasureSpec(
             parentWidth,

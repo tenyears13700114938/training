@@ -2,7 +2,8 @@ package com.example.myapplication.basic_03_android_test.Flux
 
 import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.model.Todo
-import com.example.myapplication.basic_03_android_test.todoRepository.ITodoRepository
+import com.example.myapplication.basic_03_android_test.todoList.ListDisplayType
+import com.example.myapplication.basic_03_android_test.todoList.StartType
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,22 +14,30 @@ class TodoActionCreator @Inject constructor(
     val todoRepository: todoRepository //todo change to IF
 ) {
     fun addTodo(todo: Todo) = ActionCreate {
-        AddTodoAction(todo, todoLogic.addTodo(todo))
+        todoLogic.addTodo(todo)
     }
 
     fun deleteTodo(todo: Todo) = ActionCreate {
-        DeleteTodoAction(todo, todoLogic.deleteTodo(todo))
+        todoLogic.deleteTodo(todo)
     }
 
     fun updateTodo(todo: Todo) = ActionCreate {
-        UpdateTodoAction(todo, todoLogic.updateTodo(todo))
+        todoLogic.updateTodo(todo)
     }
 
-    val LoadTodoList = ActionCreate {
-        LoadTodoListAction(todoRepository.alltodos)
+    fun todoListDisplayType(diplayType: ListDisplayType) = ActionCreate {
+        TodoListDisplayType(diplayType)
     }
 
-    fun editingTodo(todo: Todo) = ActionCreate {
-        EditingTodoAction(todo)
+    fun editedTodo(todo: Todo) = ActionCreate {
+        TodoEdited(todo)
+    }
+
+    fun setStartType(startType: StartType) = ActionCreate {
+        StartTypeSelected(startType)
+    }
+
+    val loadedTodoList = ActionCreate {
+        TodoListLoaded(todoRepository.alltodos)
     }
 }

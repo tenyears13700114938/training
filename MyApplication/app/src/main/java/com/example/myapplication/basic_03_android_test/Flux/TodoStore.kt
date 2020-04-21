@@ -1,35 +1,51 @@
 package com.example.myapplication.basic_03_android_test.Flux
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import com.example.myapplication.basic_03_android_test.TodoService.OpResult
 import com.example.myapplication.basic_03_android_test.model.Todo
+import com.example.myapplication.basic_03_android_test.todoList.ListDisplayType
+import com.example.myapplication.basic_03_android_test.todoList.StartType
 import com.example.myapplication.util.dagger.ActivityScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.consume
-import kotlinx.coroutines.channels.map
-import kotlinx.coroutines.launch
+import com.example.myapplication.util.toLiveData
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 @ActivityScope
 class TodoStore @Inject constructor(dispatcher: CoroutineDispatcher) : CoroutineStore(dispatcher) {
-    inline fun <reified T : Action> ReceiveChannel<T>.toLiveData() : LiveData<T> {
-        val result = MutableLiveData<T>()
-        MainScope().launch {
-            Log.d("DebugCoroutine", "toLiveData before receive...${this@toLiveData.toString()}")
-            result.value = this@toLiveData.receive()
-            Log.d("DebugCoroutine", "toLiveData after receive...")
+
+    val addTodoResult: LiveData<OpResult> = dispatcher.subScribe<TodoAdded>()
+        .toLiveData(this) {
+            it.result
         }
-        Log.d("DebugCoroutine", "toLivedata result...")
-        return result
+
+    val todoList: LiveData<List<Todo>> by lazy {
+        dispatcher.subScribe<TodoListLoaded>()
+            .toLiveData(this) {
+                it.todoList
+            }
     }
 
-    val addTodoActioned : LiveData<AddTodoAction> = dispatcher.subScribe<AddTodoAction>()
-        .toLiveData()
+    val updateTodoResult: LiveData<OpResult> =
+        dispatcher.subScribe<TodoUpdated>()
+            .toLiveData(this) {
+                it.result
+            }
 
-    val loadTodoListActioned : LiveData<LoadTodoListAction> = dispatcher.subScribe<LoadTodoListAction>()
-        .toLiveData()
+    val todoListDisplayType: LiveData<ListDisplayType> =
+        dispatcher.subScribe<TodoListDisplayType>()
+            .toLiveData(this) {
+                it.displayType
+            }
 
+    val startType: LiveData<StartType> =
+        dispatcher.subScribe<StartTypeSelected>()
+            .toLiveData(this) {
+                it.startType
+            }
+
+    val editingTodo: LiveData<Todo> by lazy {
+        dispatcher.subScribe<TodoEdited>()
+            .toLiveData(this, Todo()) {
+                it.todo
+            }
+    }
 }

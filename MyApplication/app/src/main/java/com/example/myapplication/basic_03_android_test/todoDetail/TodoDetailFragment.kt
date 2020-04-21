@@ -4,15 +4,14 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
 import androidx.navigation.findNavController
-
 import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
@@ -21,7 +20,6 @@ import com.example.myapplication.basic_03_android_test.model.TodoEvent
 import com.example.myapplication.basic_03_android_test.todoList.TodoViewModel
 import com.example.myapplication.basic_03_android_test.uiCommon.CardEvent
 import com.example.myapplication.databinding.FragmentTodoDetailBinding
-import com.example.myapplication.util.copyTodo
 import com.google.android.material.transition.MaterialContainerTransform
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
@@ -82,17 +80,23 @@ class TodoDetailFragment : DaggerFragment(), CoroutineScope by MainScope() {
                 .subscribe() { todoEvent ->
                     when (todoEvent.cardEvent) {
                         CardEvent.COMPLETE -> {
-                            val copy = Todo()
-                            copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
+                            val copy = todoDetailViewModel.todoDetail.value!!.copy()
                             copy.completed = !copy.completed
-                            todoLogic.updateTodo(copy)
+                            launch {
+                                withContext(Dispatchers.Default) {
+                                    todoLogic.updateTodo(copy)
+                                }
+                            }
                         }
                         CardEvent.SAVE_COMMENT -> {
-                            val copy = Todo()
-                            copyTodo(todoDetailViewModel.todoDetail.value!!, copy)
+                            val copy = todoDetailViewModel.todoDetail.value!!.copy()
                             //todo
                             //copy.comment = mCommentEdit.text.toString()
-                            todoLogic.updateTodo(copy)
+                            launch {
+                                withContext(Dispatchers.Default) {
+                                    todoLogic.updateTodo(copy)
+                                }
+                            }
                         }
                     }
                 }
@@ -159,7 +163,11 @@ class TodoDetailFragment : DaggerFragment(), CoroutineScope by MainScope() {
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    todoLogic.deleteTodo(it)
+                    launch {
+                        withContext(Dispatchers.Default) {
+                            todoLogic.deleteTodo(it)
+                        }
+                    }
                 }
             }
             activity?.finish()

@@ -49,7 +49,7 @@ class TodoOpIntentService() : IntentService("TodoOpIntentService") {
                         handleAddTodo(addTodo)
                         Bundle().also {
                             it.putSerializable(EXTRA_PARAM_TODO_INFO, addTodo)
-                            receiver.send(OpResult.ADD_OK.result, it)
+                            //receiver.send(OpResult.ADD_OK.result, it)
                         }
                     }
                 //}
@@ -61,7 +61,7 @@ class TodoOpIntentService() : IntentService("TodoOpIntentService") {
                     handleUpdateTodo(updateTodo)
                     Bundle().also {
                         it.putSerializable(EXTRA_PARAM_TODO_INFO, updateTodo)
-                        receiver.send(OpResult.UPDATE_OK.result, it)
+                        //receiver.send(OpResult.UPDATE_OK.result, it)
                     }
                 }
             }
@@ -72,7 +72,7 @@ class TodoOpIntentService() : IntentService("TodoOpIntentService") {
                     handleDeleteTodo(deleteTodo)
                     Bundle().also {
                         it.putSerializable(EXTRA_PARAM_TODO_INFO, deleteTodo)
-                        receiver.send(OpResult.DELETE_OK.result, it)
+                        //receiver.send(OpResult.DELETE_OK.result, it)
                     }
                 }
             }
@@ -88,9 +88,9 @@ class TodoOpIntentService() : IntentService("TodoOpIntentService") {
      * parameters.
      */
     suspend fun handleAddTodo(todo: Todo?) {
-        todo?.also {
+        todo?.let {
             Log.d(TAG, "add todo.....")
-            todoRepository.addToDo(todo)
+            todoRepository.addToDo(it)
         }
     }
 
@@ -99,7 +99,7 @@ class TodoOpIntentService() : IntentService("TodoOpIntentService") {
      * parameters.
      */
     suspend fun handleUpdateTodo(todo : Todo?) {
-        todo?.also {
+        todo?.let {
             todoRepository.updateToDo(it)
         }
     }
@@ -109,7 +109,7 @@ class TodoOpIntentService() : IntentService("TodoOpIntentService") {
      * parameters.
      */
     suspend fun handleDeleteTodo(todo : Todo?) {
-        todo?.also {
+        todo?.let {
             Log.d(TAG, "delete todo.....")
             todoRepository.deleteToDo(it)
         }

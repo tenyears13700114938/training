@@ -7,7 +7,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.observe
 import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.Flux.CoroutineDispatcher
+import com.example.myapplication.basic_03_android_test.Flux.TodoActionCreator
+import com.example.myapplication.basic_03_android_test.Flux.TodoStore
 import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
@@ -21,19 +25,26 @@ import kotlinx.android.synthetic.main.activity_navi_common.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
-class TodoListActivity : NavCommonActivity(), HasAndroidInjector,CoroutineScope by MainScope() {
-    @Inject
-    lateinit var todoListViewModel: TodoListViewModel
-    @Inject
-    lateinit var todoViewModel: TodoViewModel
+class TodoListActivity : NavCommonActivity(), HasAndroidInjector, CoroutineScope by MainScope() {
     @Inject
     lateinit var todoLogic: TodoLogic
 
     @Inject
-    lateinit var dispatchingAndroidInjector : DispatchingAndroidInjector<Any>
+    lateinit var dispatcher: CoroutineDispatcher
+
+    @Inject
+    lateinit var todoActionCreator: TodoActionCreator
+
+    @Inject
+    lateinit var store: TodoStore
+
+    @Inject
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
+
     companion object {
         val EXTRA_PARAMETER_START_TYPE = "EXTRA_PARAMETER_START_TYPE"
     }
@@ -47,64 +58,73 @@ class TodoListActivity : NavCommonActivity(), HasAndroidInjector,CoroutineScope 
         AndroidInjection.inject(this)
         setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
         window.sharedElementsUseOverlay = false
-        
+
         super.onCreate(savedInstanceState)
 
-        toolbar.title = if(intent.getIntExtra(EXTRA_PARAMETER_START_TYPE, 0) == 0)"ToDo List" else "Attention Todos"
+        toolbar.title = if (intent.getIntExtra(
+                EXTRA_PARAMETER_START_TYPE,
+                0
+            ) == 0
+        ) "ToDo List" else "Attention Todos"
         mNavController.graph = mNavController.navInflater.inflate(R.navigation.todo_navigation)
-
-        //todoViewModel = ViewModelProviders.of(this).get(TodoViewModel::class.java)
-        /*todoListViewModel = TodoListViewModel.getTodoListViewModel(this,
-            if(intent.getIntExtra(TodoListActivity.EXTRA_PARAMETER_START_TYPE, 0) == 1) StartType.search else StartType.all
-            )*/
     }
 
     fun saveTodo(_todo: Todo) {
-        todoLogic.addTodo(_todo)
+        launch {
+            todoLogic.addTodo(_todo)
+        }
     }
 
     override fun onResume() {
         super.onResume()
+        dispatcher.dispatch(todoActionCreator.loadedTodoList)
     }
 
     override fun onDestroy() {
+        store.editingTodo.observe(this) {
+            it.imageUrl?.let {
+                File(it).delete()
+            }
+        }
         super.onDestroy()
         cancel()
-        todoViewModel.todoInfo.imageUrl?.also {
+
+        /*todoViewModel.todoInfo.imageUrl?.also {
             File(it).delete()
         }
-        todoViewModel.todoInfo.reset()
+        todoViewModel.todoInfo.reset()*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_todo_list, menu)
 
         val searchItem = menu?.findItem(R.id.action_search)
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as  SearchManager
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchView = searchItem?.actionView as androidx.appcompat.widget.SearchView
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(ComponentName(this,TodoSearchableActivity::class.java)))
+        searchView.setSearchableInfo(
+            searchManager.getSearchableInfo(
+                ComponentName(
+                    this,
+                    TodoSearchableActivity::class.java
+                )
+            )
+        )
 
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.action_allItems ->{
-                todoListViewModel.displayType.value?.also { oldValue ->
-                    todoListViewModel.displayType.value = Pair(oldValue.second, ListDisplayType.all)
-                }
+        when (item.itemId) {
+            R.id.action_allItems -> {
+                dispatcher.dispatch(todoActionCreator.todoListDisplayType(ListDisplayType.all))
                 return true;
             }
             R.id.action_activeItems -> {
-                todoListViewModel.displayType.value?.also { oldValue ->
-                    todoListViewModel.displayType.value = Pair(oldValue.second, ListDisplayType.active)
-                }
+                dispatcher.dispatch(todoActionCreator.todoListDisplayType(ListDisplayType.active))
                 return true
             }
             R.id.action_completeItems -> {
-                todoListViewModel.displayType.value?.also { oldValue ->
-                    todoListViewModel.displayType.value = Pair(oldValue.second, ListDisplayType.completed)
-                }
+                dispatcher.dispatch(todoActionCreator.todoListDisplayType(ListDisplayType.completed))
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
@@ -121,7 +141,7 @@ class TodoListActivity : NavCommonActivity(), HasAndroidInjector,CoroutineScope 
     }
 }
 
-enum class StartType(var type : Int) {
+enum class StartType(var type: Int) {
     all(0),
     search(1)
 }
