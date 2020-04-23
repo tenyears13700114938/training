@@ -10,7 +10,7 @@ import com.example.myapplication.util.toLiveData
 import javax.inject.Inject
 
 @ActivityScope
-class TodoStore @Inject constructor(dispatcher: CoroutineDispatcher) : CoroutineStore(dispatcher) {
+class TodoListStore @Inject constructor(dispatcher: CoroutineDispatcher) : CoroutineStore(dispatcher), TodoEditingStore{
 
     val addTodoResult: LiveData<OpResult> = dispatcher.subScribe<TodoAdded>()
         .toLiveData(this) {
@@ -42,7 +42,7 @@ class TodoStore @Inject constructor(dispatcher: CoroutineDispatcher) : Coroutine
                 it.startType
             }
 
-    val editingTodo: LiveData<Todo> by lazy {
+    override val editingTodo: LiveData<Todo> by lazy {
         dispatcher.subScribe<TodoEdited>()
             .toLiveData(this, Todo()) {
                 it.todo

@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.Flux.CoroutineDispatcher
 import com.example.myapplication.basic_03_android_test.Flux.TodoActionCreator
-import com.example.myapplication.basic_03_android_test.Flux.TodoStore
+import com.example.myapplication.basic_03_android_test.Flux.TodoListStore
 import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
@@ -55,7 +55,7 @@ class TodoListFragment : DaggerFragment(), CoroutineScope by MainScope() {
     lateinit var actionCreator: TodoActionCreator
 
     @Inject
-    lateinit var todoStore: TodoStore
+    lateinit var todoStore: TodoListStore
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

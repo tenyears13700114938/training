@@ -25,7 +25,7 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.Flux.CoroutineDispatcher
 import com.example.myapplication.basic_03_android_test.Flux.TodoActionCreator
-import com.example.myapplication.basic_03_android_test.Flux.TodoStore
+import com.example.myapplication.basic_03_android_test.Flux.TodoEditingStore
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
@@ -52,7 +52,7 @@ class TodoPhotoEditFragment : DaggerFragment() {
     lateinit var dispatcher: CoroutineDispatcher
 
     @Inject
-    lateinit var todoStore: TodoStore
+    lateinit var todoStore: TodoEditingStore
 
     @Inject
     lateinit var actionCreator: TodoActionCreator
@@ -82,6 +82,7 @@ class TodoPhotoEditFragment : DaggerFragment() {
 
             setOnClickListener {
                 val todo = todoStore.editingTodo.value ?: Todo()
+                todo.imageUrl = photoImageUrl
                 todo.imageUrl?.let {
                     if (!TextUtils.isEmpty(it) && !it.contains("bitmap")) {
                         var originalFile = it
@@ -89,7 +90,6 @@ class TodoPhotoEditFragment : DaggerFragment() {
                         File(originalFile).delete()
                     }
                 }
-                todo.imageUrl = photoImageUrl
                 if (args.editType == TodoEditType.CREATE) {
                     it.findNavController().popBackStack(R.id.todoListFragment, false)
                     dispatcher.dispatch(actionCreator.addTodo(todo))
@@ -97,6 +97,7 @@ class TodoPhotoEditFragment : DaggerFragment() {
                 } else {
                     //copyTodo(todoViewModel.todoInfo, todoDetailViewModel.todoDetail.value!!)
                     dispatcher.dispatch(actionCreator.updateTodo(todo))
+                    dispatcher.dispatch(actionCreator.editedTodo(todo))
                     it.findNavController().popBackStack(R.id.todoDetailFragment, false)
                 }
             }
@@ -107,7 +108,7 @@ class TodoPhotoEditFragment : DaggerFragment() {
         }
 
         binding.imageButton.setOnClickListener { _imageButton ->
-            if (TextUtils.isEmpty(todoStore.editingTodo.value?.imageUrl)) {
+            if (TextUtils.isEmpty(photoImageUrl)) {
                 val file =
                     File(
                         getFileDirs("todoPhoto", context!!),
@@ -156,14 +157,6 @@ class TodoPhotoEditFragment : DaggerFragment() {
                 updateTransform()
             }
         }
-
-        /*todoViewModel = activity?.run{
-            ViewModelProviders.of(this).get(TodoViewModel::class.java)
-        } ?: return view*/
-
-        /*todoDetailViewModel = activity?.run {
-            ViewModelProviders.of(this).get(TodoDetailViewModel::class.java)
-        } ?: return view*/
 
         configPhotoImageOrCamera()
 

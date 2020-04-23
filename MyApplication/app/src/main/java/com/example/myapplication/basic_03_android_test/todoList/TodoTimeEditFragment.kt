@@ -13,7 +13,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.myapplication.basic_03_android_test.Flux.CoroutineDispatcher
 import com.example.myapplication.basic_03_android_test.Flux.TodoActionCreator
-import com.example.myapplication.basic_03_android_test.Flux.TodoStore
+import com.example.myapplication.basic_03_android_test.Flux.TodoEditingStore
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.databinding.FragmentTodoTimeEditBinding
@@ -33,7 +33,7 @@ class TodoTimeEditFragment : DaggerFragment() {
     lateinit var dispatcher: CoroutineDispatcher
 
     @Inject
-    lateinit var todoStore: TodoStore
+    lateinit var todoStore: TodoEditingStore
 
     @Inject
     lateinit var actionCreator: TodoActionCreator
@@ -120,5 +120,9 @@ class TodoTimeEditFragment : DaggerFragment() {
                 duration = 100
             }
         exitTransition = backward
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
     }
 }

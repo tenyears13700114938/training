@@ -37,6 +37,10 @@ class TodoActionCreator @Inject constructor(
         StartTypeSelected(startType)
     }
 
+    fun detailLoaded(todo: Todo) = ActionCreate {
+        DetailedLoaded(todo)
+    }
+
     val loadedTodoList = ActionCreate {
         TodoListLoaded(todoRepository.alltodos)
     }

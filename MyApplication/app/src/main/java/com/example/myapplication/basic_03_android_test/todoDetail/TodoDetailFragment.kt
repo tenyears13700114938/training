@@ -12,18 +12,21 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
 import androidx.navigation.findNavController
+import com.example.myapplication.basic_03_android_test.Flux.CoroutineDispatcher
+import com.example.myapplication.basic_03_android_test.Flux.TodoActionCreator
+import com.example.myapplication.basic_03_android_test.Flux.TodoDetailStore
 import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.model.TodoEditType
 import com.example.myapplication.basic_03_android_test.model.TodoEvent
-import com.example.myapplication.basic_03_android_test.todoList.TodoViewModel
 import com.example.myapplication.basic_03_android_test.uiCommon.CardEvent
 import com.example.myapplication.databinding.FragmentTodoDetailBinding
 import com.google.android.material.transition.MaterialContainerTransform
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.todo_item.view.*
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
@@ -43,10 +46,13 @@ class TodoDetailFragment : DaggerFragment(), CoroutineScope by MainScope() {
     private var listener: OnFragmentInteractionListener? = null
 
     @Inject
-    lateinit var todoDetailViewModel: TodoDetailViewModel
+    lateinit var dispatcher: CoroutineDispatcher
 
     @Inject
-    lateinit var todoViewModel: TodoViewModel
+    lateinit var store: TodoDetailStore
+
+    @Inject
+    lateinit var todoActionCreator: TodoActionCreator
 
     @Inject
     lateinit var todoLogic: TodoLogic
@@ -69,19 +75,15 @@ class TodoDetailFragment : DaggerFragment(), CoroutineScope by MainScope() {
         // Inflate the layout for this fragment
         binding = FragmentTodoDetailBinding.inflate(LayoutInflater.from(context), container, false)
         //binding.todoCard.detailsView.transitionName = "shared_todo_card"
-        //todoDetailViewModel = activity?.run{ ViewModelProviders.of(activity as FragmentActivity).get(TodoDetailViewModel::class.java)} ?: throw Exception("no activity")
-        //todoViewModel = activity?.run {ViewModelProviders.of(activity as FragmentActivity).get(TodoViewModel::class.java)} ?: throw Exception("no activity")
-        todoDetailViewModel.todoDetail.observe(this) {
-            setCardView(null, it)
-        }
         configCardView()
         compositeDisposable.add(
             completeSubject
                 .subscribe() { todoEvent ->
                     when (todoEvent.cardEvent) {
                         CardEvent.COMPLETE -> {
-                            val copy = todoDetailViewModel.todoDetail.value!!.copy()
+                            val copy = store.editingTodo.value!!.copy()
                             copy.completed = !copy.completed
+                            dispatcher.dispatch(todoActionCreator.editedTodo(copy))
                             launch {
                                 withContext(Dispatchers.Default) {
                                     todoLogic.updateTodo(copy)
@@ -89,9 +91,9 @@ class TodoDetailFragment : DaggerFragment(), CoroutineScope by MainScope() {
                             }
                         }
                         CardEvent.SAVE_COMMENT -> {
-                            val copy = todoDetailViewModel.todoDetail.value!!.copy()
-                            //todo
-                            //copy.comment = mCommentEdit.text.toString()
+                            val copy =
+                                store.editingTodo.value!!.copy(comment = binding.todoCard.todo_comment_edit_text.text.toString())
+                            dispatcher.dispatch(todoActionCreator.editedTodo(copy))
                             launch {
                                 withContext(Dispatchers.Default) {
                                     todoLogic.updateTodo(copy)
@@ -109,6 +111,7 @@ class TodoDetailFragment : DaggerFragment(), CoroutineScope by MainScope() {
         super.onDestroyView()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         activity?.let {
@@ -130,16 +133,18 @@ class TodoDetailFragment : DaggerFragment(), CoroutineScope by MainScope() {
         (activity as NavCommonActivity).run {
             setTitle("Todo Detail")
         }
-        setCardView(null, todoDetailViewModel.todoDetail.value!!)
+        store.editingTodo.observe(this) {
+            setCardView(null, it)
+        }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun configCardView() {
         //complete button, delete button
         View.OnClickListener { _view ->
-            val todo = todoDetailViewModel.todoDetail.value
-            todo?.let {
-                completeSubject.onNext(TodoEvent(CardEvent.COMPLETE, todo, _view))
+            store.editingTodo.value?.let {
+                completeSubject.onNext(TodoEvent(CardEvent.COMPLETE, it, _view))
             }
         }.let {
             binding.todoCard.completeClickListener = it
@@ -147,15 +152,14 @@ class TodoDetailFragment : DaggerFragment(), CoroutineScope by MainScope() {
         }
 
         binding.todoCard.saveClickListener = View.OnClickListener { _view ->
-            val todo = todoDetailViewModel.todoDetail.value
-            todo?.let {
-                completeSubject.onNext(TodoEvent(CardEvent.SAVE_COMMENT, todo, _view))
+            store.editingTodo.value?.let {
+                completeSubject.onNext(TodoEvent(CardEvent.SAVE_COMMENT, it, _view))
             }
         }
 
         //delete button
         binding.todoCard.deleteClickListener = View.OnClickListener { _view ->
-            todoViewModel.todoInfo.let {
+            store.editingTodo.value?.let {
                 if (todoLogic.isTodoEditing(it)) {
                     Toast.makeText(
                         _view.context,
@@ -174,7 +178,7 @@ class TodoDetailFragment : DaggerFragment(), CoroutineScope by MainScope() {
         }
 
         binding.todoCard.editClickListener = View.OnClickListener { _view ->
-            todoViewModel.todoInfo.let {
+            store.editingTodo.value?.let {
                 if (todoLogic.isTodoEditing(it)) {
                     Toast.makeText(_view.context, "Todo is Editing", Toast.LENGTH_SHORT).show()
                 } else {

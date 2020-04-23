@@ -11,7 +11,7 @@ import androidx.lifecycle.observe
 import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.Flux.CoroutineDispatcher
 import com.example.myapplication.basic_03_android_test.Flux.TodoActionCreator
-import com.example.myapplication.basic_03_android_test.Flux.TodoStore
+import com.example.myapplication.basic_03_android_test.Flux.TodoListStore
 import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
@@ -40,7 +40,7 @@ class TodoListActivity : NavCommonActivity(), HasAndroidInjector, CoroutineScope
     lateinit var todoActionCreator: TodoActionCreator
 
     @Inject
-    lateinit var store: TodoStore
+    lateinit var store: TodoListStore
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
