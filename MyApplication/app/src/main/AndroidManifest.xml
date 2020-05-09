@@ -52,8 +52,11 @@
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar.NoActionBar">
             <intent-filter>
-                <action android:name="ACTION_TODO_NOTIFY" />
+                <!--<action android:name="ACTION_TODO_NOTIFY" />-->
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"></category>
             </intent-filter>
+
         </activity>
         <activity android:name=".basic_02_Activity.ImplicitIntentReceiverActivity">
             <intent-filter>
@@ -85,11 +88,11 @@
         <activity android:name=".basic_01_02_firstApp.FirstAppActivity" />
         <activity android:name=".sensordetails.SensorDetailsActivity" />
         <activity android:name=".main.MainActivity">
-            <intent-filter>
+          <!--  <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity android:name=".sensorlist.SensorListActivity" />
 

@@ -4,34 +4,32 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.myapplication.basic_03_android_test.model.Todo
 
-class FakeTodoRepository : ITodoRepository {
+open class FakeTodoRepository(override val alltodos: MutableList<Todo>) : ITodoRepository {
     override val alltodosLiveData: LiveData<List<Todo>> = MutableLiveData<List<Todo>>()
-    var todoList = mutableListOf<Todo>()
-
     init {
-        (alltodosLiveData as MutableLiveData).value = todoList
+        (alltodosLiveData as MutableLiveData).value = this.alltodos
     }
 
     override fun addToDo(todo: Todo) {
-        todoList.add(todo)
-        (alltodosLiveData as MutableLiveData).value = todoList
+        this.alltodos.add(todo)
+        (alltodosLiveData as MutableLiveData).value = this.alltodos
     }
 
     override fun updateToDo(todo: Todo) {
-        todoList.indexOfFirst { it.id == todo.id }.takeIf { it != -1 }?.let {
-            todoList[it] = todo
+        this.alltodos.indexOfFirst { it.id == todo.id }.takeIf { it != -1 }?.let {
+            this.alltodos[it] = todo
         }
-        (alltodosLiveData as MutableLiveData).value = todoList
+        (alltodosLiveData as MutableLiveData).value = this.alltodos
     }
 
     override fun deleteToDo(todo: Todo) {
-        todoList.remove(todo)
-        (alltodosLiveData as MutableLiveData).value = todoList
+        this.alltodos.remove(todo)
+        (alltodosLiveData as MutableLiveData).value = this.alltodos
     }
 
     override fun getNotificationTodo(limitTime: Long): List<Todo> {
         val result = mutableListOf<Todo>()
-        todoList.asSequence().filter { (it.targetTime ?: 0) <= limitTime }.toCollection(result)
+        this.alltodos.asSequence().filter { (it.targetTime ?: 0) <= limitTime }.toCollection(result)
         return result
     }
 

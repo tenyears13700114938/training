@@ -22,13 +22,6 @@ data class Todo (
     var priority: String? = TodoPriority.LOW.name
 ) : Serializable {
     constructor() : this(0, "", false,"", "", null)
-    fun reset() {
-        thing = ""
-        completed = false
-        description = ""
-        imageUrl = ""
-        targetTime = null
-    }
 }
 
 enum class TodoPriority{

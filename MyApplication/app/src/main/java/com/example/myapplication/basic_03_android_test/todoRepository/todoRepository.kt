@@ -4,44 +4,45 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import com.example.myapplication.basic_03_android_test.model.Todo
+import dagger.Binds
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class todoRepository @Inject constructor(val context : Context) : ITodoRepository {
+class todoRepository @Inject constructor(val context : Context, val todoDao: todoDao) : ITodoRepository {
     override val alltodosLiveData : LiveData<List<Todo>> by lazy {
-        todoDatabase.getInstance(context).todoDao().getAllLiveData()
+        todoDao.getAllLiveData()
     }
 
     override val alltodos: List<Todo>
-        get() = todoDatabase.getInstance(context).todoDao().getAllTodos()
+        get() = todoDao.getAllTodos()
 
     override fun addToDo(todo: Todo) {
-        todoDatabase.getInstance(context).todoDao().insertTodo(todo)
+        todoDao.insertTodo(todo)
     }
 
     override fun updateToDo(todo : Todo){
-        todoDatabase.getInstance(context).todoDao().updateTodo(todo)
+        todoDao.updateTodo(todo)
     }
 
     override fun deleteToDo(todo : Todo){
         todo.imageUrl?.also {
             File(it).delete()
         }
-        todoDatabase.getInstance(context).todoDao().delete(todo)
+        todoDao.delete(todo)
     }
 
-    fun searchTodo(key : String) : DataSource.Factory<Int, Todo>{
-        return todoDatabase.getInstance(context).todoDao().searchByTitleOrDescription(key)
+    fun searchTodo(key : String) : DataSource.Factory<Int, Todo>?{
+        return todoDao.searchByTitleOrDescription(key)
     }
 
     override fun getNotificationTodo(limitTime : Long) : List<Todo>{
-        return todoDatabase.getInstance(context).todoDao().getNotificationTodo(limitTime)
+        return todoDao.getNotificationTodo(limitTime)
     }
 
     override fun getLiveNotificationTodo(limitTime : Long) : LiveData<List<Todo>>{
-        return todoDatabase.getInstance(context).todoDao().getLiveNotificationTodo(limitTime)
+        return todoDao.getLiveNotificationTodo(limitTime)
     }
 
     /*companion object {

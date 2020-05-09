@@ -1,17 +1,18 @@
 package com.example.myapplication.basic_03_android_test.Flux
 
+import com.example.myapplication.basic_03_android_test.TodoService.ITodoLogic
 import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoList.ListDisplayType
 import com.example.myapplication.basic_03_android_test.todoList.StartType
-import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
+import com.example.myapplication.basic_03_android_test.todoRepository.ITodoRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TodoActionCreator @Inject constructor(
-    val todoLogic: TodoLogic,
-    val todoRepository: todoRepository //todo change to IF
+    val todoLogic: ITodoLogic,
+    val todoRepository: ITodoRepository
 ) {
     fun addTodo(todo: Todo) = ActionCreate {
         todoLogic.addTodo(todo)

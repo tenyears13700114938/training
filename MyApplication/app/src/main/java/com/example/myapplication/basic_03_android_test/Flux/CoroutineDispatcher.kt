@@ -17,13 +17,17 @@ class CoroutineDispatcher @Inject constructor() {
     @ExperimentalCoroutinesApi
     inline fun <reified T : Action> subScribe(): ReceiveChannel<T> {
         return MainScope().produce<T> {
-            broadcastChannel.consumeEach {
-                Log.d("DebugCoroutine", "action : ${it.toString()}")
-                if (it is T) {
-                    Log.d("DebugCoroutine", "send...")
-                    send(it)
+            //withContext(Dispatchers.Default) {
+                broadcastChannel.consumeEach {
+                    Log.d("DebugCoroutine", "action : ${it.toString()}")
+                    System.out.println("action:${it}")
+                    if (it is T) {
+                        Log.d("DebugCoroutine", "send...")
+                        System.out.println("really send....action:${it}")
+                        send(it)
+                    }
                 }
-            }
+            //}
             Log.d("DebugCoroutine", "consume over...")
         }
 
@@ -33,7 +37,7 @@ class CoroutineDispatcher @Inject constructor() {
     fun dispatch(create: ActionCreate) {
         MainScope().launch {
             withContext(Dispatchers.Default) {
-                broadcastChannel.send(create.run())
+                broadcastChannel.send(create.create())
             }
         }
     }

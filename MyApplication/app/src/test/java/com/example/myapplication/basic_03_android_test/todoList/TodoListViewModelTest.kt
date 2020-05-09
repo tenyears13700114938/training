@@ -27,7 +27,7 @@ class TodoListViewModelTest {
 
     @Before
     fun setupViewModel(){
-        todoRepository = FakeTodoRepository()
+        todoRepository = FakeTodoRepository(mutableListOf())
         todoListViewModel = TodoListViewModel(ApplicationProvider.getApplicationContext(), StartType.all, todoRepository)
     }
 

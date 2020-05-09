@@ -6,7 +6,9 @@ import com.example.myapplication.basic_03_android_test.Flux.TodoAdded
 import com.example.myapplication.basic_03_android_test.Flux.TodoDeleted
 import com.example.myapplication.basic_03_android_test.Flux.TodoUpdated
 import com.example.myapplication.basic_03_android_test.model.Todo
+import com.example.myapplication.basic_03_android_test.todoRepository.ITodoRepository
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
+import dagger.Binds
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,8 +25,8 @@ enum class OpResult(val result: Int) {
 @Singleton
 class TodoLogic @Inject constructor(
     val appContext: Context,
-    val todoRepository: todoRepository
-)/* : ResultReceiver(Handler())*/ {
+    val todoRepository: ITodoRepository
+)/* : ResultReceiver(Handler())*/ : ITodoLogic {
     val RESULT_EXTRA_PARAM_TODO = "RESULT_EXTRA_PARAM_TODO"
     private val TAG = TodoLogic::class.java.simpleName
 
@@ -55,25 +57,25 @@ class TodoLogic @Inject constructor(
         }
     }*/
 
-    fun isTodoEditing(todo: Todo): Boolean {
+    override fun isTodoEditing(todo: Todo): Boolean {
         synchronized(mEditTodoMap) {
             return mEditTodoMap.containsKey(todo.id)
         }
     }
 
-    fun isTodoAdding(todo: Todo): Boolean {
+    override fun isTodoAdding(todo: Todo): Boolean {
         synchronized(mAddTodoList) {
             return mAddTodoList.contains(todo)
         }
     }
 
-    fun popEditMap(todo: Todo) {
+    override fun popEditMap(todo: Todo) {
         synchronized(mEditTodoMap) {
             mEditTodoMap.remove(todo.id)
         }
     }
 
-    suspend fun updateTodo(todo: Todo): TodoUpdated {
+    override suspend fun updateTodo(todo: Todo): TodoUpdated {
         var result = OpResult.UPDATE_OK
         val copy = todo.copy()
         synchronized(mEditTodoMap) {
@@ -91,7 +93,7 @@ class TodoLogic @Inject constructor(
         return TodoUpdated(copy, result)
     }
 
-    suspend fun deleteTodo(todo: Todo): TodoDeleted {
+    override suspend fun deleteTodo(todo: Todo): TodoDeleted {
         var result = OpResult.DELETE_OK
         val copy = todo.copy()
         synchronized(mEditTodoMap) {
@@ -111,7 +113,7 @@ class TodoLogic @Inject constructor(
         return TodoDeleted(copy, result)
     }
 
-    suspend fun addTodo(todo: Todo): TodoAdded {
+    override suspend fun addTodo(todo: Todo): TodoAdded {
         var result = OpResult.ADD_OK
         val copy = todo.copy()
         synchronized(mAddTodoList) {
@@ -130,7 +132,7 @@ class TodoLogic @Inject constructor(
         return TodoAdded(copy, result)
     }
 
-    fun removeTodo(todo: Todo) {
+    override fun removeTodo(todo: Todo) {
         synchronized(mAddTodoList) {
             mAddTodoList.remove(todo)
         }

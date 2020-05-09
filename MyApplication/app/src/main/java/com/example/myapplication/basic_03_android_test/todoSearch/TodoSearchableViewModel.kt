@@ -13,7 +13,9 @@ class TodoSearchableViewModel(val repository : todoRepository) : ViewModel() {
     }
 
     var searchInfo : LiveData<PagedList<Todo>> = Transformations.switchMap(searchKey){
-        LivePagedListBuilder(repository.searchTodo(it), 20).build()
+        repository.searchTodo(it)?.let {
+            LivePagedListBuilder(it, 20).build()
+        }
     }
 
 }
