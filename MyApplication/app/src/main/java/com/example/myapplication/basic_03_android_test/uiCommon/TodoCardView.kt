@@ -17,6 +17,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.view.setPadding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
@@ -68,6 +69,9 @@ class TodoCardView(context: Context, attrs: AttributeSet? = null) : FrameLayout(
 
         Log.d(TAG, "displayMode: {$displayMode}")
         configCard(displayMode)
+
+        background = resources.getDrawable(R.drawable.divider_line, null)
+        setPaddingRelative(0, 4, 0,4)
 
         completeButton.setOnClickListener { completeClickListener.onClick(it) }
         deleteButton.setOnClickListener { deleteClickListener.onClick(it) }
