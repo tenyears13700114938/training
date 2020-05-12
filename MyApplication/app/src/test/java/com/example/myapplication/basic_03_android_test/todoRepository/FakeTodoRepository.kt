@@ -6,6 +6,7 @@ import com.example.myapplication.basic_03_android_test.model.Todo
 
 open class FakeTodoRepository(override val alltodos: MutableList<Todo>) : ITodoRepository {
     override val alltodosLiveData: LiveData<List<Todo>> = MutableLiveData<List<Todo>>()
+
     init {
         (alltodosLiveData as MutableLiveData).value = this.alltodos
     }

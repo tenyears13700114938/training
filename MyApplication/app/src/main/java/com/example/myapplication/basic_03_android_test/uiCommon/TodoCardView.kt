@@ -103,6 +103,7 @@ class TodoCardView(context: Context, attrs: AttributeSet? = null) : FrameLayout(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun bind(item: Todo) {
+        Log.d(TAG, "$item")
         titleView.text = item.thing
         descriptionView.text = item.description
         if (item.targetTime != 0L && item.targetTime != null) {

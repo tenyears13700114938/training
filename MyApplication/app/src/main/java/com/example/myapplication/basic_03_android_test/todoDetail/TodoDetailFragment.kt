@@ -15,6 +15,7 @@ import androidx.navigation.findNavController
 import com.example.myapplication.basic_03_android_test.Flux.CoroutineDispatcher
 import com.example.myapplication.basic_03_android_test.Flux.TodoActionCreator
 import com.example.myapplication.basic_03_android_test.Flux.TodoDetailStore
+import com.example.myapplication.basic_03_android_test.TodoService.ITodoLogic
 import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
@@ -55,7 +56,7 @@ class TodoDetailFragment : DaggerFragment(), CoroutineScope by MainScope() {
     lateinit var todoActionCreator: TodoActionCreator
 
     @Inject
-    lateinit var todoLogic: TodoLogic
+    lateinit var todoLogic: ITodoLogic
     private lateinit var binding: FragmentTodoDetailBinding
     private val completeSubject = PublishSubject.create<TodoEvent>()
     private val compositeDisposable = CompositeDisposable()

@@ -1,21 +1,15 @@
 package com.example.myapplication.basic_03_android_test.todoRepository
 
-import android.content.pm.ApplicationInfo
 import android.os.Build
 import androidx.lifecycle.MutableLiveData
-import androidx.room.DatabaseConfiguration
-import androidx.room.InvalidationTracker
-import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.core.content.pm.ApplicationInfoBuilder
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.getOrAwaitValue
 import org.hamcrest.Matchers.`is`
-import org.junit.Test
-
-import org.junit.Assert.*
+import org.junit.Assert.assertThat
 import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 import org.robolectric.annotation.Config
@@ -40,7 +34,7 @@ class todoRepositoryTest {
 
         `when`(todoDao.getAllLiveData()).thenReturn(alltodosLiveData)
         assertThat(
-            testIns.alltodosLiveData.getOrAwaitValue(2, TimeUnit.SECONDS) {},
+            testIns.alltodosLiveData.getOrAwaitValue(2, TimeUnit.SECONDS) {}[0],
             `is`(listOf(Todo(1, "thing", true)))
         )
     }
@@ -101,7 +95,7 @@ class todoRepositoryTest {
 
         `when`(todoDao.getLiveNotificationTodo(100)).thenReturn(notificationLiveData)
         assertThat(
-            testIns.getLiveNotificationTodo(100).getOrAwaitValue(2, TimeUnit.SECONDS) {},
+            testIns.getLiveNotificationTodo(100).getOrAwaitValue(2, TimeUnit.SECONDS) {}[0],
             `is`(listOf(Todo(1, "thing", false)))
         )
     }

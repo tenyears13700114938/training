@@ -1,6 +1,5 @@
 package com.example.myapplication.basic_03_android_test.todoRepository
 
-import androidx.arch.core.util.Function
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
@@ -22,10 +21,10 @@ open class FaketodoDao : todoDao {
     }
 
     override fun updateTodo(todo: Todo) {
-     }
+    }
 
     override fun delete(todo: Todo) {
-     }
+    }
 
     override fun searchByTitleOrDescription(key: String): DataSource.Factory<Int, Todo>? {
         return null

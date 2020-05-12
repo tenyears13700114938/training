@@ -22,6 +22,7 @@ import com.example.myapplication.R
 import com.example.myapplication.basic_03_android_test.Flux.CoroutineDispatcher
 import com.example.myapplication.basic_03_android_test.Flux.TodoActionCreator
 import com.example.myapplication.basic_03_android_test.Flux.TodoListStore
+import com.example.myapplication.basic_03_android_test.TodoService.ITodoLogic
 import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.activityCommon.NavCommonActivity
 import com.example.myapplication.basic_03_android_test.model.Todo
@@ -45,7 +46,7 @@ class TodoListFragment : DaggerFragment(), CoroutineScope by MainScope() {
     private lateinit var todoListAdapter: TodoListAdapter
 
     @Inject
-    lateinit var todoLogic: TodoLogic
+    lateinit var todoLogic: ITodoLogic
     private val TAG = TodoListFragment::class.java.simpleName
 
     @Inject

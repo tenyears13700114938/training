@@ -3,11 +3,9 @@ package com.example.myapplication.basic_03_android_test.Flux
 import android.os.Build
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.myapplication.util.MainCoroutineRule
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`

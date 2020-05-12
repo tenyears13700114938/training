@@ -7,9 +7,8 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.myapplication.basic_03_android_test.model.NasaPhotoEntity
 import org.hamcrest.CoreMatchers.`is`
+import org.junit.Assert.assertThat
 import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import java.io.File
@@ -27,7 +26,10 @@ class UtilsKtTest {
         val absoluteDirName = getFileDirs(dirName, context)
 
         val packageName = context.packageName
-        assertThat(absoluteDirName, `is`(File("/data/data/$packageName/files/", dirName).absolutePath))
+        assertThat(
+            absoluteDirName,
+            `is`(File("/data/data/$packageName/files/", dirName).absolutePath)
+        )
     }
 
     @Test
@@ -36,7 +38,10 @@ class UtilsKtTest {
         val context = ApplicationProvider.getApplicationContext() as Context
         val externalDir = com.example.myapplication.util.getExternalFilesDir(dirName, context)
 
-        val tagertFile = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath + "/" + context.packageName + "/files", dirName)
+        val tagertFile = File(
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath + "/" + context.packageName + "/files",
+            dirName
+        )
 
         assertThat(externalDir, `is`(tagertFile.absolutePath))
     }
@@ -52,28 +57,41 @@ class UtilsKtTest {
 
         val fileName = convertToFileName(photoEntity)
 
-        assertThat(fileName, `is`(curDate.replace("-", "_") + "_" + photoUrl.substringAfterLast("/")))
+        assertThat(
+            fileName,
+            `is`(curDate.replace("-", "_") + "_" + photoUrl.substringAfterLast("/"))
+        )
     }
 
     @Test
     fun getDateStr_noHalf_empty() {
-        assertThat(getDateStr(LocalDate.now().format(DateTimeFormatter.ofPattern("uuuuMMdd")), 1), `is`(""))
+        assertThat(
+            getDateStr(LocalDate.now().format(DateTimeFormatter.ofPattern("uuuuMMdd")), 1),
+            `is`("")
+        )
     }
 
     @Test
-    fun getDateStr_oneHalf_empty(){
-        assertThat(getDateStr(LocalDate.now().format(DateTimeFormatter.ofPattern("uuuu-MMdd")), 1), `is`(""))
+    fun getDateStr_oneHalf_empty() {
+        assertThat(
+            getDateStr(LocalDate.now().format(DateTimeFormatter.ofPattern("uuuu-MMdd")), 1),
+            `is`("")
+        )
     }
 
     @Test
-    fun getDateStr_twoHalfAddOne_plusOne(){
-        assertThat(getDateStr(LocalDate.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd")), 1),
-            `is`(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("uuuu-MM-dd"))))
+    fun getDateStr_twoHalfAddOne_plusOne() {
+        assertThat(
+            getDateStr(LocalDate.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd")), 1),
+            `is`(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("uuuu-MM-dd")))
+        )
     }
 
     @Test
-    fun getDateStr_twohalfMinusOne_minusOne(){
-        assertThat(getDateStr(LocalDate.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd")), -1),
-            `is`(LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("uuuu-MM-dd"))))
+    fun getDateStr_twohalfMinusOne_minusOne() {
+        assertThat(
+            getDateStr(LocalDate.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd")), -1),
+            `is`(LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("uuuu-MM-dd")))
+        )
     }
 }

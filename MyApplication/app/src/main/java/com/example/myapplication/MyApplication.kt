@@ -13,7 +13,7 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
-class MyApplication : Application(),HasAndroidInjector, Configuration.Provider {
+open class MyApplication : Application(),HasAndroidInjector, Configuration.Provider {
     @Inject
     lateinit var todoAlarmManager: todoAlarmManager
     lateinit var appComponent: AppComponent
@@ -28,12 +28,17 @@ class MyApplication : Application(),HasAndroidInjector, Configuration.Provider {
         return dispatchingAndroidInjector
     }
 
+    open fun createAppComponent() {
+        appComponent = DaggerAppComponent.builder().myApp(this).build()
+        appComponent.inject(this@MyApplication)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
-        appComponent = DaggerAppComponent.builder().myApp(this).build().apply {
-            inject(this@MyApplication)
-        }
+        //appComponent = DaggerAppComponent.builder().myApp(this).build().apply {
+         createAppComponent()
+        //}
         //todo start workmanager
         todoAlarmManager.run()
         photoDownloadWorkManager.getIns(this).run()

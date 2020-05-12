@@ -5,26 +5,23 @@ import com.example.myapplication.basic_03_android_test.TodoService.OpResult
 import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.getOrAwaitValue
 import com.example.myapplication.util.MainCoroutineRule
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
 import org.hamcrest.Matchers.`is`
 import org.junit.After
+import org.junit.Assert.assertThat
 import org.junit.Before
-import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.Rule
+import org.junit.Test
 import java.util.concurrent.TimeUnit
 
 class TodoListStoreTest {
     lateinit var testIns: TodoListStore
     lateinit var dispatcher: CoroutineDispatcher
+
     @ExperimentalCoroutinesApi
     val testDispatcher = TestCoroutineDispatcher()
 
@@ -51,13 +48,13 @@ class TodoListStoreTest {
         })
         assertThat(
             testIns.addTodoResult.getOrAwaitValue(2, TimeUnit.SECONDS) {},
-            `is`(OpResult.ADD_OK)
+            `is`(listOf(OpResult.ADD_OK))
         )
     }
 
     @Test
     fun getTodoList() {
-        val loadList = mutableListOf<Todo>().apply{
+        val loadList = mutableListOf<Todo>().apply {
             add(Todo(1, "thing", false))
             add(Todo(2, "second", true))
         }
@@ -65,12 +62,15 @@ class TodoListStoreTest {
         dispatcher.dispatch(ActionCreate {
             TodoListLoaded(loadList)
         })
-        assertThat(todoObserve.getOrAwaitValue(2, TimeUnit.SECONDS, {}), `is`(loadList as List<Todo>))
+        assertThat(
+            todoObserve.getOrAwaitValue(2, TimeUnit.SECONDS) {},
+            `is`(listOf(loadList as List<Todo>))
+        )
     }
 
     @ExperimentalCoroutinesApi
     @Test
-    fun testTest(){
+    fun testTest() {
         runBlockingTest {
             var a = 0
             launch {
@@ -92,7 +92,7 @@ class TodoListStoreTest {
 
     @ExperimentalCoroutinesApi
     @After
-    fun teardown(){
+    fun teardown() {
         //Dispatchers.resetMain()
         //testDispatcher.cleanupTestCoroutines()
     }

@@ -26,45 +26,90 @@ class TodoListViewModelTest {
     var instantExecutorRule = InstantTaskExecutorRule()
 
     @Before
-    fun setupViewModel(){
+    fun setupViewModel() {
         todoRepository = FakeTodoRepository(mutableListOf())
-        todoListViewModel = TodoListViewModel(ApplicationProvider.getApplicationContext(), StartType.all, todoRepository)
+        todoListViewModel = TodoListViewModel(
+            ApplicationProvider.getApplicationContext(),
+            StartType.all,
+            todoRepository
+        )
     }
 
     @Test
     fun getTodoList_allZeroItem() {
-        assertThat(todoListViewModel.todoList.getOrAwaitValue(2, TimeUnit.SECONDS){}.size, comparesEqualTo(0))
+        assertThat(
+            todoListViewModel.todoList.getOrAwaitValue(2, TimeUnit.SECONDS) {}[0].size,
+            comparesEqualTo(0)
+        )
     }
 
     @Test
-    fun getTodoList_allMultiItems(){
+    fun getTodoList_allMultiItems() {
         todoRepository.addToDo(Todo(1, "test1", false))
         todoRepository.addToDo(Todo(2, "test2", false))
         todoRepository.addToDo(Todo(3, "test3", false))
 
-        assertThat(todoListViewModel.todoList.getOrAwaitValue(2, TimeUnit.SECONDS){}.size, comparesEqualTo(3))
+        assertThat(
+            todoListViewModel.todoList.getOrAwaitValue(2, TimeUnit.SECONDS) {}[0].size,
+            comparesEqualTo(3)
+        )
     }
 
     @Test
-    fun getTodoList_expiredZeroItem(){
-        todoRepository.addToDo(Todo(1,"test1", false, targetTime = System.currentTimeMillis() + 1000))
+    fun getTodoList_expiredZeroItem() {
+        todoRepository.addToDo(
+            Todo(
+                1,
+                "test1",
+                false,
+                targetTime = System.currentTimeMillis() + 1000
+            )
+        )
 
-        val expiredCount = todoListViewModel.todoList.getOrAwaitValue(2, TimeUnit.SECONDS){}.count { it.targetTime ?: 0 < System.currentTimeMillis() }
+        val expiredCount = todoListViewModel.todoList.getOrAwaitValue(
+            2,
+            TimeUnit.SECONDS
+        ) {}[0].count { it.targetTime ?: 0 < System.currentTimeMillis() }
         assertThat(expiredCount, comparesEqualTo(0))
     }
 
-    fun getTodoList_expiredMulitiItems(){
-        todoRepository.addToDo(Todo(1,"test1", false, targetTime = System.currentTimeMillis() + 1000))
-        todoRepository.addToDo(Todo(2,"test2", false, targetTime = System.currentTimeMillis() - 1000))
-        todoRepository.addToDo(Todo(3,"test3", false, targetTime = System.currentTimeMillis() - 2000))
+    fun getTodoList_expiredMulitiItems() {
+        todoRepository.addToDo(
+            Todo(
+                1,
+                "test1",
+                false,
+                targetTime = System.currentTimeMillis() + 1000
+            )
+        )
+        todoRepository.addToDo(
+            Todo(
+                2,
+                "test2",
+                false,
+                targetTime = System.currentTimeMillis() - 1000
+            )
+        )
+        todoRepository.addToDo(
+            Todo(
+                3,
+                "test3",
+                false,
+                targetTime = System.currentTimeMillis() - 2000
+            )
+        )
 
-        val expiredCount = todoListViewModel.todoList.getOrAwaitValue(2, TimeUnit.SECONDS){}.count{ it.targetTime ?: 0 < System.currentTimeMillis()}
+        val expiredCount = todoListViewModel.todoList.getOrAwaitValue(
+            2,
+            TimeUnit.SECONDS
+        ) {}[0].count { it.targetTime ?: 0 < System.currentTimeMillis() }
         assertThat(expiredCount, comparesEqualTo(2))
     }
 
     @Test
     fun getDisplayType_all() {
-        val displayTypePair = todoListViewModel.displayType.getOrAwaitValue(2, TimeUnit.SECONDS){}
+        val displayTypePair =
+            todoListViewModel.displayType.getOrAwaitValue(2, TimeUnit.SECONDS) {}[0]
 
         assertThat(displayTypePair.first, comparesEqualTo(ListDisplayType.none))
         assertThat(displayTypePair.second, comparesEqualTo(ListDisplayType.all))

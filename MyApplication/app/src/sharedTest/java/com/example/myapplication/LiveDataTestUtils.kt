@@ -6,23 +6,26 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
-fun <T> LiveData<T>.getOrAwaitValue(wait : Long, unit : TimeUnit, afterObserve : () -> Unit) : T {
-    var value : T? = null
-    val countDownLatch = CountDownLatch(1)
+fun <T> LiveData<T>.getOrAwaitValue(
+    wait: Long,
+    unit: TimeUnit,
+    requestItemCnt: Int = 1,
+    afterObserve: () -> Unit
+): List<T> {
+    var value = mutableListOf<T>()
+    val countDownLatch = CountDownLatch(requestItemCnt)
     val observer = Observer<T> { t ->
-        value = t
+        value.add(t)
         countDownLatch.countDown()
     }
     observeForever(observer)
     try {
         afterObserve.invoke()
         countDownLatch.await(wait, unit)
-    }
-    catch (e : InterruptedException){
+    } catch (e: InterruptedException) {
         throw TimeoutException("LiveData is not set")
-    }
-    finally {
+    } finally {
         removeObserver(observer)
     }
-    return value as T
+    return value
 }

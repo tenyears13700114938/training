@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.MyApplication
 import com.example.myapplication.R
+import com.example.myapplication.basic_03_android_test.TodoService.ITodoLogic
 import com.example.myapplication.basic_03_android_test.TodoService.TodoLogic
 import com.example.myapplication.basic_03_android_test.todoList.TodoListAdapter
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
@@ -32,7 +33,7 @@ class TodoSearchableFragment : androidx.fragment.app.Fragment() , CoroutineScope
     @Inject
     lateinit var todoRepository: todoRepository
     @Inject
-    lateinit var todoLogic: TodoLogic
+    lateinit var todoLogic: ITodoLogic
     private lateinit var viewModel: TodoSearchableViewModel
     private lateinit var listView : RecyclerView
     private lateinit var listAdapter : TodoListAdapter

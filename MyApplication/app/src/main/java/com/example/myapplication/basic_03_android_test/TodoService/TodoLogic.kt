@@ -9,6 +9,7 @@ import com.example.myapplication.basic_03_android_test.model.Todo
 import com.example.myapplication.basic_03_android_test.todoRepository.ITodoRepository
 import com.example.myapplication.basic_03_android_test.todoRepository.todoRepository
 import dagger.Binds
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -126,6 +127,7 @@ class TodoLogic @Inject constructor(
             }
         }
         if (result != OpResult.TODO_ALREADY_DOING) {
+            delay(5000)
             todoRepository.addToDo(copy)
             removeTodo(copy)
         }
